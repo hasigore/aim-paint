@@ -339,6 +339,8 @@
     // --- State & Cache System ---
     let crossColor = crossColorPicker.value;
     let trackingPoints = [];
+    let particles = []; 
+    let respawnQueue = []; // Holds targets waiting to reappear
     let isPaintBlocked = invertModeCheckbox.checked;
     let isFirstPointAfterRelease = true;
     let backgroundImage = null;
@@ -366,6 +368,7 @@
       config.zigZagAmplitude = parseInt(cfgElements.zigzagAmp.value) || 50;
       config.zigZagFrequency = parseInt(cfgElements.zigzagFreq.value) || 16;
 
+      respawnQueue = []; // Clear queue on settings change to keep tracking accurate
       calculateBackgroundPoints(centerX, centerY);
     }
 
@@ -470,7 +473,6 @@
       return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 0, g: 255, b: 0 };
     }
 
-    // Fixed implementation displaying strictly "Fullscreen" on the toggle element
     document.addEventListener("fullscreenchange", () => {
       fullscreenBtn.textContent = "📺 Fullscreen";
       handleResize();
@@ -493,7 +495,54 @@
       }
     }
 
-    function handlePress() { isPaintBlocked = !invertModeCheckbox.checked; updateCustomCursor(); }
+    function triggerExplosion(x, y) {
+      const particleCount = 18;
+      for (let i = 0; i < particleCount; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = Math.random() * 4 + 3;
+        particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * velocity,
+          vy: Math.sin(angle) * velocity,
+          radius: Math.random() * 3 + 2,
+          alpha: 1.0,
+          decay: Math.random() * 0.04 + 0.02
+        });
+      }
+    }
+
+    function handlePress(e) { 
+      isPaintBlocked = !invertModeCheckbox.checked; 
+      updateCustomCursor(); 
+
+      if (e && e.clientX !== undefined) {
+        const rect = canvas.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
+        const hitRadius = 6; // Matches precise visual radius of target circles
+
+        for (let i = cachedBackgroundPoints.length - 1; i >= 0; i--) {
+          const pt = cachedBackgroundPoints[i];
+          const distance = Math.hypot(clickX - pt.x, clickY - pt.y);
+          
+          if (distance <= hitRadius) {
+            triggerExplosion(pt.x, pt.y);
+            
+            // Queue target item back after 1.0s interval
+            respawnQueue.push({
+              x: pt.x,
+              y: pt.y,
+              respawnTime: Date.now() + 800
+            });
+
+            cachedBackgroundPoints.splice(i, 1);
+            break; 
+          }
+        }
+      }
+    }
+    
     function handleRelease() { isPaintBlocked = invertModeCheckbox.checked; isFirstPointAfterRelease = true; updateCustomCursor(); }
 
     invertModeCheckbox.addEventListener("change", () => {
@@ -516,7 +565,7 @@
     fadeSlider.addEventListener("input", (e) => { fadeVal.textContent = parseInt(e.target.value) >= parseInt(e.target.max) ? "∞" : e.target.value + "s"; });
     lengthSlider.addEventListener("input", (e) => { lengthVal.textContent = parseInt(e.target.value) >= parseInt(e.target.max) ? "∞" : e.target.value; });
     trailColorPicker.addEventListener("input", updateCustomCursor);
-    clearBtn.addEventListener("click", () => { trackingPoints = []; backgroundImage = null; });
+    clearBtn.addEventListener("click", () => { trackingPoints = []; particles = []; respawnQueue = []; backgroundImage = null; });
     crossColorPicker.addEventListener("input", (e) => { crossColor = e.target.value; updateCustomCursor(); });
 
     viewport.addEventListener("mousedown", handlePress);
@@ -626,6 +675,16 @@
 
     function engineLoop() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Monitor timeline updates to process target respawns
+      const now = Date.now();
+      for (let i = respawnQueue.length - 1; i >= 0; i--) {
+        if (now >= respawnQueue[i].respawnTime) {
+          cachedBackgroundPoints.push({ x: respawnQueue[i].x, y: respawnQueue[i].y });
+          respawnQueue.splice(i, 1);
+        }
+      }
+
       drawBackground();
 
       const currentTime = Date.now();
@@ -662,6 +721,27 @@
           ctx.stroke();
         }
       }
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = "#ffff00"; 
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
       requestAnimationFrame(engineLoop);
     }
 
