@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Aim Contour | Online Aim Trainer & Mouse Tracking Tool</title>
-    <meta name="description" content="Improve your FPS precision with Aim Contour. Follow geometric figures, practice smooth tracking, and upload custom draw targets entirely in your browser." />
+    <meta
+      name="description"
+      content="Improve your FPS precision with Aim Contour. Follow geometric figures, practice smooth tracking, and upload custom draw targets entirely in your browser."
+    />
     <style>
       :root {
         --bg-color: #121214;
@@ -13,9 +16,14 @@
         --text-color: #f3f4f6;
         --border-color: #2d2d34;
       }
-      * { box-sizing: border-box; margin: 0; padding: 0; }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
         background-color: var(--bg-color);
         color: var(--text-color);
         overflow: hidden;
@@ -35,7 +43,11 @@
         background-color: #1a1a2e;
         border: 3px dashed var(--accent-color);
       }
-      canvas { display: block; width: 100%; height: 100%; }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
       .ui-layer {
         position: absolute;
         top: 15px;
@@ -55,11 +67,28 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         transition: all 0.2s;
       }
-      .btn:hover { background: #2a2a32; border-color: #4a4a54; }
-      .control-row { display: flex; gap: 10px; margin-bottom: 12px; }
-      .file-input-wrapper { position: relative; display: inline-block; pointer-events: auto; }
+      .btn:hover {
+        background: #2a2a32;
+        border-color: #4a4a54;
+      }
+      .control-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .file-input-wrapper {
+        position: relative;
+        display: inline-block;
+        pointer-events: auto;
+      }
       .file-input-wrapper input[type="file"] {
-        position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer;
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
       }
       #advanced-menu {
         position: absolute;
@@ -77,18 +106,55 @@
         backdrop-filter: blur(8px);
         transition: opacity 0.2s, transform 0.2s;
       }
-      #advanced-menu.hidden-menu { opacity: 0; transform: translateY(-10px); pointer-events: none; }
-      h3 {
-        margin: 15px 0 10px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
-        color: #9ca3af; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;
+      #advanced-menu.hidden-menu {
+        opacity: 0;
+        transform: translateY(-10px);
+        pointer-events: none;
       }
-      h3:first-of-type { margin-top: 0; }
-      .setting-group { margin-bottom: 16px; }
-      .setting-group label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
-      .setting-group input[type="range"] { width: 100%; accent-color: var(--accent-color); }
-      .setting-group input[type="color"] { width: 40px; height: 25px; border: none; cursor: pointer; background: none; }
-      .inline-setting { display: flex; align-items: center; justify-content: space-between; }
-      .checkbox-container { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
+      h3 {
+        margin: 15px 0 10px;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #9ca3af;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 5px;
+      }
+      h3:first-of-type {
+        margin-top: 0;
+      }
+      .setting-group {
+        margin-bottom: 16px;
+      }
+      .setting-group label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        margin-bottom: 6px;
+      }
+      .setting-group input[type="range"] {
+        width: 100%;
+        accent-color: var(--accent-color);
+      }
+      .setting-group input[type="color"] {
+        width: 40px;
+        height: 25px;
+        border: none;
+        cursor: pointer;
+        background: none;
+      }
+      .inline-setting {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
@@ -107,34 +173,195 @@
 
         <div id="advanced-menu" class="hidden-menu">
           <h3>Trail Mechanics</h3>
-          <div class="setting-group"><label>Fade Time: <span id="fade-val">5s</span></label><input type="range" id="fade-slider" min="1" max="20" value="5" /></div>
-          <div class="setting-group"><label>Max Line Length: <span id="length-val">500</span></label><input type="range" id="length-slider" min="50" max="2000" step="50" value="500" /></div>
-          <div class="setting-group inline-setting"><label>Invert Mode (Hold to Block)</label><input type="checkbox" id="invert-mode" /></div>
+          <div class="setting-group">
+            <label>Fade Time: <span id="fade-val">5s</span></label
+            ><input type="range" id="fade-slider" min="1" max="20" value="5" />
+          </div>
+          <div class="setting-group">
+            <label>Max Line Length: <span id="length-val">500</span></label
+            ><input
+              type="range"
+              id="length-slider"
+              min="50"
+              max="2000"
+              step="50"
+              value="500"
+            />
+          </div>
+          <div class="setting-group inline-setting">
+            <label>Invert Mode (Hold to Block)</label
+            ><input type="checkbox" id="invert-mode" />
+          </div>
 
           <h3>Aesthetics</h3>
-          <div class="setting-group inline-setting"><label>Crosshair Color</label><input type="color" id="cross-color" value="#ff00ff" /></div>
-          <div class="setting-group inline-setting"><label>Grid Shape Color</label><input type="color" id="shape-color" value="#eeeeee" /></div>
-          <div class="setting-group inline-setting"><label>Mouse Trail Color</label><input type="color" id="trail-color" value="#00ff00" /></div>
+          <div class="setting-group inline-setting">
+            <label>Crosshair Color</label
+            ><input type="color" id="cross-color" value="#ff00ff" />
+          </div>
+          <div class="setting-group inline-setting">
+            <label>Grid Shape Color</label
+            ><input type="color" id="shape-color" value="#eeeeee" />
+          </div>
+          <div class="setting-group inline-setting">
+            <label>Mouse Trail Color</label
+            ><input type="color" id="trail-color" value="#00ff00" />
+          </div>
 
           <h3>Geometry Grid Layout</h3>
-          <div class="setting-group"><label>Radial Line Count</label><input type="range" id="cfg-line-count" min="0" max="36" value="4" /></div>
-          <div class="setting-group"><label>Circle Count</label><input type="range" id="cfg-circle-count" min="0" max="10" value="0" /></div>
-          <div class="setting-group"><label>Circle Start Radius</label><input type="range" id="cfg-circle-start" min="20" max="600" value="100" /></div>
-          <div class="setting-group"><label>Circle Distance</label><input type="range" id="cfg-circle-dist" min="20" max="500" value="200" /></div>
-          <div class="setting-group"><label>Box Count</label><input type="range" id="cfg-rect-count" min="0" max="20" value="3" /></div>
-          <div class="setting-group"><label>Box Start Size</label><input type="range" id="cfg-rect-start" min="50" max="600" value="200" /></div>
-          <div class="setting-group"><label>Box Distance</label><input type="range" id="cfg-rect-dist" min="20" max="500" value="200" /></div>
+          <div class="setting-group">
+            <label>Radial Line Count</label
+            ><input
+              type="range"
+              id="cfg-line-count"
+              min="0"
+              max="36"
+              value="4"
+            />
+          </div>
+          <div class="setting-group">
+            <label>Circle Count</label
+            ><input
+              type="range"
+              id="cfg-circle-count"
+              min="0"
+              max="10"
+              value="0"
+            />
+          </div>
+          <div class="setting-group">
+            <label>Circle Start Radius</label
+            ><input
+              type="range"
+              id="cfg-circle-start"
+              min="20"
+              max="600"
+              value="100"
+            />
+          </div>
+          <div class="setting-group">
+            <label>Circle Distance</label
+            ><input
+              type="range"
+              id="cfg-circle-dist"
+              min="20"
+              max="500"
+              value="200"
+            />
+          </div>
+          <div class="setting-group">
+            <label>Box Count</label
+            ><input
+              type="range"
+              id="cfg-rect-count"
+              min="0"
+              max="20"
+              value="3"
+            />
+          </div>
+          <div class="setting-group">
+            <label>Box Start Size</label
+            ><input
+              type="range"
+              id="cfg-rect-start"
+              min="50"
+              max="600"
+              value="200"
+            />
+          </div>
+          <div class="setting-group">
+            <label>Box Distance</label
+            ><input
+              type="range"
+              id="cfg-rect-dist"
+              min="20"
+              max="500"
+              value="200"
+            />
+          </div>
 
           <h3>Advanced Wave Tracking</h3>
-          <div class="setting-group checkbox-container"><input type="checkbox" id="cfg-loop-enable" /><label for="cfg-loop-enable">Enable Lemniscate Loop</label></div>
-          <div class="setting-group"><label>Loop Width</label><input type="range" id="cfg-loop-width" min="100" max="3000" value="400" /></div>
-          <div class="setting-group"><label>Loop Y-Offset</label><input type="range" id="cfg-loop-offset" min="-1200" max="1200" value="0" /></div>
-          <div class="setting-group checkbox-container"><input type="checkbox" id="cfg-zigzag-enable" /><label for="cfg-zigzag-enable">Enable Zig-Zag Target</label></div>
-          <div class="setting-group"><label>Zig-Zag Baseline Y Offset</label><input type="range" id="cfg-zigzag-y" min="-1600" max="1600" value="0" /></div>
-          <div class="setting-group"><label>Zig-Zag Amplitude</label><input type="range" id="cfg-zigzag-amp" min="10" max="500" value="40" /></div>
-          <div class="setting-group"><label>Zig-Zag Waves (Frequency)</label><input type="range" id="cfg-zigzag-freq" min="1" max="100" value="16" /></div>
-          <div class="setting-group"><label>Zig-Zag Row Count</label><input type="range" id="cfg-zigzag-count" min="1" max="50" value="1" /></div>
-          <div class="setting-group"><label>Zig-Zag Row Separation</label><input type="range" id="cfg-zigzag-dist" min="10" max="1000" value="200" /></div>
+          <div class="setting-group checkbox-container">
+            <input type="checkbox" id="cfg-loop-enable" /><label
+              for="cfg-loop-enable"
+              >Enable Lemniscate Loop</label
+            >
+          </div>
+          <div class="setting-group">
+            <label>Loop Width</label
+            ><input
+              type="range"
+              id="cfg-loop-width"
+              min="100"
+              max="3000"
+              value="400"
+            />
+          </div>
+          <div class="setting-group">
+            <label>Loop Y-Offset</label
+            ><input
+              type="range"
+              id="cfg-loop-offset"
+              min="-1200"
+              max="1200"
+              value="0"
+            />
+          </div>
+          <div class="setting-group checkbox-container">
+            <input type="checkbox" id="cfg-zigzag-enable" /><label
+              for="cfg-zigzag-enable"
+              >Enable Zig-Zag Target</label
+            >
+          </div>
+          <div class="setting-group">
+            <label>Zig-Zag Baseline Y Offset</label
+            ><input
+              type="range"
+              id="cfg-zigzag-y"
+              min="-1600"
+              max="1600"
+              value="0"
+            />
+          </div>
+          <div class="setting-group">
+            <label>Zig-Zag Amplitude</label
+            ><input
+              type="range"
+              id="cfg-zigzag-amp"
+              min="10"
+              max="500"
+              value="40"
+            />
+          </div>
+          <div class="setting-group">
+            <label>Zig-Zag Waves (Frequency)</label
+            ><input
+              type="range"
+              id="cfg-zigzag-freq"
+              min="1"
+              max="100"
+              value="16"
+            />
+          </div>
+          <div class="setting-group">
+            <label>Zig-Zag Row Count</label
+            ><input
+              type="range"
+              id="cfg-zigzag-count"
+              min="1"
+              max="50"
+              value="1"
+            />
+          </div>
+          <div class="setting-group">
+            <label>Zig-Zag Row Separation</label
+            ><input
+              type="range"
+              id="cfg-zigzag-dist"
+              min="10"
+              max="1000"
+              value="200"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -151,7 +378,7 @@
       const clearBtn = document.getElementById("clear-btn");
       const viewport = document.getElementById("app-viewport");
       const canvas = document.getElementById("main-canvas");
-      const ctx = canvas.getContext("2d", { alpha: false }); 
+      const ctx = canvas.getContext("2d", { alpha: false });
       const invertModeCheckbox = document.getElementById("invert-mode");
       const toggleMenuBtn = document.getElementById("toggle-menu-btn");
       const advancedMenu = document.getElementById("advanced-menu");
@@ -185,12 +412,22 @@
       let backgroundImage = null;
       const config = {};
       let cachedBackgroundPoints = [];
+      let isImageNewlyLoaded = false;
       let lastMouseX = 0;
       let lastMouseY = 0;
 
+      // Points to the active loop function to eliminate per-frame checking loops
+      let currentLoopFunction = engineLoopShapes;
+
       function hexToRgb(hex) {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 0, g: 255, b: 0 };
+        return result
+          ? {
+              r: parseInt(result[1], 16),
+              g: parseInt(result[2], 16),
+              b: parseInt(result[3], 16),
+            }
+          : { r: 0, g: 255, b: 0 };
       }
 
       function updateConfigCache() {
@@ -199,7 +436,8 @@
 
         config.numberOfLines = parseInt(cfgElements.lineCount.value) || 0;
         config.circleCount = parseInt(cfgElements.circleCount.value) || 0;
-        config.circleStartRadius = parseInt(cfgElements.circleStart.value) || 60;
+        config.circleStartRadius =
+          parseInt(cfgElements.circleStart.value) || 60;
         config.circleDistance = parseInt(cfgElements.circleDist.value) || 100;
         config.rectCount = parseInt(cfgElements.rectCount.value) || 0;
         config.rectStartSize = parseInt(cfgElements.rectStart.value) || 200;
@@ -209,7 +447,8 @@
         config.loopYOffset = parseInt(cfgElements.loopOffset.value) || 0;
         config.drawZigZag = cfgElements.zigzagEnable.checked;
         config.zigZagCount = parseInt(cfgElements.zigzagCount.value) || 1;
-        config.zigZagBaseY = centerY + (parseInt(cfgElements.zigzagY.value) || 0);
+        config.zigZagBaseY =
+          centerY + (parseInt(cfgElements.zigzagY.value) || 0);
         config.zigZagDistance = parseInt(cfgElements.zigzagDist.value) || 40;
         config.zigZagAmplitude = parseInt(cfgElements.zigzagAmp.value) || 50;
         config.zigZagFrequency = parseInt(cfgElements.zigzagFreq.value) || 16;
@@ -266,7 +505,8 @@
         if (config.drawZigZag) {
           const stepX = canvas.width / config.zigZagFrequency;
           for (let j = 0; j < config.zigZagCount; j++) {
-            const currentYCenter = config.zigZagBaseY + j * config.zigZagDistance;
+            const currentYCenter =
+              config.zigZagBaseY + j * config.zigZagDistance;
             const zigZagY1 = currentYCenter - config.zigZagAmplitude;
             const zigZagY2 = currentYCenter + config.zigZagAmplitude;
 
@@ -287,7 +527,11 @@
       });
 
       document.addEventListener("click", (e) => {
-        if (!advancedMenu.contains(e.target) && e.target !== toggleMenuBtn && !e.target.closest(".file-input-wrapper")) {
+        if (
+          !advancedMenu.contains(e.target) &&
+          e.target !== toggleMenuBtn &&
+          !e.target.closest(".file-input-wrapper")
+        ) {
           advancedMenu.classList.add("hidden-menu");
         }
       });
@@ -315,7 +559,9 @@
 
       function updateCustomCursor() {
         const rawSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="2.5" fill="${crossColor}"/><line x1="16" y1="2" x2="16" y2="7" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="25" x2="16" y2="30" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/><line x1="2" y1="16" x2="7" y2="16" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/><line x1="25" y1="16" x2="30" y2="16" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/></svg>`;
-        viewport.style.cursor = `url("data:image/svg+xml;base64,${btoa(rawSvg)}") 16 16, crosshair`;
+        viewport.style.cursor = `url("data:image/svg+xml;base64,${btoa(
+          rawSvg
+        )}") 16 16, crosshair`;
       }
 
       function loadImageFile(file) {
@@ -325,8 +571,12 @@
             const img = new Image();
             img.onload = () => {
               backgroundImage = img;
+              isImageNewlyLoaded = true;
               trackingPoints = [];
-              updateConfigCache(); 
+              updateConfigCache();
+
+              // Switch engine execution pipeline immediately
+              currentLoopFunction = engineLoopImage;
             };
             img.src = e.target.result;
           };
@@ -339,7 +589,8 @@
           const angle = Math.random() * Math.PI * 2;
           const velocity = Math.random() * 4 + 3;
           particles.push({
-            x: x, y: y,
+            x: x,
+            y: y,
             vx: Math.cos(angle) * velocity,
             vy: Math.sin(angle) * velocity,
             radius: Math.random() * 3 + 2,
@@ -348,10 +599,9 @@
           });
         }
       }
-
       function handlePress(e) {
         if (e && e.type === "contextmenu") e.preventDefault();
-        
+
         isPaintBlocked = !invertModeCheckbox.checked;
         updateCustomCursor();
 
@@ -363,14 +613,17 @@
         const rect = canvas.getBoundingClientRect();
         const clickX = isMouseClick ? e.clientX - rect.left : lastMouseX;
         const clickY = isMouseClick ? e.clientY - rect.top : lastMouseY;
-        const hitRadius = 12; 
+
+        // CHANGE THIS FROM 12 TO 6 TO MATCH THE VISUAL DOT RADIUS
+        const hitRadius = 6;
 
         for (let i = cachedBackgroundPoints.length - 1; i >= 0; i--) {
           const pt = cachedBackgroundPoints[i];
           if (Math.hypot(clickX - pt.x, clickY - pt.y) <= hitRadius) {
             triggerExplosion(pt.x, pt.y);
             respawnQueue.push({
-              x: pt.x, y: pt.y,
+              x: pt.x,
+              y: pt.y,
               respawnTime: Date.now() + 1000,
             });
             cachedBackgroundPoints.splice(i, 1);
@@ -396,27 +649,62 @@
       });
       window.addEventListener("dragover", (e) => e.preventDefault());
       window.addEventListener("drop", (e) => e.preventDefault());
-      viewport.addEventListener("dragover", (e) => { e.preventDefault(); viewport.classList.add("drag-over"); });
-      viewport.addEventListener("dragleave", () => viewport.classList.remove("drag-over"));
+      viewport.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        viewport.classList.add("drag-over");
+      });
+      viewport.addEventListener("dragleave", () =>
+        viewport.classList.remove("drag-over")
+      );
       viewport.addEventListener("drop", (e) => {
         e.preventDefault();
         viewport.classList.remove("drag-over");
-        if (e.dataTransfer.files.length > 0) loadImageFile(e.dataTransfer.files[0]);
+        if (e.dataTransfer.files.length > 0)
+          loadImageFile(e.dataTransfer.files[0]);
       });
 
-      fadeSlider.addEventListener("input", (e) => { fadeVal.textContent = parseInt(e.target.value) >= parseInt(e.target.max) ? "∞" : e.target.value + "s"; });
-      lengthSlider.addEventListener("input", (e) => { lengthVal.textContent = parseInt(e.target.value) >= parseInt(e.target.max) ? "∞" : e.target.value; });
-      clearBtn.addEventListener("click", () => {
-        trackingPoints = []; particles = []; respawnQueue = []; backgroundImage = null;
-        updateConfigCache();
+      fadeSlider.addEventListener("input", (e) => {
+        fadeVal.textContent =
+          parseInt(e.target.value) >= parseInt(e.target.max)
+            ? "∞"
+            : e.target.value + "s";
       });
-      crossColorPicker.addEventListener("input", (e) => { crossColor = e.target.value; updateCustomCursor(); });
+      lengthSlider.addEventListener("input", (e) => {
+        lengthVal.textContent =
+          parseInt(e.target.value) >= parseInt(e.target.max)
+            ? "∞"
+            : e.target.value;
+      });
+      clearBtn.addEventListener("click", () => {
+        trackingPoints = [];
+        particles = [];
+        respawnQueue = [];
+        backgroundImage = null;
+        updateConfigCache();
+
+        // Return to shape layout rendering engine loop
+        currentLoopFunction = engineLoopShapes;
+      });
+      crossColorPicker.addEventListener("input", (e) => {
+        crossColor = e.target.value;
+        updateCustomCursor();
+      });
 
       viewport.addEventListener("mousedown", handlePress);
       window.addEventListener("mouseup", handleRelease);
       window.addEventListener("mouseleave", handleRelease);
-      window.addEventListener("keydown", (e) => { if (e.code === "Space" && !e.repeat) { e.preventDefault(); handlePress(); } });
-      window.addEventListener("keyup", (e) => { if (e.code === "Space") { e.preventDefault(); handleRelease(); } });
+      window.addEventListener("keydown", (e) => {
+        if (e.code === "Space" && !e.repeat) {
+          e.preventDefault();
+          handlePress();
+        }
+      });
+      window.addEventListener("keyup", (e) => {
+        if (e.code === "Space") {
+          e.preventDefault();
+          handleRelease();
+        }
+      });
       viewport.addEventListener("contextmenu", handlePress);
 
       viewport.addEventListener("mousemove", (e) => {
@@ -433,41 +721,61 @@
         }
 
         trackingPoints.push({
-          x: lastMouseX, y: lastMouseY,
+          x: lastMouseX,
+          y: lastMouseY,
           time: now,
           disconnect: isFirstPointAfterRelease,
         });
         if (isFirstPointAfterRelease) isFirstPointAfterRelease = false;
       });
 
-      function drawBackgroundShapes(centerX, centerY) {
-        if (backgroundImage) {
-          const canvasRatio = canvas.width / canvas.height;
-          const imageRatio = backgroundImage.width / backgroundImage.height;
-          let drawWidth, drawHeight, startX, startY;
-          if (imageRatio > canvasRatio) {
-            drawWidth = canvas.width; drawHeight = canvas.width / imageRatio;
-            startX = 0; startY = (canvas.height - drawHeight) / 2;
-          } else {
-            drawWidth = canvas.height * imageRatio; drawHeight = canvas.height;
-            startX = (canvas.width - drawWidth) / 2; startY = 0;
-          }
-          ctx.drawImage(backgroundImage, startX, startY, drawWidth, drawHeight);
-          return;
+      function drawImage() {
+        if (isImageNewlyLoaded) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          cachedBackgroundPoints = [];
+          respawnQueue = [];
+          isImageNewlyLoaded = false;
         }
 
+        const canvasRatio = canvas.width / canvas.height;
+        const imageRatio = backgroundImage.width / backgroundImage.height;
+        let drawWidth, drawHeight, startX, startY;
+
+        if (imageRatio > canvasRatio) {
+          drawWidth = canvas.width;
+          drawHeight = canvas.width / imageRatio;
+          startX = 0;
+          startY = (canvas.height - drawHeight) / 2;
+        } else {
+          drawWidth = canvas.height * imageRatio;
+          drawHeight = canvas.height;
+          startX = (canvas.width - drawWidth) / 2;
+          startY = 0;
+        }
+        ctx.drawImage(backgroundImage, startX, startY, drawWidth, drawHeight);
+      }
+
+      function drawShapes(centerX, centerY) {
         ctx.fillStyle = "#0b0b0c";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         ctx.lineWidth = 3;
         ctx.strokeStyle = shapeColorPicker.value;
 
+        // Radial Lines
         for (let i = 0; i < config.circleCount; i++) {
           ctx.beginPath();
-          ctx.arc(centerX, centerY, config.circleStartRadius + i * config.circleDistance, 0, Math.PI * 2);
+          ctx.arc(
+            centerX,
+            centerY,
+            config.circleStartRadius + i * config.circleDistance,
+            0,
+            Math.PI * 2
+          );
           ctx.stroke();
         }
 
+        // Box Layout
         for (let i = 0; i < config.rectCount; i++) {
           const size = config.rectStartSize + i * config.rectDistance;
           ctx.beginPath();
@@ -475,11 +783,13 @@
           ctx.stroke();
         }
 
+        // Axis Lines
         const maxLineLength = Math.max(canvas.width, canvas.height);
         if (config.numberOfLines > 0) {
           ctx.beginPath();
           for (let i = 0; i < config.numberOfLines; i++) {
-            const radians = (((i * 180) / config.numberOfLines) * Math.PI) / 180;
+            const radians =
+              (((i * 180) / config.numberOfLines) * Math.PI) / 180;
             const cos = Math.cos(radians) * maxLineLength;
             const sin = Math.sin(radians) * maxLineLength;
             ctx.moveTo(centerX - cos, centerY - sin);
@@ -488,6 +798,7 @@
           ctx.stroke();
         }
 
+        // Lemniscate Loop Tracker
         if (config.drawLoop) {
           ctx.beginPath();
           const loopY = centerY - config.loopYOffset;
@@ -502,10 +813,12 @@
           ctx.stroke();
         }
 
+        // Zig-Zag Target Path
         if (config.drawZigZag) {
           const stepX = canvas.width / config.zigZagFrequency;
           for (let j = 0; j < config.zigZagCount; j++) {
-            const currentYCenter = config.zigZagBaseY + j * config.zigZagDistance;
+            const currentYCenter =
+              config.zigZagBaseY + j * config.zigZagDistance;
             const zigZagY1 = currentYCenter - config.zigZagAmplitude;
             const zigZagY2 = currentYCenter + config.zigZagAmplitude;
 
@@ -518,45 +831,33 @@
           }
         }
 
+        // Clickable Aim Targets (Yellow Dots)
         ctx.fillStyle = "#ffff00";
         for (let i = 0; i < cachedBackgroundPoints.length; i++) {
           const p = cachedBackgroundPoints[i];
           ctx.beginPath();
           ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
           ctx.fill();
-          ctx.stroke();
         }
       }
 
-      function engineLoop() {
-        const centerX = canvas.width * 0.5;
-        const centerY = canvas.height * 0.5;
-        const now = Date.now();
-
-        if (!backgroundImage) {
-          for (let i = respawnQueue.length - 1; i >= 0; i--) {
-            if (now >= respawnQueue[i].respawnTime) {
-              cachedBackgroundPoints.push({ x: respawnQueue[i].x, y: respawnQueue[i].y });
-              respawnQueue.splice(i, 1);
-            }
-          }
-        }
-
-        drawBackgroundShapes(centerX, centerY);
-
+      // --- SHARED TRAIL & PARTICLE RENDER ENGINE PIPELINE ---
+      function drawTrailAndParticles(now) {
         const lifespan = parseInt(fadeSlider.value) * 1000;
         const neverFades = lifespan >= parseInt(fadeSlider.max) * 1000;
         const pointsCap = parseInt(lengthSlider.value);
         const infiniteLine = pointsCap >= parseInt(lengthSlider.max);
 
-        while (trackingPoints.length > 0 && now - trackingPoints[0].time > lifespan) {
+        while (
+          trackingPoints.length > 0 &&
+          now - trackingPoints[0].time > lifespan
+        ) {
           trackingPoints.shift();
         }
         if (!infiniteLine && trackingPoints.length > pointsCap) {
           trackingPoints.splice(0, trackingPoints.length - pointsCap);
         }
 
-        // CORRECTED INDIVIDUAL STROKE ENGINE FOR OPACITY PER SEGMENT
         if (trackingPoints.length > 1) {
           ctx.lineWidth = 2;
           ctx.lineCap = "round";
@@ -568,7 +869,9 @@
             const endNode = trackingPoints[i];
             if (endNode.disconnect) continue;
 
-            let opacityValue = neverFades ? 1.0 : Math.max(0, 1 - (now - endNode.time) / lifespan);
+            let opacityValue = neverFades
+              ? 1.0
+              : Math.max(0, 1 - (now - endNode.time) / lifespan);
 
             ctx.beginPath();
             ctx.moveTo(startNode.x, startNode.y);
@@ -597,13 +900,49 @@
           ctx.fill();
           ctx.restore();
         }
-
-        requestAnimationFrame(engineLoop);
       }
 
+      // --- ENGINE PIPELINE 1: SHAPES LOOP ---
+      function engineLoopShapes() {
+        const centerX = canvas.width * 0.5;
+        const centerY = canvas.height * 0.5;
+        const now = Date.now();
+
+        for (let i = respawnQueue.length - 1; i >= 0; i--) {
+          if (now >= respawnQueue[i].respawnTime) {
+            cachedBackgroundPoints.push({
+              x: respawnQueue[i].x,
+              y: respawnQueue[i].y,
+            });
+            respawnQueue.splice(i, 1);
+          }
+        }
+
+        drawShapes(centerX, centerY);
+        drawTrailAndParticles(now);
+
+        requestAnimationFrame(mainTicker);
+      }
+
+      // --- ENGINE PIPELINE 2: IMAGE RENDERING LOOP ---
+      function engineLoopImage() {
+        const now = Date.now();
+
+        drawImage();
+        drawTrailAndParticles(now);
+
+        requestAnimationFrame(mainTicker);
+      }
+
+      // Global Ticker that directs execution to the swapped reference
+      function mainTicker() {
+        currentLoopFunction();
+      }
+
+      // Launch application
       updateCustomCursor();
       handleResize();
-      requestAnimationFrame(engineLoop);
+      requestAnimationFrame(mainTicker);
     </script>
   </body>
-</html>  
+</html>
