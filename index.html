@@ -3,18 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- The Title shows up as the main blue link on Google -->
   <title>Aim Contour | Online Aim Trainer & Mouse Tracking Tool</title>
   
-  <!-- The Description shows up as the text snippet below the link -->
   <meta name="description" content="Improve your FPS precision with Aim Contour (formerly Aim Paint). Follow geometric figures, practice smooth tracking, and upload custom draw targets entirely in your browser.">
   
-  <!-- Keywords help Google group your app with similar search terms -->
   <meta name="keywords" content="online aim trainer, aim paint, aim draw, aim contour, mouse tracking, precision trainer, hand eye coordination, smooth tracking, fps warmup, mouse calibration, aim trainer grid">
-  <title>Aim Paint</title>
   <style>
     :root {
       --bg-color: #121214;
@@ -93,6 +87,23 @@
       display: flex;
       gap: 10px;
       margin-bottom: 12px;
+    }
+
+    /* Hidden Native File Input Wrapper */
+    .file-input-wrapper {
+      position: relative;
+      display: inline-block;
+      pointer-events: auto;
+    }
+
+    .file-input-wrapper input[type="file"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
     }
 
     /* Advanced Configuration Sidebar Window */
@@ -177,6 +188,10 @@
     <div class="ui-layer">
       <div class="control-row">
         <button id="toggle-menu-btn" class="btn">⚙️ Settings</button>
+        <div class="file-input-wrapper">
+          <button class="btn">🖼️ Load Image</button>
+          <input type="file" id="image-input" accept="image/*">
+        </div>
         <button id="fullscreen-btn" class="btn">📺 Fullscreen</button>
         <button id="clear-btn" class="btn">🗑️ Clear Canvas</button>
       </div>
@@ -209,19 +224,15 @@
           <label>Mouse Trail Color</label>
           <input type="color" id="trail-color" value="#5865f2">
         </div>
-        <div class="setting-group">
-          <label>Background Image</label>
-          <input type="file" id="image-input" accept="image/*">
-        </div>
 
         <h3>Geometry Grid Layout</h3>
         <div class="setting-group">
           <label>Radial Line Count</label>
-          <input type="range" id="cfg-line-count" min="0" max="36" value="8">
+          <input type="range" id="cfg-line-count" min="0" max="36" value="2">
         </div>
         <div class="setting-group">
           <label>Circle Count</label>
-          <input type="range" id="cfg-circle-count" min="0" max="10" value="3">
+          <input type="range" id="cfg-circle-count" min="0" max="10" value="0">
         </div>
         <div class="setting-group">
           <label>Circle Start Radius</label>
@@ -229,11 +240,11 @@
         </div>
         <div class="setting-group">
           <label>Circle Distance</label>
-          <input type="range" id="cfg-circle-dist" min="20" max="200" value="60">
+          <input type="range" id="cfg-circle-dist" min="20" max="500" value="200">
         </div>
         <div class="setting-group">
           <label>Box Count</label>
-          <input type="range" id="cfg-rect-count" min="0" max="10" value="2">
+          <input type="range" id="cfg-rect-count" min="0" max="20" value="6">
         </div>
         <div class="setting-group">
           <label>Box Start Size</label>
@@ -241,25 +252,25 @@
         </div>
         <div class="setting-group">
           <label>Box Distance</label>
-          <input type="range" id="cfg-rect-dist" min="20" max="200" value="100">
+          <input type="range" id="cfg-rect-dist" min="20" max="500" value="200">
         </div>
 
         <h3>Advanced Wave Tracking</h3>
         <div class="setting-group checkbox-container">
-          <input type="checkbox" id="cfg-loop-enable" checked>
+          <input type="checkbox" id="cfg-loop-enable" unchecked>
           <label for="cfg-loop-enable">Enable Lemniscate Loop</label>
         </div>
         <div class="setting-group">
           <label>Loop Width</label>
-          <input type="range" id="cfg-loop-width" min="100" max="800" value="400">
+          <input type="range" id="cfg-loop-width" min="100" max="3000" value="400">
         </div>
         <div class="setting-group">
           <label>Loop Y-Offset</label>
-          <input type="range" id="cfg-loop-offset" min="-300" max="300" value="0">
+          <input type="range" id="cfg-loop-offset" min="-1200" max="1200" value="0">
         </div>
 
         <div class="setting-group checkbox-container">
-          <input type="checkbox" id="cfg-zigzag-enable" checked>
+          <input type="checkbox" id="cfg-zigzag-enable" unchecked>
           <label for="cfg-zigzag-enable">Enable Zig-Zag Target</label>
         </div>
         <div class="setting-group">
@@ -268,19 +279,19 @@
         </div>
         <div class="setting-group">
           <label>Zig-Zag Amplitude</label>
-          <input type="range" id="cfg-zigzag-amp" min="10" max="150" value="40">
+          <input type="range" id="cfg-zigzag-amp" min="10" max="500" value="40">
         </div>
         <div class="setting-group">
           <label>Zig-Zag Waves (Frequency)</label>
-          <input type="range" id="cfg-zigzag-freq" min="4" max="40" value="16">
+          <input type="range" id="cfg-zigzag-freq" min="4" max="400" value="16">
         </div>
         <div class="setting-group">
           <label>Zig-Zag Row Count</label>
-          <input type="range" id="cfg-zigzag-count" min="1" max="5" value="1">
+          <input type="range" id="cfg-zigzag-count" min="1" max="50" value="1">
         </div>
         <div class="setting-group">
           <label>Zig-Zag Row Separation</label>
-          <input type="range" id="cfg-zigzag-dist" min="10" max="100" value="40">
+          <input type="range" id="cfg-zigzag-dist" min="10" max="1000" value="200">
         </div>
       </div>
     </div>
@@ -423,7 +434,7 @@
     });
 
     document.addEventListener("click", (e) => {
-      if (!advancedMenu.contains(e.target) && e.target !== toggleMenuBtn) {
+      if (!advancedMenu.contains(e.target) && e.target !== toggleMenuBtn && !e.target.closest('.file-input-wrapper')) {
         advancedMenu.classList.add("hidden-menu");
       }
     });
@@ -445,7 +456,6 @@
     }
     window.addEventListener("resize", handleResize);
     document.addEventListener("fullscreenchange", () => {
-      fullscreenBtn.textContent = "📺 Fullscreen";
       handleResize();
     });
 
@@ -459,6 +469,12 @@
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
       return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 0, g: 255, b: 0 };
     }
+
+    // Fixed implementation displaying strictly "Fullscreen" on the toggle element
+    document.addEventListener("fullscreenchange", () => {
+      fullscreenBtn.textContent = "📺 Fullscreen";
+      handleResize();
+    });
 
     function updateCustomCursor() {
       const rawSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="2.5" fill="${crossColor}"/><line x1="16" y1="2" x2="16" y2="7" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="25" x2="16" y2="30" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/><line x1="2" y1="16" x2="7" y2="16" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/><line x1="25" y1="16" x2="30" y2="16" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/></svg>`;
