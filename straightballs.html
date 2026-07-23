@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Straight Balls</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #111;
+            font-family: sans-serif;
+            color: #fff;
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+        }
+        /* HUD Bar Outside the Canvas */
+        #hud-bar {
+            height: 45px;
+            background: #181818;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .hud-item {
+            display: flex;
+            gap: 8px;
+        }
+        .hud-item span {
+            color: #0f0;
+        }
+
+        /* Scrollable container that centers the canvas */
+        #canvas-container {
+            flex-grow: 1;
+            overflow: auto;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        canvas {
+            display: block;
+            cursor: crosshair;
+            background: #000;
+            border: 2px solid #555;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
+        }
+
+        /* Menu Overlay Styling */
+        #menu-toggle-btn {
+            position: fixed;
+            top: 60px;
+            right: 15px;
+            background: rgba(40, 40, 40, 0.8);
+            color: #fff;
+            border: 1px solid #666;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 14px;
+            backdrop-filter: blur(4px);
+            transition: background 0.2s;
+        }
+        #menu-toggle-btn:hover {
+            background: rgba(70, 70, 70, 0.9);
+        }
+        #config-menu {
+            position: fixed;
+            top: 105px;
+            right: 15px;
+            width: 320px;
+            background: rgba(18, 18, 18, 0.95);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            display: none;
+        }
+        #config-menu.open {
+            display: block;
+        }
+        .config-group {
+            margin-bottom: 14px;
+        }
+        .config-group label {
+            display: block;
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 4px;
+        }
+        .config-group input[type="text"], 
+        .config-group select {
+            width: 100%;
+            background: #2a2a2a;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .config-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+        .range-value {
+            float: right;
+            color: #0f0;
+            font-size: 12px;
+        }
+        .config-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+        .checkbox-label {
+            display: flex !important;
+            align-items: center;
+            cursor: pointer;
+            color: #fff !important;
+            font-size: 13px !important;
+        }
+        .btn-action {
+            width: 100%;
+            background: #333;
+            border: 1px solid #666;
+            color: #fff;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: 5px;
+            transition: background 0.2s;
+        }
+        .btn-action:hover {
+            background: #444;
+        }
+        h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 6px;
+            color: #0f0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- External HUD Bar -->
+    <div id="hud-bar">
+        <div class="hud-item">FPS: <span id="hud-fps">60</span></div>
+        <div class="hud-item">Dots: <span id="hud-dots">5</span></div>
+        <div class="hud-item">Rounds: <span id="hud-rounds">0/12</span></div>
+        <div class="hud-item">Current Index: <span id="hud-index">0</span></div>
+    </div>
+
+    <button id="menu-toggle-btn">Settings (Esc)</button>
+
+    <div id="config-menu">
+        <h3>Straight Balls Settings</h3>
+        <div class="config-group">
+            <label>Canvas Width (px) <span class="range-value" id="val-canvasWidth">1200</span></label>
+            <input type="range" id="cfg-canvasWidth" value="1200" min="400" max="4000" step="50">
+        </div>
+        <div class="config-group">
+            <label>Canvas Height (px) <span class="range-value" id="val-canvasHeight">800</span></label>
+            <input type="range" id="cfg-canvasHeight" value="800" min="400" max="4000" step="50">
+        </div>
+        <div class="config-group">
+            <button id="btn-fullscreen" class="btn-action">Toggle Fullscreen</button>
+        </div>
+        <div class="config-group">
+            <label>Dot Count <span class="range-value" id="val-count">5</span></label>
+            <input type="range" id="cfg-count" value="5" min="1" max="20" step="1">
+        </div>
+        <div class="config-group">
+            <label>Dot Radius <span class="range-value" id="val-radius">40</span></label>
+            <input type="range" id="cfg-radius" value="40" min="5" max="100" step="1">
+        </div>
+        <div class="config-group">
+            <label>Max Health <span class="range-value" id="val-maxHealth">300</span></label>
+            <input type="range" id="cfg-maxHealth" value="300" min="10" max="2000" step="10">
+        </div>
+        <div class="config-group">
+            <label>Damage Rate <span class="range-value" id="val-damageRate">50</span></label>
+            <input type="range" id="cfg-damageRate" value="50" min="1" max="500" step="1">
+        </div>
+        <div class="config-group">
+            <label>Regen Rate <span class="range-value" id="val-regenRate">4</span></label>
+            <input type="range" id="cfg-regenRate" value="4" min="0" max="50" step="1">
+        </div>
+        <div class="config-group">
+            <label>Lead Time <span class="range-value" id="val-leadTime">5</span></label>
+            <input type="range" id="cfg-leadTime" value="5" min="0" max="30" step="0.5">
+        </div>
+        <div class="config-group">
+            <label>Velocity Multiplier <span class="range-value" id="val-velocityMultiplier">4</span></label>
+            <input type="range" id="cfg-velocityMultiplier" value="4" min="0" max="20" step="0.5">
+        </div>
+        <div class="config-group">
+            <label>Rounds to Succeed <span class="range-value" id="val-roundsToSucced">12</span></label>
+            <input type="range" id="cfg-roundsToSucced" value="12" min="1" max="50" step="1">
+        </div>
+        <div class="config-group">
+            <label>Max Deviation From Target Line <span class="range-value" id="val-maxDiviationFromTargetLine">60</span></label>
+            <input type="range" id="cfg-maxDiviationFromTargetLine" value="60" min="5" max="200" step="1">
+        </div>
+        <div class="config-group">
+            <label>Trail Duration (frames) <span class="range-value" id="val-trailDuration">80</span></label>
+            <input type="range" id="cfg-trailDuration" value="80" min="0" max="300" step="1">
+        </div>
+        <div class="config-group">
+            <label class="checkbox-label">
+                <input type="checkbox" id="cfg-justHover" checked> Just Hover (No click required)
+            </label>
+        </div>
+        <div class="config-group">
+            <label>Movement Pattern</label>
+            <select id="cfg-movementPattern">
+                <option value="Static">Static</option>
+                <option value="Bouncing">Bouncing</option>
+                <option value="Strafe_Horizontal">Strafe Horizontal</option>
+                <option value="Jitter_Trackable">Jitter Trackable</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="canvas-container">
+        <canvas id="aimCanvas"></canvas>
+    </div>
+
+    <script>
+        const Config = {
+            canvas: { background: "#000", fps: 60, width: 1200, height: 800 },
+            dot: { count: 5, radius: 40, minimalRadius: 1, maxHealth: 300, damageRate: 50, regenRate: 4, leadTime: 5, baseMinimalDistance: 9000, baseMaximalDistance: 800 },
+            round: { roundsToSucced: 12 },
+            aim: { justHover: true, maxDiviationFromTargetLine: 60 },
+            velocity: { velocityMultiplier: 4 },
+            color: { zeroHealth: "yellowgreen", invincible: "grey", vulnerable: "orange", healthbarBackground: "#222", healthbar: "#0f0" },
+            trail: { duration: 80, width: 4, color: "255,255,255" },
+            movementPatterns: { default: "Static" }
+        };
+
+        function detectRefreshRate(callback) {
+            let samples = [];
+            let lastTime = performance.now();
+            function measure(now) {
+                let delta = now - lastTime;
+                lastTime = now;
+                if (delta > 0) samples.push(1000 / delta);
+                if (samples.length < 30) requestAnimationFrame(measure);
+                else {
+                    let avg = samples.reduce((a, b) => a + b, 0) / samples.length;
+                    let commonRates = [60, 75, 120, 144, 165, 240, 360];
+                    let closest = commonRates.reduce((prev, curr) => Math.abs(curr - avg) < Math.abs(prev - curr) ? curr : prev);
+                    callback(closest);
+                }
+            }
+            requestAnimationFrame(measure);
+        }
+
+        const MovementPatterns = {
+            Static: (dot) => { dot.vx = 0; dot.vy = 0; },
+            Bouncing: (dot, fps, width, height) => {
+                if (dot.has_no_velocity || (dot.vx === 0 && dot.vy === 0)) {
+                    const angle = Math.random() * Math.PI * 2;
+                    dot.vx = Math.cos(angle) * dot.velocity_multiplier;
+                    dot.vy = Math.sin(angle) * dot.velocity_multiplier;
+                    dot.has_no_velocity = false;
+                } else {
+                    let currentSpeed = Math.hypot(dot.vx, dot.vy);
+                    if (currentSpeed > 0) {
+                        dot.vx = (dot.vx / currentSpeed) * dot.velocity_multiplier;
+                        dot.vy = (dot.vy / currentSpeed) * dot.velocity_multiplier;
+                    }
+                }
+                dot.x += dot.vx;
+                dot.y += dot.vy;
+                if (dot.x < dot.radius || dot.x > width - dot.radius) dot.vx *= -1;
+                if (dot.y < dot.radius || dot.y > height - dot.radius) dot.vy *= -1;
+            },
+            Strafe_Horizontal: (dot, fps, width) => {
+                if (dot.has_no_velocity || dot.vx === 0) {
+                    const direction = Math.random() < 0.5 ? -1 : 1;
+                    dot.vx = direction * dot.velocity_multiplier;
+                    dot.vy = 0;
+                    dot.has_no_velocity = false;
+                } else {
+                    let currentDir = Math.sign(dot.vx);
+                    dot.vx = currentDir * dot.velocity_multiplier;
+                    dot.vy = 0;
+                }
+                dot.x += dot.vx;
+                if (dot.x - 20 < dot.radius || dot.x + 20 > width - dot.radius) dot.vx *= -1;
+            },
+            Jitter_Trackable: (dot, fps, width, height) => {
+                const BOX_SIZE = 60;
+                const SPEED = 0.35 * dot.velocity_multiplier;
+                const MIN_SPEED = 0.05 * dot.velocity_multiplier;
+                const WALL_SOFTNESS = 6;
+                const PUSH_FORCE = 0.015;
+
+                if (dot.has_no_velocity || (dot.vx === 0 && dot.vy === 0)) {
+                    const angle = Math.random() * Math.PI * 2;
+                    dot.vx = Math.cos(angle) * SPEED;
+                    dot.vy = Math.sin(angle) * SPEED;
+                    dot.centerX = dot.x;
+                    dot.centerY = dot.y;
+                    dot.has_no_velocity = false;
+                }
+
+                const left = dot.centerX - BOX_SIZE;
+                const right = dot.centerX + BOX_SIZE;
+                const top = dot.centerY - BOX_SIZE;
+                const bottom = dot.centerY + BOX_SIZE;
+
+                const dxLeft = dot.x - left;
+                const dxRight = right - dot.x;
+                const dyTop = dot.y - top;
+                const dyBottom = bottom - dot.y;
+
+                const minDist = Math.min(dxLeft, dxRight, dyTop, dyBottom);
+                const slowdown = Math.max(0, Math.min(1, minDist / WALL_SOFTNESS));
+                const targetSpeed = MIN_SPEED + (SPEED - MIN_SPEED) * slowdown;
+
+                let len = Math.hypot(dot.vx, dot.vy);
+                if (len > 0) {
+                    dot.vx = (dot.vx / len) * targetSpeed;
+                    dot.vy = (dot.vy / len) * targetSpeed;
+                }
+
+                if (dxLeft < WALL_SOFTNESS) dot.vx += PUSH_FORCE;
+                if (dxRight < WALL_SOFTNESS) dot.vx -= PUSH_FORCE;
+                if (dyTop < WALL_SOFTNESS) dot.vy += PUSH_FORCE;
+                if (dyBottom < WALL_SOFTNESS) dot.vy -= PUSH_FORCE;
+
+                dot.x += dot.vx;
+                dot.y += dot.vy;
+
+                if (dot.x < left) dot.x = left;
+                if (dot.x > right) dot.x = right;
+                if (dot.y < top) dot.y = top;
+                if (dot.y > bottom) dot.y = bottom;
+            }
+        };
+
+        class Dot {
+            constructor(x, y, baseRadius, minimalRadius, velocity_multiplier, maxHealth, damageRate, regenRate, leadTime, movementPattern) {
+                this.baseRadius = baseRadius;
+                this.minimalRadius = minimalRadius;
+                this.x = x;
+                this.y = y;
+                this.vx = 0.0;
+                this.vy = 0.0;
+                this.velocity_multiplier = velocity_multiplier;
+                this.has_no_velocity = true;
+                this.maxHealth = maxHealth;
+                this.health = this.maxHealth;
+                this.damageRate = damageRate;
+                this.regenRate = regenRate;
+                this.leadTime = leadTime;
+                this.movementPattern = movementPattern;
+                this.healthWasZero = false;
+                this.alwaysVulnerable = false;
+            }
+            get radius() {
+                return this.baseRadius * (this.minimalRadius + (1 - this.minimalRadius) * (this.health / this.maxHealth));
+            }
+            move(width, height, fps) {
+                this.movementPattern(this, fps, width, height);
+            }
+            takeDamage() { this.health = Math.max(0, this.health - this.damageRate); }
+            regenerate() { this.health = Math.min(this.maxHealth, this.health + this.regenRate); }
+            renerateAfterDiviationFromPath() { this.health = this.maxHealth; }
+        }
+
+        class Point {
+            constructor(x, y) { this.x = x; this.y = y; this.lifetime = 0; }
+        }
+
+        class DotManager {
+            constructor(options) {
+                this.updateOptions(options);
+                this.reset();
+            }
+            updateOptions(options) { Object.assign(this, options); }
+            reset() {
+                this._dots = [];
+                this.currentVulnerabilityIndex = 0;
+            }
+            get dots() { return this._dots; }
+            get length() { return this._dots.length; }
+            get current() { return this._dots[this.currentVulnerabilityIndex]; }
+            get previous() {
+                if (this._dots.length === 0) return null;
+                return this._dots[(this.currentVulnerabilityIndex - 1 + this._dots.length) % this._dots.length];
+            }
+            get first() { return this._dots[0]; }
+            get last() { return this._dots[this.length - 1]; }
+            
+            leads(predict) { return this.dots.map((dot) => predict(dot)); }
+            
+            spawnDots(cWidth, cHeight, margin) {
+                if (this._dots.length > this.count) {
+                    this._dots = this._dots.slice(0, this.count);
+                    if (this.currentVulnerabilityIndex >= this.count) this.currentVulnerabilityIndex = 0;
+                    return;
+                }
+
+                const scaleFactor = Math.min(cWidth, cHeight) / 1000;
+                let minDist = Math.max(30, this.minimalDistance * scaleFactor);
+                let maxDist = Math.max(100, this.maximalDistance * scaleFactor);
+
+                let loop_counter = 0;
+                while (this._dots.length < this.count) {
+                    loop_counter++;
+                    if (loop_counter > 5000) minDist = Math.max(10, minDist - 5);
+
+                    const newDot = new Dot(
+                        Math.random() * (cWidth - 2 * (this.radius + margin)) + this.radius + margin,
+                        Math.random() * (cHeight - 2 * (this.radius + margin)) + this.radius + margin,
+                        this.radius,
+                        this.minimalRadius,
+                        this.velocityMultiplier,
+                        this.maxHealth,
+                        this.damageRate,
+                        this.regenRate,
+                        this.leadTime,
+                        this.movementPattern
+                    );
+
+                    let tooClose = false;
+                    let tooFar = false;
+                    for (let d of this._dots) {
+                        const dist = Math.hypot(d.x - newDot.x, d.y - newDot.y);
+                        if (dist < minDist) tooClose = true;
+                        if (dist > maxDist && this._dots.length > 1) tooFar = true;
+                    }
+
+                    if (!tooClose) {
+                        if (this._dots.length === 0) newDot.alwaysVulnerable = true;
+                        this._dots.push(newDot);
+                    }
+                }
+            }
+            handleVulnerability() {
+                const n = this._dots.length;
+                if (n === 0) return;
+                this._dots.forEach((dot, i) => {
+                    if (this.currentVulnerabilityIndex === i) {
+                        const nextIndex = (i + 1) % n;
+                        if (dot.health === 0) {
+                            dot.healthWasZero = true;
+                            this.currentVulnerabilityIndex = nextIndex;
+                        }
+                    }
+                    if (dot.health === dot.maxHealth && dot.healthWasZero) {
+                        dot.healthWasZero = false;
+                        const prevIndex = (this.currentVulnerabilityIndex - 1 + n) % n;
+                        if (i === prevIndex) this.currentVulnerabilityIndex = 0;
+                    }
+                });
+            }
+            handleDotsDamage(onTarget, keyPressed) {
+                this._dots.forEach((dot, i) => {
+                    if (onTarget[i] && keyPressed && (i === this.currentVulnerabilityIndex || dot.alwaysVulnerable)) {
+                        dot.takeDamage();
+                    } else {
+                        dot.regenerate();
+                    }
+                });
+            }
+        }
+
+        class RoundManager {
+            constructor(roundsToSucced) {
+                this._roundsToSucced = roundsToSucced;
+                this._succededRounds = 0;
+            }
+            get roundsToSucced() { return this._roundsToSucced; }
+            get succededRounds() { return this._succededRounds; }
+            set roundsToSucced(val) { this._roundsToSucced = val; }
+
+            handleRoundSuccess(dotManager) {
+                if (dotManager.length === 0) return;
+                const firstDot = dotManager.first;
+                const lastDot = dotManager.last;
+                if (firstDot.health === 0 && lastDot.healthWasZero) {
+                    lastDot.health = lastDot.maxHealth;
+                    this._succededRounds++;
+                }
+                if (this._succededRounds >= this._roundsToSucced) {
+                    this._succededRounds = 0;
+                    dotManager.reset();
+                }
+            }
+        }
+
+        const canvas = document.getElementById("aimCanvas");
+        const ctx = canvas.getContext("2d");
+
+        let cWidth = canvas.width = Config.canvas.width;
+        let cHeight = canvas.height = Config.canvas.height;
+
+        function updateCanvasDimensions(w, h) {
+            cWidth = canvas.width = w;
+            cHeight = canvas.height = h;
+            Config.canvas.width = w;
+            Config.canvas.height = h;
+            dotManager.reset();
+        }
+
+        let isMouseDown = false;
+        let isKeyDown = false;
+        let mousePos = { x: 0, y: 0 };
+        let trailPoints = [];
+
+        window.addEventListener("mousedown", () => isMouseDown = true);
+        window.addEventListener("mouseup", () => isMouseDown = false);
+        window.addEventListener("mousemove", (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mousePos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+            trailPoints.push(new Point(mousePos.x, mousePos.y));
+        });
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" || e.key === "Tab") {
+                e.preventDefault();
+                toggleMenu();
+            }
+            isKeyDown = true;
+        });
+        window.addEventListener("keyup", () => isKeyDown = false);
+
+        const menuBtn = document.getElementById("menu-toggle-btn");
+        const menu = document.getElementById("config-menu");
+        function toggleMenu() { menu.classList.toggle("open"); }
+        menuBtn.addEventListener("click", toggleMenu);
+
+        const fullscreenBtn = document.getElementById("btn-fullscreen");
+        fullscreenBtn.addEventListener("click", () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => alert(`Error: ${err.message}`));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        });
+
+        function bindInput(id, obj, key, parser = parseFloat, callback) {
+            const el = document.getElementById(id);
+            const valSpan = document.getElementById(`val-${id.replace('cfg-', '')}`);
+            el.value = obj[key];
+            if (valSpan) valSpan.innerText = obj[key];
+
+            el.addEventListener("input", (e) => {
+                const val = parser(e.target.value);
+                obj[key] = val;
+                if (valSpan) valSpan.innerText = val;
+                if (callback) callback(val);
+            });
+        }
+
+        bindInput("cfg-canvasWidth", Config.canvas, "width", parseInt, (val) => updateCanvasDimensions(Config.canvas.width, Config.canvas.height));
+        bindInput("cfg-canvasHeight", Config.canvas, "height", parseInt, (val) => updateCanvasDimensions(Config.canvas.width, Config.canvas.height));
+
+        bindInput("cfg-count", Config.dot, "count", parseInt, (val) => {
+            if (dotManager.dots.length > Config.dot.count) {
+                dotManager._dots = dotManager.dots.slice(0, Config.dot.count);
+                if (dotManager.currentVulnerabilityIndex >= Config.dot.count) dotManager.currentVulnerabilityIndex = 0;
+            }
+        });
+        bindInput("cfg-radius", Config.dot, "radius", parseFloat, (val) => dotManager._dots.forEach(dot => dot.baseRadius = val));
+        bindInput("cfg-maxHealth", Config.dot, "maxHealth", parseFloat, (val) => dotManager._dots.forEach(dot => { dot.maxHealth = val; dot.health = Math.min(dot.health, val); }));
+        bindInput("cfg-damageRate", Config.dot, "damageRate", parseFloat, (val) => dotManager._dots.forEach(dot => dot.damageRate = val));
+        bindInput("cfg-regenRate", Config.dot, "regenRate", parseFloat, (val) => dotManager._dots.forEach(dot => dot.regenRate = val));
+        bindInput("cfg-leadTime", Config.dot, "leadTime", parseFloat, (val) => dotManager._dots.forEach(dot => dot.leadTime = val));
+        bindInput("cfg-velocityMultiplier", Config.velocity, "velocityMultiplier", parseFloat, (val) => {
+            dotManager._dots.forEach(dot => {
+                dot.velocity_multiplier = val;
+                let currentLen = Math.hypot(dot.vx, dot.vy);
+                if (currentLen > 0) {
+                    dot.vx = (dot.vx / currentLen) * dot.velocity_multiplier;
+                    dot.vy = (dot.vy / currentLen) * dot.velocity_multiplier;
+                } else dot.has_no_velocity = true;
+            });
+        });
+        bindInput("cfg-roundsToSucced", Config.round, "roundsToSucced", parseInt, (val) => roundManager.roundsToSucced = val);
+        bindInput("cfg-maxDiviationFromTargetLine", Config.aim, "maxDiviationFromTargetLine", parseFloat);
+        bindInput("cfg-trailDuration", Config.trail, "duration", parseFloat);
+        
+        const justHoverEl = document.getElementById("cfg-justHover");
+        justHoverEl.checked = Config.aim.justHover;
+        justHoverEl.addEventListener("change", (e) => Config.aim.justHover = e.target.checked);
+
+        const movementSelect = document.getElementById("cfg-movementPattern");
+        movementSelect.addEventListener("change", (e) => {
+            Config.movementPatterns.default = e.target.value;
+            dotManager.movementPattern = MovementPatterns[e.target.value];
+            dotManager._dots.forEach(dot => { dot.movementPattern = dotManager.movementPattern; dot.has_no_velocity = true; });
+        });
+
+        const dotManager = new DotManager({
+            count: Config.dot.count,
+            radius: Config.dot.radius,
+            minimalRadius: Config.dot.minimalRadius,
+            velocityMultiplier: Config.velocity.velocityMultiplier,
+            maxHealth: Config.dot.maxHealth,
+            minimalDistance: Config.dot.baseMinimalDistance,
+            maximalDistance: Config.dot.baseMaximalDistance,
+            damageRate: Config.dot.damageRate,
+            regenRate: Config.dot.regenRate,
+            leadTime: Config.dot.leadTime,
+            movementPattern: MovementPatterns[Config.movementPatterns.default],
+        });
+        const roundManager = new RoundManager(Config.round.roundsToSucced);
+
+        detectRefreshRate((detectedFps) => { Config.canvas.fps = detectedFps; });
+
+        let fpsSamples = [];
+        let lastFrameTime = performance.now();
+        let currentFpsDisplay = 60;
+
+        function predict(dot) {
+            const speed = Math.hypot(dot.vx || 0, dot.vy || 0);
+            if (speed === 0) return { x: dot.x, y: dot.y };
+            return { x: dot.x + (dot.vx || 0) * dot.leadTime, y: dot.y + (dot.vy || 0) * dot.leadTime };
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, cWidth, cHeight);
+
+            dotManager.updateOptions({
+                count: Config.dot.count,
+                radius: Config.dot.radius,
+                minimalRadius: Config.dot.minimalRadius,
+                velocityMultiplier: Config.velocity.velocityMultiplier,
+                maxHealth: Config.dot.maxHealth,
+                damageRate: Config.dot.damageRate,
+                regenRate: Config.dot.regenRate,
+                leadTime: Config.dot.leadTime,
+            });
+
+            const margin = 50;
+            roundManager.handleRoundSuccess(dotManager);
+            dotManager.spawnDots(cWidth, cHeight, margin);
+
+            if (dotManager.dots.length > 0) {
+                const keyPressed = isMouseDown || isKeyDown || Config.aim.justHover;
+                dotManager.dots.forEach((dot) => dot.move(cWidth, cHeight, Config.canvas.fps));
+
+                const leads = dotManager.leads(predict);
+                const distances = leads.map(lead => Math.hypot(mousePos.x - lead.x, mousePos.y - lead.y));
+                const onTarget = dotManager.dots.map((dot, i) => distances[i] <= dot.radius);
+
+                dotManager.handleDotsDamage(onTarget, keyPressed);
+                
+                const curDot = dotManager.current;
+                const prevDot = dotManager.previous;
+                const curLead = leads[dotManager.currentVulnerabilityIndex];
+                const prevLead = prevDot ? leads[(dotManager.currentVulnerabilityIndex - 1 + dotManager.length) % dotManager.length] : null;
+
+                if (curLead && prevLead) {
+                    const absLeadX = curLead.x - prevLead.x;
+                    const absLeadY = curLead.y - prevLead.y;
+                    const ap = { x: mousePos.x - prevLead.x, y: mousePos.y - prevLead.y };
+                    const abLenSq = absLeadX * absLeadX + absLeadY * absLeadY;
+                    let deviation = 0;
+                    if (abLenSq !== 0) {
+                        const t = Math.max(0, Math.min(1, (ap.x * absLeadX + ap.y * absLeadY) / abLenSq));
+                        const closest = { x: prevLead.x + absLeadX * t, y: prevLead.y + absLeadY * t };
+                        deviation = Math.hypot(mousePos.x - closest.x, mousePos.y - closest.y);
+                    } else deviation = Math.hypot(mousePos.x - prevLead.x, mousePos.y - prevLead.y);
+                    
+                    if (deviation > Config.aim.maxDiviationFromTargetLine) prevDot.renerateAfterDiviationFromPath();
+                }
+
+                dotManager.handleVulnerability();
+
+                if (prevDot && prevLead && curLead && prevDot.healthWasZero) {
+                    ctx.save();
+                    ctx.strokeStyle = `rgba(255, 255, 255, 0.2)`;
+                    ctx.lineWidth = Config.aim.maxDiviationFromTargetLine * 2;
+                    ctx.beginPath(); ctx.moveTo(prevLead.x, prevLead.y); ctx.lineTo(curLead.x, curLead.y); ctx.stroke();
+
+                    ctx.strokeStyle = `rgba(0, 255, 0, ${1 - prevDot.health / prevDot.maxHealth})`;
+                    ctx.lineWidth = prevDot.radius;
+                    ctx.beginPath(); ctx.moveTo(prevLead.x, prevLead.y); ctx.lineTo(curLead.x, curLead.y); ctx.stroke();
+                    ctx.restore();
+                }
+
+                dotManager.dots.forEach((dot, i) => {
+                    let vulnerable = (i === dotManager.currentVulnerabilityIndex || dot.alwaysVulnerable);
+                    let fillColor = Config.color.invincible;
+                    if (vulnerable) fillColor = Config.color.vulnerable;
+                    if (dot.healthWasZero) fillColor = Config.color.zeroHealth;
+
+                    ctx.beginPath(); ctx.arc(dot.x, dot.y, dot.radius, 0, 2 * Math.PI); ctx.fillStyle = fillColor; ctx.fill(); ctx.closePath();
+
+                    if (dot.maxHealth > 1) {
+                        const r = dot.radius;
+                        const hRatio = dot.health / dot.maxHealth;
+                        const healthW = 2 * r;
+                        const healthH = r / 4;
+                        const healthX = dot.x - r;
+                        const healthY = dot.y - r - (1.5 * healthH) - 4;
+
+                        ctx.fillStyle = Config.color.healthbarBackground; ctx.fillRect(healthX, healthY, healthW, healthH);
+                        ctx.fillStyle = Config.color.healthbar; ctx.fillRect(healthX, healthY, healthW * hRatio, healthH);
+                    }
+
+                    ctx.beginPath(); ctx.arc(leads[i].x, leads[i].y, dot.radius, 0, 2 * Math.PI);
+                    ctx.strokeStyle = onTarget[i] ? "rgba(0,255,0,0.7)" : "rgba(255,255,255,0.5)";
+                    ctx.lineWidth = 2; ctx.stroke(); ctx.closePath();
+                });
+            }
+
+            const duration = Config.trail.duration;
+            for (let i = 0; i < trailPoints.length; i++) {
+                const p = trailPoints[i];
+                const prev = trailPoints[i - 1] || p;
+                p.lifetime++;
+                if (p.lifetime > duration) { trailPoints.shift(); i--; } 
+                else {
+                    const opacity = 1 - p.lifetime / duration;
+                    ctx.strokeStyle = `rgba(255,255,255,${opacity})`;
+                    ctx.lineWidth = 4 * opacity;
+                    ctx.beginPath(); ctx.moveTo(prev.x, prev.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+                }
+            }
+
+            // Update External HUD Bar HTML elements
+            document.getElementById("hud-fps").innerText = currentFpsDisplay.toFixed(0);
+            document.getElementById("hud-dots").innerText = dotManager.length;
+            document.getElementById("hud-rounds").innerText = `${roundManager.succededRounds}/${roundManager.roundsToSucced}`;
+            document.getElementById("hud-index").innerText = Number.isNaN(dotManager.currentVulnerabilityIndex) ? "NaN" : Math.round(dotManager.currentVulnerabilityIndex);
+
+            const now = performance.now();
+            const delta = now - lastFrameTime;
+            lastFrameTime = now;
+            const currentFps = 1000 / Math.max(delta, 1);
+            fpsSamples.push({ time: now, fps: currentFps });
+            while (fpsSamples.length > 0 && now - fpsSamples[0].time > 1000) fpsSamples.shift();
+            currentFpsDisplay = fpsSamples.reduce((a, b) => a + b.fps, 0) / fpsSamples.length;
+
+            requestAnimationFrame(animate);
+        }
+
+        requestAnimationFrame(animate);
+    </script>
+</body>
+</html>
