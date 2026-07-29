@@ -549,6 +549,10 @@
             isKeyDown = true;
         });
         window.addEventListener("keyup", () => isKeyDown = false);
+        canvas.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+});
+
 
         const menuBtn = document.getElementById("menu-toggle-btn");
         const menu = document.getElementById("config-menu");
