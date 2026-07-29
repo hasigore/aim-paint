@@ -297,6 +297,16 @@ select {
 .range-value {
     color: #0f0;
 }
+.ui-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.control-row,
+#advanced-menu {
+    pointer-events: auto;
+}
 
 /* ==========================================
    HEADINGS
