@@ -1,50 +1,59 @@
+/* ==========================================
+   RESET
+========================================== */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     width: 100%;
     min-height: 100%;
-    background: #090d16;
-    font-family: system-ui, sans-serif;
-    color: #fff;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     user-select: none;
 }
 
-/* Hub Dashboard Styles */
+:root {
+    --bg-color: #121214;
+    --panel-bg: #1e1e24;
+    --accent-color: #5865f2;
+    --text-color: #f3f4f6;
+    --border-color: #2d2d34;
+}
+
+/* ==========================================
+   HUB / INDEX PAGE
+========================================== */
+
 body.hub-body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     overflow-y: auto;
     background: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%);
+    color: white;
 }
 
 .hub-container {
     max-width: 1000px;
     width: 100%;
-    margin: 0 auto;
+    margin: auto;
     padding: 40px 20px;
     text-align: center;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
 }
 
 .hub-header h1 {
     font-size: 2.5rem;
     color: #0f0;
     margin-bottom: 10px;
-    letter-spacing: 2px;
 }
 
 .hub-header p {
     color: #888;
     margin-bottom: 40px;
-    font-size: 1.1rem;
 }
 
 .scenario-grid {
@@ -57,14 +66,12 @@ body.hub-body {
     background: #181818;
     border: 1px solid #333;
     border-radius: 8px;
-    overflow: hidden;
-    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    transition: .2s;
 }
 
 .scenario-card:hover {
     transform: translateY(-5px);
     border-color: #0f0;
-    box-shadow: 0 10px 20px rgba(0, 255, 0, 0.1);
 }
 
 .card-content {
@@ -74,31 +81,20 @@ body.hub-body {
     height: 100%;
 }
 
-.scenario-card h2 {
-    font-size: 1.4rem;
-    margin-bottom: 10px;
-    color: #fff;
-}
-
-.scenario-card p {
+.card-content p {
+    flex: 1;
     color: #aaa;
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-    flex-grow: 1;
-    line-height: 1.4;
+    margin: 15px 0;
 }
 
 .btn-play {
     display: inline-block;
-    background: #222;
-    color: #0f0;
+    padding: 10px;
     border: 1px solid #0f0;
-    padding: 10px 0;
-    text-align: center;
     border-radius: 4px;
+    color: #0f0;
     text-decoration: none;
-    font-weight: bold;
-    transition: background 0.2s, color 0.2s;
+    transition: .2s;
 }
 
 .btn-play:hover {
@@ -106,39 +102,60 @@ body.hub-body {
     color: #111;
 }
 
-/* Gameplay Page Layout */
-.game-body {
-    display: flex;
-    flex-direction: column;
+/* ==========================================
+   COMMON GAME LAYOUT
+========================================== */
+
+body.game-body {
+    background: #090d16;
+    color: white;
     overflow: hidden;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-#hub-bar {
-    height: 50px;
-    background: #181818;
-    border-bottom: 1px solid #333;
+canvas {
+    display: block;
+    cursor: crosshair;
+    background: #000;
+}
+
+#canvas-container,
+.canvas-container,
+#app-viewport {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.canvas-frame {
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid #3b82f6;
+    background: #1e293b;
+}
+
+/* ==========================================
+   HUD
+========================================== */
+
+#hud-bar,
+#hub-bar,
+.top-hud {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
-    font-size: 14px;
-    font-weight: bold;
+    background: #181818;
+    border-bottom: 1px solid #333;
+    padding: 12px 20px;
     z-index: 100;
-    flex-shrink: 0;
 }
 
-.hub-title {
-    color: #0f0;
-    font-size: 16px;
-    text-decoration: none;
-}
-
-.hub-title:hover {
-    text-decoration: underline;
-}
-
-.hud-items {
+.hud-items,
+.top-hud {
     display: flex;
     gap: 20px;
 }
@@ -147,51 +164,70 @@ body.hub-body {
     color: #0f0;
 }
 
-#canvas-container {
-    flex-grow: 1;
-    overflow: auto;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
+/* ==========================================
+   BUTTONS
+========================================== */
 
-canvas {
-    display: block;
-    cursor: crosshair;
-    background: #000;
-    border: 2px solid #555;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
-    flex-shrink: 0;
-}
-
-/* Settings Menu Drawer */
-#menu-toggle-btn {
-    position: fixed;
-    top: 65px;
-    right: 15px;
-    background: rgba(40, 40, 40, 0.8);
-    color: #fff;
-    border: 1px solid #666;
-    padding: 8px 14px;
-    border-radius: 6px;
+.btn,
+.btn-action,
+#menu-toggle,
+#menu-toggle-btn,
+#start-btn {
     cursor: pointer;
-    z-index: 1000;
-    font-size: 14px;
+    border-radius: 6px;
+    transition: .2s;
+}
+
+.btn {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    color: white;
+    padding: 10px 16px;
+}
+
+.btn:hover {
+    background: #2a2a32;
+}
+
+.btn-action {
+    width: 100%;
+    background: #333;
+    color: white;
+    border: 1px solid #666;
+    padding: 8px;
+}
+
+.btn-action:hover {
+    background: #444;
+}
+
+#start-btn {
+    background: #16a34a;
+    border: 0;
+    color: white;
+    padding: 10px 20px;
+}
+
+/* ==========================================
+   SETTINGS PANELS
+========================================== */
+
+#config-menu,
+#advanced-menu,
+.control-panel {
+    background: rgba(18,18,18,.95);
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,.5);
 }
 
 #config-menu {
     position: fixed;
     top: 110px;
     right: 15px;
-    width: 300px;
-    background: rgba(18, 18, 18, 0.95);
-    border: 1px solid #444;
-    border-radius: 8px;
-    padding: 20px;
-    z-index: 999;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    width: 320px;
     display: none;
 }
 
@@ -199,72 +235,93 @@ canvas {
     display: block;
 }
 
+#advanced-menu {
+    position: absolute;
+    top: 75px;
+    left: 15px;
+    width: 320px;
+}
+
+#advanced-menu.hidden-menu {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.control-panel {
+    position: fixed;
+    left: 0;
+    top: 70px;
+    width: 320px;
+    height: calc(100vh - 70px);
+    transform: translateX(-100%);
+    transition: transform .25s;
+}
+
+.control-panel.open {
+    transform: translateX(0);
+}
+
+/* ==========================================
+   FORM CONTROLS
+========================================== */
+
+.setting-group,
 .config-group {
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
+.setting-group label,
 .config-group label {
-    display: block;
-    font-size: 12px;
-    color: #aaa;
-    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 6px;
 }
 
-.config-group input[type="range"], .config-group select {
+input[type="range"],
+select {
     width: 100%;
-    cursor: pointer;
 }
 
 .range-value {
-    float: right;
     color: #0f0;
-    font-size: 12px;
 }
 
-.btn-action {
-    width: 100%;
-    background: #333;
-    border: 1px solid #666;
-    color: #fff;
-    padding: 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 5px;
+/* ==========================================
+   HEADINGS
+========================================== */
+
+h3 {
+    font-size: 15px;
+    margin: 15px 0;
+    color: #9ca3af;
+    border-bottom: 1px solid #444;
+    padding-bottom: 5px;
 }
 
-.btn-action:hover {
-    background: #444;
-}
+/* ==========================================
+   FOOTER
+========================================== */
 
-/* Footer Styles */
 footer {
-    width: 100%;
     background: #111827;
     color: #94a3b8;
-    font-size: 13px;
     text-align: center;
-    padding: 30px 20px;
+    padding: 30px;
     border-top: 1px solid #1f2937;
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-    box-sizing: border-box;
 }
 
 .footer-links {
     display: flex;
+    justify-content: center;
     gap: 20px;
 }
 
 footer a {
-    color: #94a3b8;
+    color: inherit;
     text-decoration: none;
-    transition: color 0.2s ease;
 }
 
 footer a:hover {
     color: #3b82f6;
-    text-decoration: underline;
 }
