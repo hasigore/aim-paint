@@ -304,11 +304,16 @@ h3 {
 ========================================== */
 
 footer {
+    border-top: 1px solid #1f2937;
     background: #111827;
     color: #94a3b8;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
     text-align: center;
-    padding: 30px;
-    border-top: 1px solid #1f2937;
+    padding: 10px;
+    z-index: 1000;
 }
 
 .footer-links {
