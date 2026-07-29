@@ -201,7 +201,7 @@ canvas {
                   <input
                      type="text"
                      id="jump-keys-input"
-                     value="alt, ö"
+                     value="alt, ö, strg"
                      placeholder="e.g. alt, ö"
                   />
                </div>
@@ -410,6 +410,8 @@ canvas {
                   if (k === "alt") return { code: "altleft", key: "alt" };
                   if (k === "ctrl") return { code: "controlleft", key: "control" };
                   if (k === "ctrlr") return { code: "controlright", key: "control" };
+                  if (k === "strg") return { code: "controlleft", key: "control" };
+                  if (k === "strgr") return { code: "controlright", key: "control" };
                   if (k === "shift") return { code: "shiftleft", key: "shift" };
                   if (k === "shiftr") return { code: "shiftright", key: "shift" };
                   if (k === "ö") return { code: "semicolon", key: "ö" }; // German layout fallback
