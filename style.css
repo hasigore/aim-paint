@@ -32,13 +32,11 @@ body {
    HUB / INDEX PAGE
 ========================================== */
 
-body.hub-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    overflow-y: auto;
-    background: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%);
-    color: white;
+body.game-body {
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+    height: 100vh;
 }
 
 .hub-container {
