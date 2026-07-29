@@ -394,6 +394,13 @@
             />
          </div>
          <div class="config-group">
+   <label class="checkbox-label">
+      <input type="checkbox" id="cfg-reactionMode" />
+      Reaction Mode
+   </label>
+</div>
+
+         <div class="config-group">
             <label class="checkbox-label">
                <input type="checkbox" id="cfg-justHover" checked /> Just Hover
                (No click required)
@@ -440,7 +447,28 @@
             },
             trail: { duration: 80, width: 4, color: "255,255,255" },
             movementPatterns: { default: "Static" },
+            aim: { 
+   justHover: true, 
+   maxDiviationFromTargetLine: 60,
+   reactionMode: false
+},
          };
+         const reactionModeEl = document.getElementById("cfg-reactionMode");
+
+reactionModeEl.checked = Config.aim.reactionMode;
+
+reactionModeEl.addEventListener("change", (e) => {
+   Config.aim.reactionMode = e.target.checked;
+
+   dotManager.reset();
+
+   if (Config.aim.reactionMode) {
+      Config.dot.count = 1;
+   } else {
+      Config.dot.count = 5;
+   }
+});
+
 
          function detectRefreshRate(callback) {
             let samples = [];
@@ -796,6 +824,8 @@
          let trailPoints = [];
          let reactionTimes = [];
          let reactionStartTime = performance.now();
+         let reactionModeStartTime = 0;
+         let reactionModeWaiting = false;
          let lastVulnerableIndex = 0;
          let reactionActive = false;
 
@@ -1016,6 +1046,9 @@
             lastTime = now;
 
             ctx.clearRect(0, 0, cWidth, cHeight);
+            if (Config.aim.reactionMode) {
+   Config.dot.count = 1;
+} 
 
             dotManager.updateOptions({
                count: Config.dot.count,
@@ -1030,7 +1063,14 @@
 
             const margin = 50;
             roundManager.handleRoundSuccess(dotManager);
-            dotManager.spawnDots(cWidth, cHeight, margin);
+           const wasEmpty = dotManager.length === 0;
+
+dotManager.spawnDots(cWidth, cHeight, margin);
+
+if (Config.aim.reactionMode && wasEmpty && dotManager.length > 0) {
+   reactionModeStartTime = performance.now();
+   reactionModeWaiting = true;
+}
 
             if (dotManager.dots.length > 0) {
                const keyPressed =
@@ -1047,7 +1087,32 @@
                   (dot, i) => distances[i] <= dot.radius,
                );
 
-               dotManager.handleDotsDamage(onTarget, keyPressed, dt);
+             if (Config.aim.reactionMode) {
+
+   if (onTarget[0]) {
+
+      if (reactionModeWaiting) {
+         const reactionTime =
+            performance.now() - reactionModeStartTime;
+
+         reactionTimes.push(reactionTime);
+
+         if (reactionTimes.length > 20)
+            reactionTimes.shift();
+
+         reactionModeWaiting = false;
+      }
+
+      dotManager._dots[0].health = 0;
+   }
+
+}
+
+else {
+
+   dotManager.handleDotsDamage(onTarget, keyPressed, dt);
+
+}
                updateReactionTime();
 
                const curDot = dotManager.current;
@@ -1097,9 +1162,25 @@
                      prevDot.regenerateAfterDiviationFromPath();
                }
 
-               dotManager.handleVulnerability();
+               if (Config.aim.reactionMode) {
 
-               if (prevDot && prevLead && curLead && prevDot.healthWasZero) {
+   if (dotManager.current && dotManager.current.health === 0) {
+      dotManager.reset();
+   }
+
+} else {
+
+   dotManager.handleVulnerability();
+
+}
+
+               if (
+   !Config.aim.reactionMode &&
+   prevDot &&
+   prevLead &&
+   curLead &&
+   prevDot.healthWasZero
+) {
                   ctx.save();
                   ctx.strokeStyle = `rgba(255, 255, 255, 0.2)`;
                   ctx.lineWidth = Config.aim.maxDiviationFromTargetLine * 2;
@@ -1131,19 +1212,20 @@
                   ctx.fill();
                   ctx.closePath();
 
-                  if (dot.maxHealth > 1) {
-                     const r = dot.radius;
-                     const hRatio = dot.health / dot.maxHealth;
-                     const healthW = 2 * r;
-                     const healthH = r / 4;
-                     const healthX = dot.x - r;
-                     const healthY = dot.y - r - 1.5 * healthH - 4;
+                  if (!Config.aim.reactionMode && dot.maxHealth > 1) {
+   const r = dot.radius;
+   const hRatio = dot.health / dot.maxHealth;
+   const healthW = 2 * r;
+   const healthH = r / 4;
+   const healthX = dot.x - r;
+   const healthY = dot.y - r - 1.5 * healthH - 4;
 
-                     ctx.fillStyle = Config.color.healthbarBackground;
-                     ctx.fillRect(healthX, healthY, healthW, healthH);
-                     ctx.fillStyle = Config.color.healthbar;
-                     ctx.fillRect(healthX, healthY, healthW * hRatio, healthH);
-                  }
+   ctx.fillStyle = Config.color.healthbarBackground;
+   ctx.fillRect(healthX, healthY, healthW, healthH);
+
+   ctx.fillStyle = Config.color.healthbar;
+   ctx.fillRect(healthX, healthY, healthW * hRatio, healthH);
+}
 
                   ctx.beginPath();
                   ctx.arc(leads[i].x, leads[i].y, dot.radius, 0, 2 * Math.PI);
