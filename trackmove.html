@@ -408,6 +408,10 @@ canvas {
                .map((k) => {
                   if (k === "space") return { code: "space", key: " " };
                   if (k === "alt") return { code: "altleft", key: "alt" };
+                  if (k === "ctrl") return { code: "controlleft", key: "control" };
+                  if (k === "ctrlr") return { code: "controlright", key: "control" };
+                  if (k === "shift") return { code: "shiftleft", key: "shift" };
+                  if (k === "shiftr") return { code: "shiftright", key: "shift" };
                   if (k === "ö") return { code: "semicolon", key: "ö" }; // German layout fallback
                   if (k.length === 1 && k >= "a" && k <= "z") {
                      return { code: `key${k}`, key: k };
