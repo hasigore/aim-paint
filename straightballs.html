@@ -171,6 +171,10 @@
       <div id="hud-bar">
          <div class="hud-item">FPS: <span id="hud-fps">60</span></div>
          <div class="hud-item">Dots: <span id="hud-dots">5</span></div>
+         <div class="hud-item">
+            Avg Reaction: <span id="hud-reaction">0 ms</span>
+         </div>
+
          <div class="hud-item">Rounds: <span id="hud-rounds">0/12</span></div>
          <div class="hud-item">
             Current Index: <span id="hud-index">0</span>
@@ -761,6 +765,10 @@
          let isKeyDown = false;
          let mousePos = { x: 0, y: 0 };
          let trailPoints = [];
+         let reactionTimes = [];
+         let reactionStartTime = performance.now();
+         let lastVulnerableIndex = 0;
+         let reactionActive = false;
 
          window.addEventListener("mousedown", () => (isMouseDown = true));
          window.addEventListener("mouseup", () => (isMouseDown = false));
@@ -947,6 +955,31 @@
                y: dot.y + (dot.vy || 0) * dot.leadTime,
             };
          }
+         function updateReactionTime() {
+            const currentIndex = dotManager.currentVulnerabilityIndex;
+            const currentDot = dotManager.current;
+
+            if (!currentDot) return;
+
+            // New vulnerable dot appeared
+            if (currentIndex !== lastVulnerableIndex) {
+               lastVulnerableIndex = currentIndex;
+               reactionStartTime = performance.now();
+               reactionActive = true;
+            }
+
+            // Target was killed
+            if (reactionActive && currentDot.health === 0) {
+               const reactionTime = performance.now() - reactionStartTime;
+
+               reactionTimes.push(reactionTime);
+
+               // Keep only recent 20 attempts
+               if (reactionTimes.length > 20) reactionTimes.shift();
+
+               reactionActive = false;
+            }
+         }
 
          let lastTime = performance.now();
          function animate(now) {
@@ -986,6 +1019,7 @@
                );
 
                dotManager.handleDotsDamage(onTarget, keyPressed, dt);
+               updateReactionTime();
 
                const curDot = dotManager.current;
                const prevDot = dotManager.previous;
@@ -1118,6 +1152,15 @@
             document.getElementById("hud-dots").innerText = dotManager.length;
             document.getElementById("hud-rounds").innerText =
                `${roundManager.succededRounds}/${roundManager.roundsToSucced}`;
+            const avgReaction =
+               reactionTimes.length > 0
+                  ? reactionTimes.reduce((a, b) => a + b, 0) /
+                    reactionTimes.length
+                  : 0;
+
+            document.getElementById("hud-reaction").innerText =
+               `${avgReaction.toFixed(0)} ms`;
+
             document.getElementById("hud-index").innerText = Number.isNaN(
                dotManager.currentVulnerabilityIndex,
             )
