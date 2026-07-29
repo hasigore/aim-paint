@@ -103,9 +103,14 @@
 
          /* open state */
 
-         .control-panel.open {
-            transform: translateX(0);
-         }
+       .control-panel.open {
+   transform: translateX(0);
+}
+
+.control-panel.open ~ #menu-toggle {
+   left: 320px;
+}
+
      .control-panel {
    pointer-events: auto;
 }
