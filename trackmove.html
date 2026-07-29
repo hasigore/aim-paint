@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <title>BallSheet Aim Trainer</title>
+      <style>
+         body {
+            margin: 0;
+            background-color: #090d16;
+            color: #f1f5f9;
+            font-family:
+               system-ui,
+               -apple-system,
+               sans-serif;
+         }
+         #app {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Prevents matching heights between columns */
+            gap: 20px;
+            padding: 40px;
+            width: max-content;
+            margin: 0 auto;
+         }
+     .control-panel {
+    width: 280px;
+    overflow: hidden;
+    transition: width .25s ease, padding .25s ease;
+}
+
+.control-panel.collapsed {
+    width: 0;
+    padding: 0;
+    border: 0;
+}
+
+#menu-toggle {
+    position: fixed;
+    left: 15px;
+    top: 15px;
+    z-index: 1000;
+
+    padding: 10px 18px;
+
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+         .control-panel {
+            background-color: #111827;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #1f2937;
+            width: 280px;
+            flex-shrink: 0;
+         }
+         h2 {
+            margin-top: 0;
+            font-size: 1.3rem;
+            color: #f8fafc;
+         }
+         .stats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #cbd5e1;
+         }
+         hr {
+            border: 0;
+            border-top: 1px solid #1f2937;
+            margin: 15px 0;
+         }
+         .control-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+         }
+         .control-group label {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            font-weight: 600;
+         }
+         .slider-subrow {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-bottom: 6px;
+         }
+         .slider-subrow span {
+            font-size: 0.75rem;
+            color: #6b7280;
+         }
+         select,
+         input[type="range"] {
+            width: 100%;
+            padding: 8px;
+            background-color: #030712;
+            border: 1px solid #374151;
+            border-radius: 4px;
+            color: #fff;
+            box-sizing: border-box;
+         }
+         input[type="range"] {
+            accent-color: #3b82f6;
+            padding: 4px 0;
+         }
+         .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            cursor: pointer;
+            user-select: none;
+            margin-bottom: 4px;
+         }
+         .checkbox-row input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #3b82f6;
+            cursor: pointer;
+         }
+
+         /* Styles for the custom action key binders */
+         .key-config-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 12px;
+            padding-left: 10px;
+            border-left: 2px solid #1f2937;
+            margin-bottom: 12px;
+         }
+         .key-config-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+         }
+         .key-config-row label {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            white-space: nowrap;
+         }
+         .key-config-row input[type="text"] {
+            width: 130px;
+            padding: 4px 8px;
+            background-color: #030712;
+            border: 1px solid #374151;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 0.8rem;
+            font-family: monospace;
+         }
+         .key-config-row input[type="text"]:focus {
+            outline: 1px solid #3b82f6;
+            border-color: #3b82f6;
+         }
+
+         #start-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.15s;
+            margin-top: 10px;
+         }
+         #start-btn:hover {
+            background-color: #1d4ed8;
+         }
+
+         /* OUTER CONTAINER */
+         .canvas-container {
+            display: block; /* Switched to block layout to eliminate nested flexbox squeezing mechanisms */
+            flex-shrink: 0;
+         }
+
+         /* EXTRA CONTAINER: Your styled containment block with custom backdrop color */
+         .canvas-frame {
+            padding: 12px;
+            background-color: #1e293b; /* Slate-800 backdrop accent frame */
+            border: 2px solid #3b82f6; /* Neon blue styling frame border */
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+
+            /* FIXED: Forces container to honor exact dimensional specs */
+            width: 1200px;
+            height: 600px;
+            box-sizing: content-box; /* Ensures the padding expands OUTSIDE the 1200x600 space */
+         }
+
+         /* CANVAS: Fixed internal bounding workspace geometry */
+         canvas {
+            display: block;
+            width: 1200px;
+            height: 600px;
+            min-height: 600px; /* FIXED: Hard guard prevents any parent from crushing the canvas height */
+            cursor: crosshair;
+            background-color: #020617; /* Slate-950 gaming workspace floor */
+            border-radius: 6px;
+         }
+      </style>
+   </head>
+   <body>
+      <div id="app">
+          <button id="menu-toggle">☰ Settings</button>
+        <div id="control-panel" class="control-panel collapsed">
+            <h2>BallSheet Aim Trainer</h2>
+            <div class="stats">
+               <div>Score: <span id="score">0</span></div>
+               <div>Accuracy: <span id="accuracy">100%</span></div>
+               <div>Avg Reaction: <span id="avg-reaction">0ms</span></div>
+            </div>
+            <hr />
+
+            <div class="control-group">
+               <label>Training Requirements</label>
+               <label class="checkbox-row">
+                  <input type="checkbox" id="require-ad-checkbox" checked />
+                  <span>Require Strafe Keys</span>
+               </label>
+
+               <div class="key-config-group">
+                  <div class="key-config-row">
+                     <label for="left-keys-input">Left keys:</label>
+                     <input
+                        type="text"
+                        id="left-keys-input"
+                        value="a, j"
+                        placeholder="e.g. a, j, h"
+                     />
+                  </div>
+                  <div class="key-config-row">
+                     <label for="right-keys-input">Right keys:</label>
+                     <input
+                        type="text"
+                        id="right-keys-input"
+                        value="d, l"
+                        placeholder="e.g. d, l"
+                     />
+                  </div>
+               </div>
+
+               <label class="checkbox-row">
+                  <input
+                     type="checkbox"
+                     id="require-modifiers-checkbox"
+                     checked
+                  />
+                  <span>Require Modifiers</span>
+               </label>
+
+               <div class="key-config-group">
+                  <div class="key-config-row">
+                     <label for="jump-keys-input">Jump keys:</label>
+                     <input
+                        type="text"
+                        id="jump-keys-input"
+                        value="alt, ö"
+                        placeholder="e.g. alt, ö"
+                     />
+                  </div>
+                  <div class="key-config-row">
+                     <label for="slide-keys-input">Slide keys:</label>
+                     <input
+                        type="text"
+                        id="slide-keys-input"
+                        value="space, n"
+                        placeholder="e.g. space, n"
+                     />
+                  </div>
+               </div>
+            </div>
+            <hr />
+
+            <div class="control-group">
+               <label>Target Preset (Size):</label>
+               <select id="preset-select">
+                  <option value="40">BigBall</option>
+                  <option value="35" selected>MediumBall</option>
+                  <option value="25">SmallBalls</option>
+               </select>
+            </div>
+            <div class="control-group">
+               <label>Ball Speed</label>
+               <div class="slider-subrow">
+                  <span><strong id="ball-speed-val">50</strong></span>
+                  <input
+                     type="range"
+                     id="ball-speed-slider"
+                     min="1"
+                     max="100"
+                     step="1"
+                     value="50"
+                  />
+               </div>
+            </div>
+            <div class="control-group">
+               <label>Player Speed</label>
+               <div class="slider-subrow">
+                  <span><strong id="player-speed-val">20</strong></span>
+                  <input
+                     type="range"
+                     id="player-speed-slider"
+                     min="1"
+                     max="100"
+                     step="1"
+                     value="20"
+                  />
+               </div>
+            </div>
+            <div class="control-group">
+               <label>A/D Change Range</label>
+               <div class="slider-subrow">
+                  <span>Min: <strong id="key-min-val">1000</strong>ms</span>
+                  <input
+                     type="range"
+                     id="key-min-slider"
+                     min="100"
+                     max="3000"
+                     step="50"
+                     value="1000"
+                  />
+               </div>
+               <div class="slider-subrow">
+                  <span>Max: <strong id="key-max-val">3000</strong>ms</span>
+                  <input
+                     type="range"
+                     id="key-max-slider"
+                     min="100"
+                     max="3000"
+                     step="50"
+                     value="1800"
+                  />
+               </div>
+            </div>
+            <div class="control-group">
+               <label>Modifier Rest Phase</label>
+               <div class="slider-subrow">
+                  <span>Min: <strong id="rest-min-val">2000</strong>ms</span>
+                  <input
+                     type="range"
+                     id="rest-min-slider"
+                     min="100"
+                     max="6000"
+                     step="100"
+                     value="2500"
+                  />
+               </div>
+               <div class="slider-subrow">
+                  <span>Max: <strong id="rest-max-val">3000</strong>ms</span>
+                  <input
+                     type="range"
+                     id="rest-max-slider"
+                     min="100"
+                     max="6000"
+                     step="100"
+                     value="4000"
+                  />
+               </div>
+            </div>
+            <button id="start-btn">Start Training</button>
+         </div>
+
+         <div class="canvas-container">
+            <div class="canvas-frame">
+               <canvas id="gameCanvas" width="1200" height="600"></canvas>
+            </div>
+         </div>
+      </div>
+
+      <script>
+         const canvas = document.getElementById("gameCanvas");
+         const ctx = canvas.getContext("2d");
+         const menuButton = document.getElementById("menu-toggle");
+const controlPanel = document.getElementById("control-panel");
+
+menuButton.addEventListener("click", () => {
+    controlPanel.classList.toggle("collapsed");
+});
+
+         // DOM Elements
+         const scoreEl = document.getElementById("score");
+         const accuracyEl = document.getElementById("accuracy");
+         const reactionEl = document.getElementById("avg-reaction");
+         const startBtn = document.getElementById("start-btn");
+         const presetSelect = document.getElementById("preset-select");
+
+         // Toggle Checkbox Elements
+         const requireADCheckbox = document.getElementById(
+            "require-ad-checkbox",
+         );
+         const requireModifiersCheckbox = document.getElementById(
+            "require-modifiers-checkbox",
+         );
+
+         // Slider Elements
+         const ballSpeedSlider = document.getElementById("ball-speed-slider");
+         const playerSpeedSlider = document.getElementById(
+            "player-speed-slider",
+         );
+         const keyMinSlider = document.getElementById("key-min-slider");
+         const keyMaxSlider = document.getElementById("key-max-slider");
+         const restMinSlider = document.getElementById("rest-min-slider");
+         const restMaxSlider = document.getElementById("rest-max-slider");
+
+         // Slider Value Readouts
+         const ballSpeedValueLable = document.getElementById("ball-speed-val");
+         const playerSpeedValueLable =
+            document.getElementById("player-speed-val");
+         const keyMinValueLabel = document.getElementById("key-min-val");
+         const keyMaxValueLabel = document.getElementById("key-max-val");
+         const restMinValueLabel = document.getElementById("rest-min-val");
+         const restMaxValueLabel = document.getElementById("rest-max-val");
+
+         // Add these to your DOM element selectors
+         const leftKeysInput = document.getElementById("left-keys-input");
+         const rightKeysInput = document.getElementById("right-keys-input");
+         const jumpKeysInput = document.getElementById("jump-keys-input");
+         const slideKeysInput = document.getElementById("slide-keys-input");
+
+         // Game Parameters & State
+         let isPlaying = false;
+         let activeTarget = null;
+         let gameLoopId = null;
+
+         // Timeline tracking pointers
+         let keySwitchTimeoutId = null;
+         let restPhaseTimeoutId = null;
+
+         // Mouse coordinate states
+         let mouseX = 0;
+         let mouseY = 0;
+
+         let metrics = {
+            score: 0,
+            totalFrames: 0,
+            trackingFrames: 0,
+         };
+
+         // Config Variables
+         let targetRadius = parseInt(presetSelect.value);
+
+         // State to hold active key configurations
+         let KEY_MAPPINGS = {
+            LEFT: [],
+            RIGHT: [],
+            JUMP: [],
+            SLIDE: [],
+         };
+
+         // Tracks all mapped keys so we can prevent default browser behavior (like page scrolling)
+         let ALL_MAPPED_INPUTS = new Set();
+
+         /**
+          * Parses comma-separated strings into usable key/code objects.
+          * Handles spaces and maps special keys gracefully.
+          */
+         function parseInputKeys(inputValue) {
+            return inputValue
+               .split(",")
+               .map((k) => k.trim().toLowerCase())
+               .filter((k) => k.length > 0)
+               .map((k) => {
+                  if (k === "space") return { code: "space", key: " " };
+                  if (k === "alt") return { code: "altleft", key: "alt" };
+                  if (k === "ö") return { code: "semicolon", key: "ö" }; // German layout fallback
+                  if (k.length === 1 && k >= "a" && k <= "z") {
+                     return { code: `key${k}`, key: k };
+                  }
+                  return { code: k, key: k };
+               });
+         }
+
+         /**
+          * Rebuilds the key bindings mapping and updates HUD labels
+          */
+         // --- Primary Action Pool ---
+         const KEY_POOL = [
+            { action: "LEFT", label: "LEFT (A/J)" },
+            { action: "RIGHT", label: "RIGHT (D/L)" },
+         ];
+         let currentKeyObj = KEY_POOL[0];
+
+         function rebuildKeyMappings() {
+            KEY_MAPPINGS.LEFT = parseInputKeys(leftKeysInput.value);
+            KEY_MAPPINGS.RIGHT = parseInputKeys(rightKeysInput.value);
+            KEY_MAPPINGS.JUMP = parseInputKeys(jumpKeysInput.value);
+            KEY_MAPPINGS.SLIDE = parseInputKeys(slideKeysInput.value);
+
+            // Update dynamic display labels for your active action objects
+            KEY_POOL[0].label = `LEFT (${leftKeysInput.value.toUpperCase()})`;
+            KEY_POOL[1].label = `RIGHT (${rightKeysInput.value.toUpperCase()})`;
+            MODIFIER_POOL[0].label = `SLIDE (${slideKeysInput.value.toUpperCase()})`;
+            MODIFIER_POOL[1].label = `JUMP (${jumpKeysInput.value.toUpperCase()})`;
+
+            // Build unified list of mapped inputs to block browser defaults
+            ALL_MAPPED_INPUTS.clear();
+            Object.values(KEY_MAPPINGS)
+               .flat()
+               .forEach((m) => {
+                  ALL_MAPPED_INPUTS.add(m.code);
+                  ALL_MAPPED_INPUTS.add(m.key);
+               });
+         }
+
+         // Rebuild key mappings when user types in the input fields
+         [leftKeysInput, rightKeysInput, jumpKeysInput, slideKeysInput].forEach(
+            (inp) => {
+               inp.addEventListener("input", rebuildKeyMappings);
+            },
+         );
+
+         // --- Secondary Modifier Setup ---
+         const MODIFIER_POOL = [
+            { action: "SLIDE", label: "SLIDE (SPACE/N)" },
+            { action: "JUMP", label: "JUMP (ALT/Ö)" },
+         ];
+         let currentModifierObj = { action: null, label: "NONE" };
+
+         // Flatten all mapped keys dynamically so the game blocks their default actions
+         const ALL_MAPPED_KEYS = new Set(Object.values(KEY_MAPPINGS).flat());
+
+         const pressedKeys = new Set();
+
+         // Checks if any of the bound keys for a given action are currently held down
+         function isActionActive(action) {
+            const mappings = KEY_MAPPINGS[action];
+            if (!mappings) return false;
+            return mappings.some(
+               (m) => pressedKeys.has(m.code) || pressedKeys.has(m.key),
+            );
+         }
+
+         const KEY_ROTATION_RANGE = {
+            min: Number(keyMinSlider.value),
+            max: Number(keyMaxSlider.value),
+         };
+
+         let BALL_SPEED = Number(ballSpeedSlider.value);
+         let PLAYER_SPEED = Number(playerSpeedSlider.value);
+
+         let isRestingPhase = true;
+         let isModifierLatched = false;
+
+         const REST_RANGE_MS = {
+            min: Number(restMinSlider.value),
+            max: Number(restMaxSlider.value),
+         };
+
+         // --- Connect UI Sliders to Internal Variable States ---
+         ballSpeedSlider.addEventListener("input", (e) => {
+            const newSpeed = parseInt(e.target.value);
+
+            if (isPlaying && activeTarget) {
+               if (BALL_SPEED > 0) {
+                  const ratio = newSpeed / BALL_SPEED;
+                  activeTarget.vx *= ratio;
+                  activeTarget.vy *= ratio;
+               }
+            }
+
+            BALL_SPEED = newSpeed;
+            ballSpeedValueLable.textContent = e.target.value;
+         });
+
+         playerSpeedSlider.addEventListener("input", (e) => {
+            PLAYER_SPEED = parseInt(e.target.value);
+            playerSpeedValueLable.textContent = e.target.value;
+         });
+
+         keyMinSlider.addEventListener("input", (e) => {
+            KEY_ROTATION_RANGE.min = parseInt(e.target.value);
+            keyMinValueLabel.textContent = e.target.value;
+            if (KEY_ROTATION_RANGE.min > KEY_ROTATION_RANGE.max) {
+               keyMaxSlider.value = e.target.value;
+               KEY_ROTATION_RANGE.max = KEY_ROTATION_RANGE.min;
+               keyMaxValueLabel.textContent = e.target.value;
+            }
+         });
+
+         keyMaxSlider.addEventListener("input", (e) => {
+            KEY_ROTATION_RANGE.max = parseInt(e.target.value);
+            keyMaxValueLabel.textContent = e.target.value;
+            if (KEY_ROTATION_RANGE.max < KEY_ROTATION_RANGE.min) {
+               keyMinSlider.value = e.target.value;
+               KEY_ROTATION_RANGE.min = KEY_ROTATION_RANGE.max;
+               keyMinValueLabel.textContent = e.target.value;
+            }
+         });
+
+         restMinSlider.addEventListener("input", (e) => {
+            REST_RANGE_MS.min = parseInt(e.target.value);
+            restMinValueLabel.textContent = e.target.value;
+            if (REST_RANGE_MS.min > REST_RANGE_MS.max) {
+               restMaxSlider.value = e.target.value;
+               REST_RANGE_MS.max = REST_RANGE_MS.min;
+               restMaxValueLabel.textContent = e.target.value;
+            }
+         });
+
+         restMaxSlider.addEventListener("input", (e) => {
+            REST_RANGE_MS.max = parseInt(e.target.value);
+            restMaxValueLabel.textContent = e.target.value;
+            if (REST_RANGE_MS.max < REST_RANGE_MS.min) {
+               restMinSlider.value = e.target.value;
+               REST_RANGE_MS.min = REST_RANGE_MS.max;
+               restMinValueLabel.textContent = e.target.value;
+            }
+         });
+
+         presetSelect.addEventListener("change", (e) => {
+            targetRadius = parseInt(e.target.value);
+         });
+
+         window.addEventListener("keydown", (e) => {
+            if (!isPlaying) return;
+
+            // Ignore key captures if the user is actively typing in a config box
+            if (
+               document.activeElement.tagName === "INPUT" &&
+               document.activeElement.type === "text"
+            ) {
+               return;
+            }
+
+            const codeLower = e.code.toLowerCase();
+            const keyLower = e.key.toLowerCase();
+
+            // Prevent browser default actions if key is in active mappings
+            if (
+               ALL_MAPPED_INPUTS.has(codeLower) ||
+               ALL_MAPPED_INPUTS.has(keyLower)
+            ) {
+               e.preventDefault();
+            }
+
+            pressedKeys.add(codeLower);
+            pressedKeys.add(keyLower);
+
+            // Trigger modifier phase if active
+            if (
+               requireModifiersCheckbox.checked &&
+               !isRestingPhase &&
+               currentModifierObj.action &&
+               KEY_MAPPINGS[currentModifierObj.action].some(
+                  (m) => m.code === codeLower || m.key === keyLower,
+               )
+            ) {
+               isModifierLatched = true;
+               setTimeout(() => {
+                  if (isPlaying && !isRestingPhase) triggerRestPhase();
+               }, 150);
+            }
+         });
+
+         window.addEventListener("keyup", (e) => {
+            const codeLower = e.code.toLowerCase();
+            const keyLower = e.key.toLowerCase();
+            pressedKeys.delete(codeLower);
+            pressedKeys.delete(keyLower);
+         });
+
+         canvas.addEventListener("mousemove", (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = ((e.clientX - rect.left) / rect.width) * canvas.width;
+            mouseY = ((e.clientY - rect.top) / rect.height) * canvas.height;
+         });
+
+         function randomizeActivationKey() {
+            const oldKey = currentKeyObj.action;
+            const filtered = KEY_POOL.filter((k) => k.action !== oldKey);
+            currentKeyObj =
+               filtered.length > 0
+                  ? filtered[Math.floor(Math.random() * filtered.length)]
+                  : KEY_POOL[0];
+         }
+
+         function activateNextModifier() {
+            isRestingPhase = false;
+            isModifierLatched = false;
+            const randomIndex = Math.floor(
+               Math.random() * MODIFIER_POOL.length,
+            );
+            currentModifierObj = MODIFIER_POOL[randomIndex];
+         }
+
+         function triggerRestPhase() {
+            isRestingPhase = true;
+            isModifierLatched = false;
+            currentModifierObj = { action: null, label: "NONE" };
+
+            const randomRestDelay =
+               Math.random() * (REST_RANGE_MS.max - REST_RANGE_MS.min) +
+               REST_RANGE_MS.min;
+
+            if (restPhaseTimeoutId) clearTimeout(restPhaseTimeoutId);
+            restPhaseTimeoutId = setTimeout(() => {
+               if (isPlaying && requireModifiersCheckbox.checked) {
+                  activateNextModifier();
+               }
+            }, randomRestDelay);
+         }
+
+         function spawnMovingTarget() {
+            const margin = targetRadius + 20;
+            const x = Math.random() * (canvas.width - margin * 2) + margin;
+            const y = Math.random() * (canvas.height - margin * 2) + margin;
+            const movingRight = Math.random() > 0.5;
+
+            const maxVerticalAngle = 25 * (Math.PI / 180);
+            const randomSpread = (Math.random() * 2 - 1) * maxVerticalAngle;
+            const angle = movingRight ? randomSpread : Math.PI + randomSpread;
+
+            activeTarget = {
+               x,
+               y,
+               vx: (Math.cos(angle) * BALL_SPEED) / 10,
+               vy: (Math.sin(angle) * BALL_SPEED) / 10,
+            };
+         }
+
+         function updateTargetPosition() {
+            if (!activeTarget) return;
+
+            activeTarget.x += activeTarget.vx;
+            activeTarget.y += activeTarget.vy;
+
+            // Horizontal Movement (Left / Right)
+            if (isActionActive("LEFT")) {
+               activeTarget.x -= PLAYER_SPEED / 10;
+            }
+            if (isActionActive("RIGHT")) {
+               activeTarget.x += PLAYER_SPEED / 10;
+            }
+
+            // Vertical Movement (Up / Down)
+            if (isActionActive("UP")) {
+               activeTarget.y -= PLAYER_SPEED / 10;
+            }
+            if (isActionActive("DOWN")) {
+               activeTarget.y += PLAYER_SPEED / 10;
+            }
+
+            if (activeTarget.x - targetRadius < 0) {
+               activeTarget.x = targetRadius;
+               activeTarget.vx *= -1;
+            } else if (activeTarget.x + targetRadius > canvas.width) {
+               activeTarget.x = canvas.width - targetRadius;
+               activeTarget.vx *= -1;
+            }
+
+            if (activeTarget.y - targetRadius < 0) {
+               activeTarget.y = targetRadius;
+               activeTarget.vy *= -1;
+            } else if (activeTarget.y + targetRadius > canvas.height) {
+               activeTarget.y = canvas.height - targetRadius;
+               activeTarget.vy *= -1;
+            }
+         }
+
+         function checkContinuousTracking() {
+            if (!activeTarget) return;
+
+            metrics.totalFrames++;
+
+            const distance = Math.hypot(
+               mouseX - activeTarget.x,
+               mouseY - activeTarget.y,
+            );
+
+            // Conditionally process checking criteria based on toggles
+            const isCorrectKeyHeld =
+               !requireADCheckbox.checked ||
+               isActionActive(currentKeyObj.action);
+
+            // Check if the correct modifier action is currently being used
+            let isModifierCorrect = false;
+
+            if (!requireModifiersCheckbox.checked) {
+               isModifierCorrect = true;
+            } else if (currentModifierObj.action === null) {
+               // Rest phase: NO modifier keys (JUMP or SLIDE) should be pressed
+               isModifierCorrect =
+                  !isActionActive("SLIDE") && !isActionActive("JUMP");
+            } else {
+               // Active phase: Either the modifier was already registered (latched) OR they are actively pressing it
+               isModifierCorrect =
+                  isModifierLatched ||
+                  isActionActive(currentModifierObj.action);
+            }
+
+            if (
+               distance <= targetRadius &&
+               isCorrectKeyHeld &&
+               isModifierCorrect
+            ) {
+               metrics.trackingFrames++;
+               metrics.score += 2;
+            }
+
+            updateMetricsUI();
+         }
+
+         function drawTargetArrow(centerX, centerY, radius, directionAction) {
+            ctx.save();
+            ctx.beginPath();
+
+            ctx.strokeStyle = "#333333";
+            ctx.lineWidth = Math.max(4, radius * 0.18);
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
+
+            const length = radius * 1.1;
+            const halfLength = length / 2;
+            const headSize = radius * 0.45;
+
+            if (directionAction === "LEFT") {
+               ctx.moveTo(centerX + halfLength, centerY);
+               ctx.lineTo(centerX - halfLength, centerY);
+               ctx.lineTo(centerX - halfLength + headSize, centerY - headSize);
+               ctx.moveTo(centerX - halfLength, centerY);
+               ctx.lineTo(centerX - halfLength + headSize, centerY + headSize);
+            } else {
+               ctx.moveTo(centerX - halfLength, centerY);
+               ctx.lineTo(centerX + halfLength, centerY);
+               ctx.lineTo(centerX + halfLength - headSize, centerY - headSize);
+               ctx.moveTo(centerX + halfLength, centerY);
+               ctx.lineTo(centerX + halfLength - headSize, centerY + headSize);
+            }
+
+            ctx.stroke();
+            ctx.closePath();
+            ctx.restore();
+         }
+
+         function updateGame() {
+            if (!isPlaying) return;
+
+            updateTargetPosition();
+            checkContinuousTracking();
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. Check if the current required Strafe Action (LEFT or RIGHT) is active
+            const isCorrectKeyHeld =
+               !requireADCheckbox.checked ||
+               isActionActive(currentKeyObj.action);
+
+            // 2. Check if the current Modifier Action (JUMP or SLIDE) is correct
+            let isModifierCorrect = true;
+
+            if (requireModifiersCheckbox.checked) {
+               if (currentModifierObj.action === null) {
+                  // Rest phase: NO modifier actions (JUMP or SLIDE) should be pressed
+                  isModifierCorrect =
+                     !isActionActive("SLIDE") && !isActionActive("JUMP");
+               } else {
+                  // Active phase: Either the modifier was already registered (latched) OR they are actively pressing it
+                  isModifierCorrect =
+                     isModifierLatched ||
+                     isActionActive(currentModifierObj.action);
+               }
+            }
+
+            const totalInputMatch = isCorrectKeyHeld && isModifierCorrect;
+
+            // 3. Render the target ball
+            if (activeTarget) {
+               ctx.beginPath();
+               ctx.arc(
+                  activeTarget.x,
+                  activeTarget.y,
+                  targetRadius,
+                  0,
+                  Math.PI * 2,
+               );
+
+               ctx.fillStyle = "#ffccff"; // Default color
+
+               // Change target color if they fail the active modifier criteria
+               if (requireModifiersCheckbox.checked && !isModifierCorrect) {
+                  if (currentModifierObj.action === "JUMP") {
+                     ctx.fillStyle = "#0000ff"; // Blue indicates JUMP is required
+                  } else if (currentModifierObj.action === "SLIDE") {
+                     ctx.fillStyle = "#ffff00"; // Yellow indicates SLIDE is required
+                  }
+               }
+               ctx.fill();
+
+               const distance = Math.hypot(
+                  mouseX - activeTarget.x,
+                  mouseY - activeTarget.y,
+               );
+
+               // Outer Ring Feedback (Green for tracking on-target, Red for off-target)
+               if (distance <= targetRadius && totalInputMatch) {
+                  ctx.strokeStyle = "#00ff00";
+                  ctx.lineWidth = 10;
+               } else {
+                  ctx.strokeStyle = "#ff0000";
+                  ctx.lineWidth = 10;
+               }
+               ctx.stroke();
+               ctx.closePath();
+
+               // 4. Draw the directional target arrow (only if strafe validation is enabled)
+               if (requireADCheckbox.checked) {
+                  drawTargetArrow(
+                     activeTarget.x,
+                     activeTarget.y,
+                     targetRadius,
+                     currentKeyObj.action, // Pass "LEFT" or "RIGHT" action instead of key code
+                  );
+               }
+            }
+
+            // 5. Draw the text dashboards onto the canvas
+            ctx.textAlign = "left";
+            ctx.textBaseline = "top";
+            ctx.font = "bold 14px sans-serif";
+
+            // Strafe Key feedback
+            if (requireADCheckbox.checked) {
+               ctx.fillStyle = isActionActive(currentKeyObj.action)
+                  ? "#34d399"
+                  : "#ef4444";
+               ctx.fillText(`STRAFE KEY: [ ${currentKeyObj.label} ]`, 15, 20);
+            } else {
+               ctx.fillStyle = "#6b7280";
+               ctx.fillText(`STRAFE KEY: [ DISABLED ]`, 15, 20);
+            }
+
+            // Modifier Key feedback
+            if (!requireModifiersCheckbox.checked) {
+               ctx.fillStyle = "#6b7280";
+               ctx.fillText(`MODIFIER: [ DISABLED ]`, 15, 40);
+            } else if (isRestingPhase) {
+               ctx.fillStyle = "#ffffff";
+               ctx.fillText(`MODIFIER: [ REST ]`, 15, 40);
+            } else {
+               ctx.fillStyle = isModifierCorrect ? "#34d399" : "#ef4444";
+               ctx.fillText(
+                  `MODIFIER: [ ${currentModifierObj.label} ] ${
+                     isModifierLatched ? "(LATCHED)" : ""
+                  }`,
+                  15,
+                  40,
+               );
+            }
+
+            gameLoopId = requestAnimationFrame(updateGame);
+         }
+
+         function updateMetricsUI() {
+            scoreEl.textContent = metrics.score;
+
+            const trackingAccuracy =
+               metrics.totalFrames > 0
+                  ? Math.round(
+                       (metrics.trackingFrames / metrics.totalFrames) * 100,
+                    )
+                  : 100;
+
+            accuracyEl.textContent = `${trackingAccuracy}%`;
+
+            if (reactionEl) {
+               reactionEl.textContent =
+                  trackingAccuracy > 75
+                     ? "Excellent"
+                     : trackingAccuracy > 45
+                       ? "Good"
+                       : "Tracking...";
+            }
+         }
+
+         function startKeyRotation() {
+            if (keySwitchTimeoutId) clearTimeout(keySwitchTimeoutId);
+
+            const randomDelay =
+               Math.random() *
+                  (KEY_ROTATION_RANGE.max - KEY_ROTATION_RANGE.min) +
+               KEY_ROTATION_RANGE.min;
+
+            keySwitchTimeoutId = setTimeout(() => {
+               if (isPlaying) {
+                  if (requireADCheckbox.checked) {
+                     randomizeActivationKey();
+                  }
+                  startKeyRotation();
+               }
+            }, randomDelay);
+         }
+
+         function toggleGame() {
+            if (isPlaying) {
+               isPlaying = false;
+               cancelAnimationFrame(gameLoopId);
+               clearTimeout(keySwitchTimeoutId);
+               clearTimeout(restPhaseTimeoutId);
+               activeTarget = null;
+               pressedKeys.clear();
+               startBtn.textContent = "Start Training";
+            } else {
+               rebuildKeyMappings();
+               isPlaying = true;
+               metrics = {
+                  score: 0,
+                  totalFrames: 0,
+                  trackingFrames: 0,
+               };
+               pressedKeys.clear();
+
+               if (requireADCheckbox.checked) randomizeActivationKey();
+               if (requireModifiersCheckbox.checked) {
+                  triggerRestPhase();
+               } else {
+                  isRestingPhase = false;
+                  currentModifierObj = { action: null, label: "NONE" };
+               }
+
+               spawnMovingTarget();
+               updateMetricsUI();
+               startKeyRotation();
+
+               startBtn.textContent = "Pause Training";
+               gameLoopId = requestAnimationFrame(updateGame);
+            }
+         }
+         // Run an initial build on script load
+         rebuildKeyMappings();
+         startBtn.addEventListener("click", toggleGame);
+      </script>
+   </body>
+</html>
