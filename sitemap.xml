@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
+
+<url>
     <loc>https://aimcontour.ddnsgeek.com/</loc>
-    <priority>1.0</priority>
-  </url>
-  <url>
+    <lastmod>2026-07-29</lastmod>
+</url>
+
+<url>
     <loc>https://aimcontour.ddnsgeek.com/straightballs.html</loc>
-    <priority>0.8</priority>
-  </url>
-  <url>
+    <lastmod>2026-07-29</lastmod>
+</url>
+
+<url>
     <loc>https://aimcontour.ddnsgeek.com/aimpaint.html</loc>
-    <priority>0.8</priority>
-  </url>
+    <lastmod>2026-07-29</lastmod>
+</url>
+  
+<url>
+    <loc>https://aimcontour.ddnsgeek.com/trackmove.html</loc>
+    <lastmod>2026-07-29</lastmod>
+</url>
+
 </urlset>
