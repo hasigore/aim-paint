@@ -125,15 +125,13 @@ canvas {
 
 #canvas-container,
 .canvas-container,
- {
+#app-viewport {
     flex: 1;
     position: relative;
     min-height: 0;
 }
 
 #app-viewport {
-    position: relative;
-    flex: 1;
     overflow: hidden;
     background: #0b0b0c;
 }
