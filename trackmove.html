@@ -3,36 +3,53 @@
    <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      
+
       <!-- Primary SEO Meta Tags -->
-      <title>Strafe Track - Free Online FPS Aim Trainer & Mouse Tracking Game</title>
-      <meta name="description" content="Improve your tracking accuracy, reaction time, and strafe key control for FPS games like Valorant, CS:GO, and Apex Legends with Strafe Track." />
-      <meta name="keywords" content="aim trainer, fps training, mouse accuracy, tracking practice, strafe aim trainer, browser game" />
-      
+      <title>
+         Strafe Track - Free Online FPS Aim Trainer & Mouse Tracking Game
+      </title>
+      <meta
+         name="description"
+         content="Improve your tracking accuracy, reaction time, and strafe key control for FPS games like Valorant, CS:GO, and Apex Legends with Strafe Track."
+      />
+      <meta
+         name="keywords"
+         content="aim trainer, fps training, mouse accuracy, tracking practice, strafe aim trainer, browser game"
+      />
+
       <!-- Open Graph / Social Sharing Tags -->
       <meta property="og:type" content="website" />
       <meta property="og:url" content="https://aimcontour.ddnsgeek.com/" />
-      <meta property="og:title" content="Strafe Track - Free Online FPS Aim Trainer" />
-      <meta property="og:description" content="Train your aim, reaction speed, and strafe controls in this browser-based FPS aim trainer." />
-      <meta property="og:image" content="https://aimcontour.ddnsgeek.com/preview.png" />
-      
+      <meta
+         property="og:title"
+         content="Strafe Track - Free Online FPS Aim Trainer"
+      />
+      <meta
+         property="og:description"
+         content="Train your aim, reaction speed, and strafe controls in this browser-based FPS aim trainer."
+      />
+      <meta
+         property="og:image"
+         content="https://aimcontour.ddnsgeek.com/preview.png"
+      />
+
       <!-- Structured Data (JSON-LD) for Google Rich Snippets -->
       <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "VideoGame",
-        "name": "Strafe Track",
-        "url": "https://aimcontour.ddnsgeek.com/",
-        "description": "A browser-based FPS aim trainer designed to improve mouse tracking accuracy and movement synchronization.",
-        "genre": "Aim Trainer",
-        "applicationCategory": "Browser Game",
-        "operatingSystem": "All",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        }
-      }
+         {
+            "@context": "https://schema.org",
+            "@type": "VideoGame",
+            "name": "Strafe Track",
+            "url": "https://aimcontour.ddnsgeek.com/",
+            "description": "A browser-based FPS aim trainer designed to improve mouse tracking accuracy and movement synchronization.",
+            "genre": "Aim Trainer",
+            "applicationCategory": "Browser Game",
+            "operatingSystem": "All",
+            "offers": {
+               "@type": "Offer",
+               "price": "0",
+               "priceCurrency": "USD"
+            }
+         }
       </script>
 
       <style>
@@ -107,81 +124,81 @@
          /* side menu */
 
          .control-panel {
-   position: fixed;
+            position: fixed;
 
-   left: 0;
-   top: 70px; /* put it below the button */
+            left: 0;
+            top: 70px; /* put it below the button */
 
-   height: calc(100vh - 70px);
+            height: calc(100vh - 70px);
 
-   width: 320px;
+            width: 320px;
 
-   overflow-y: auto;
+            overflow-y: auto;
 
-   background: #111827;
+            background: #111827;
 
-   padding: 20px;
+            padding: 20px;
 
-   box-sizing: border-box;
+            box-sizing: border-box;
 
-   z-index: 1500;
+            z-index: 1500;
 
-   transform: translateX(-100%);
+            transform: translateX(-100%);
 
-   transition: transform 0.25s ease;
+            transition: transform 0.25s ease;
 
-   border-right: 1px solid #1f2937;
-}
+            border-right: 1px solid #1f2937;
+         }
 
          /* open state */
 
-       .control-panel.open {
-   transform: translateX(0);
-}
+         .control-panel.open {
+            transform: translateX(0);
+         }
 
-.control-panel.open ~ #menu-toggle {
-   left: 320px;
-}
+         .control-panel.open ~ #menu-toggle {
+            left: 320px;
+         }
 
-     .control-panel {
-   pointer-events: auto;
-}
+         .control-panel {
+            pointer-events: auto;
+         }
 
          /* canvas */
 
-  .canvas-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+         .canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-    width: 100vw;
-    min-height: calc(100vh - 100px);
+            width: 100vw;
+            min-height: calc(100vh - 100px);
 
-    padding-top: 100px;
-    box-sizing: border-box;
-}
+            padding-top: 100px;
+            box-sizing: border-box;
+         }
 
-.canvas-frame {
-    padding: 12px;
+         .canvas-frame {
+            padding: 12px;
 
-    background: #1e293b;
+            background: #1e293b;
 
-    border: 2px solid #3b82f6;
+            border: 2px solid #3b82f6;
 
-    border-radius: 12px;
+            border-radius: 12px;
 
-    box-shadow: 0 25px 50px rgba(0,0,0,.5);
-}
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+         }
 
-canvas {
-    display: block;
+         canvas {
+            display: block;
 
-    background: #020617;
+            background: #020617;
 
-    cursor: crosshair;
+            cursor: crosshair;
 
-    border-radius: 6px;
-}
+            border-radius: 6px;
+         }
       </style>
    </head>
    <body>
@@ -197,8 +214,11 @@ canvas {
 
       <div id="settings-panel" class="control-panel">
          <h2>Settings</h2>
-         
 
+         <div class="config-group">
+            <label>Crosshair Color </label>
+            <input type="color" id="cross-color" value="#ff00ff" />
+         </div>
          <div class="control-group">
             <label class="checkbox-row">
                <input type="checkbox" id="require-ad-checkbox" checked />
@@ -255,7 +275,6 @@ canvas {
          <hr />
 
          <div class="control-group">
-             
             <label>Target Preset (Size):</label>
             <select id="preset-select">
                <option value="40">BigBall</option>
@@ -351,6 +370,21 @@ canvas {
 
       <script>
          const canvas = document.getElementById("gameCanvas");
+         const crossColorPicker = document.getElementById("cross-color");
+         let crossColor = crossColorPicker.value;
+         crossColorPicker.addEventListener("input", (e) => {
+            crossColor = e.target.value;
+            updateCustomCursor();
+         });
+
+         function updateCustomCursor() {
+            const rawSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="2.5" fill="${crossColor}"/><line x1="16" y1="2" x2="16" y2="7" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="25" x2="16" y2="30" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/><line x1="2" y1="16" x2="7" y2="16" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/><line x1="25" y1="16" x2="30" y2="16" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/></svg>`;
+            //viewport.style.cursor = `url("data:image/svg+xml;base64,${btoa(rawSvg)}") 16 16, crosshair`;
+            canvas.style.cursor = `url("data:image/svg+xml;base64,${btoa(rawSvg)}") 16 16, crosshair`;
+            //canvas.style.cursor = "pointer";
+         }
+         updateCustomCursor();
+
          const ctx = canvas.getContext("2d");
          const menuButton = document.getElementById("menu-toggle");
 
@@ -444,12 +478,17 @@ canvas {
                .map((k) => {
                   if (k === "space") return { code: "space", key: " " };
                   if (k === "alt") return { code: "altleft", key: "alt" };
-                  if (k === "ctrl") return { code: "controlleft", key: "control" };
-                  if (k === "ctrlr") return { code: "controlright", key: "control" };
-                  if (k === "strg") return { code: "controlleft", key: "control" };
-                  if (k === "strgr") return { code: "controlright", key: "control" };
+                  if (k === "ctrl")
+                     return { code: "controlleft", key: "control" };
+                  if (k === "ctrlr")
+                     return { code: "controlright", key: "control" };
+                  if (k === "strg")
+                     return { code: "controlleft", key: "control" };
+                  if (k === "strgr")
+                     return { code: "controlright", key: "control" };
                   if (k === "shift") return { code: "shiftleft", key: "shift" };
-                  if (k === "shiftr") return { code: "shiftright", key: "shift" };
+                  if (k === "shiftr")
+                     return { code: "shiftright", key: "shift" };
                   if (k === "ö") return { code: "semicolon", key: "ö" }; // German layout fallback
                   if (k.length === 1 && k >= "a" && k <= "z") {
                      return { code: `key${k}`, key: k };
