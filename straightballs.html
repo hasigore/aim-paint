@@ -4,35 +4,56 @@
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Straight Balls</title>
-      <meta name="description" content="Straight Balls is an aim training game that improves reaction time, tracking accuracy, and mouse control with moving targets.">
-      <meta name="keywords" content="aim trainer, reaction test, mouse accuracy game, FPS aim training, tracking practice">
-      <meta property="og:title" content="Straight Balls - Aim Training Game">
-      <meta property="og:description" content="Train your aim, reaction speed and tracking accuracy with Straight Balls.">
-      <meta property="og:type" content="website">
-      <meta property="og:image" content="https://aimcontour.ddnsgeek.com/preview.png">
-      <meta property="twitter:card" content="summary_large_image">
-      <meta property="twitter:title" content="Straight Balls - Aim Training Game">
-      <meta property="twitter:description" content="Train your aim, reaction speed and tracking accuracy with Straight Balls.">
-      <meta property="twitter:image" content="https://aimcontour.ddnsgeek.com/preview.png">
-      <link rel="canonical" href="https://aimcontour.ddnsgeek.com/">
+      <meta
+         name="description"
+         content="Straight Balls is an aim training game that improves reaction time, tracking accuracy, and mouse control with moving targets."
+      />
+      <meta
+         name="keywords"
+         content="aim trainer, reaction test, mouse accuracy game, FPS aim training, tracking practice"
+      />
+      <meta property="og:title" content="Straight Balls - Aim Training Game" />
+      <meta
+         property="og:description"
+         content="Train your aim, reaction speed and tracking accuracy with Straight Balls."
+      />
+      <meta property="og:type" content="website" />
+      <meta
+         property="og:image"
+         content="https://aimcontour.ddnsgeek.com/preview.png"
+      />
+      <meta property="twitter:card" content="summary_large_image" />
+      <meta
+         property="twitter:title"
+         content="Straight Balls - Aim Training Game"
+      />
+      <meta
+         property="twitter:description"
+         content="Train your aim, reaction speed and tracking accuracy with Straight Balls."
+      />
+      <meta
+         property="twitter:image"
+         content="https://aimcontour.ddnsgeek.com/preview.png"
+      />
+      <link rel="canonical" href="https://aimcontour.ddnsgeek.com/" />
       <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "VideoGame",
-  "name": "Straight Balls",
-  "url": "https://aimcontour.ddnsgeek.com/",
-  "description": "Straight Balls is an aim training game that improves reaction time, tracking accuracy, and mouse control with moving targets.",
-  "genre": "Aim Trainer",
-  "applicationCategory": "Browser Game",
-  "operatingSystem": "All",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  }
-}
-</script>
-      <link rel="icon" type="image/png" href="/favicon.png">
+         {
+            "@context": "https://schema.org",
+            "@type": "VideoGame",
+            "name": "Straight Balls",
+            "url": "https://aimcontour.ddnsgeek.com/",
+            "description": "Straight Balls is an aim training game that improves reaction time, tracking accuracy, and mouse control with moving targets.",
+            "genre": "Aim Trainer",
+            "applicationCategory": "Browser Game",
+            "operatingSystem": "All",
+            "offers": {
+               "@type": "Offer",
+               "price": "0",
+               "priceCurrency": "USD"
+            }
+         }
+      </script>
+      <link rel="icon" type="image/png" href="/favicon.png" />
       <style>
          * {
             margin: 0;
@@ -243,6 +264,10 @@
             />
          </div>
          <div class="config-group">
+            <label>Crosshair Color </label>
+            <input type="color" id="cross-color" value="#ff00ff" />
+         </div>
+         <div class="config-group">
             <button id="btn-fullscreen" class="btn-action">
                Toggle Fullscreen
             </button>
@@ -394,11 +419,11 @@
             />
          </div>
          <div class="config-group">
-   <label class="checkbox-label">
-      <input type="checkbox" id="cfg-reactionMode" />
-      Reaction Mode
-   </label>
-</div>
+            <label class="checkbox-label">
+               <input type="checkbox" id="cfg-reactionMode" />
+               Reaction Mode
+            </label>
+         </div>
 
          <div class="config-group">
             <label class="checkbox-label">
@@ -447,28 +472,27 @@
             },
             trail: { duration: 80, width: 4, color: "255,255,255" },
             movementPatterns: { default: "Static" },
-            aim: { 
-   justHover: true, 
-   maxDiviationFromTargetLine: 60,
-   reactionMode: false
-},
+            aim: {
+               justHover: true,
+               maxDiviationFromTargetLine: 60,
+               reactionMode: false,
+            },
          };
          const reactionModeEl = document.getElementById("cfg-reactionMode");
 
-reactionModeEl.checked = Config.aim.reactionMode;
+         reactionModeEl.checked = Config.aim.reactionMode;
 
-reactionModeEl.addEventListener("change", (e) => {
-   Config.aim.reactionMode = e.target.checked;
+         reactionModeEl.addEventListener("change", (e) => {
+            Config.aim.reactionMode = e.target.checked;
 
-   dotManager.reset();
+            dotManager.reset();
 
-   if (Config.aim.reactionMode) {
-      Config.dot.count = 1;
-   } else {
-      Config.dot.count = 5;
-   }
-});
-
+            if (Config.aim.reactionMode) {
+               Config.dot.count = 1;
+            } else {
+               Config.dot.count = 5;
+            }
+         });
 
          function detectRefreshRate(callback) {
             let samples = [];
@@ -805,6 +829,21 @@ reactionModeEl.addEventListener("change", (e) => {
          }
 
          const canvas = document.getElementById("aimCanvas");
+         const crossColorPicker = document.getElementById("cross-color");
+         let crossColor = crossColorPicker.value;
+         crossColorPicker.addEventListener("input", (e) => {
+            crossColor = e.target.value;
+            updateCustomCursor();
+         });
+
+         function updateCustomCursor() {
+            const rawSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="2.5" fill="${crossColor}"/><line x1="16" y1="2" x2="16" y2="7" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="25" x2="16" y2="30" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/><line x1="2" y1="16" x2="7" y2="16" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/><line x1="25" y1="16" x2="30" y2="16" stroke="${crossColor}" stroke-width="2" stroke-linecap="round"/></svg>`;
+            //viewport.style.cursor = `url("data:image/svg+xml;base64,${btoa(rawSvg)}") 16 16, crosshair`;
+            canvas.style.cursor = `url("data:image/svg+xml;base64,${btoa(rawSvg)}") 16 16, crosshair`;
+            //canvas.style.cursor = "pointer";
+         }
+         updateCustomCursor();
+
          const ctx = canvas.getContext("2d");
 
          let cWidth = (canvas.width = Config.canvas.width);
@@ -1047,8 +1086,8 @@ reactionModeEl.addEventListener("change", (e) => {
 
             ctx.clearRect(0, 0, cWidth, cHeight);
             if (Config.aim.reactionMode) {
-   Config.dot.count = 1;
-} 
+               Config.dot.count = 1;
+            }
 
             dotManager.updateOptions({
                count: Config.dot.count,
@@ -1063,14 +1102,14 @@ reactionModeEl.addEventListener("change", (e) => {
 
             const margin = 50;
             roundManager.handleRoundSuccess(dotManager);
-           const wasEmpty = dotManager.length === 0;
+            const wasEmpty = dotManager.length === 0;
 
-dotManager.spawnDots(cWidth, cHeight, margin);
+            dotManager.spawnDots(cWidth, cHeight, margin);
 
-if (Config.aim.reactionMode && wasEmpty && dotManager.length > 0) {
-   reactionModeStartTime = performance.now();
-   reactionModeWaiting = true;
-}
+            if (Config.aim.reactionMode && wasEmpty && dotManager.length > 0) {
+               reactionModeStartTime = performance.now();
+               reactionModeWaiting = true;
+            }
 
             if (dotManager.dots.length > 0) {
                const keyPressed =
@@ -1087,32 +1126,24 @@ if (Config.aim.reactionMode && wasEmpty && dotManager.length > 0) {
                   (dot, i) => distances[i] <= dot.radius,
                );
 
-             if (Config.aim.reactionMode) {
+               if (Config.aim.reactionMode) {
+                  if (onTarget[0]) {
+                     if (reactionModeWaiting) {
+                        const reactionTime =
+                           performance.now() - reactionModeStartTime;
 
-   if (onTarget[0]) {
+                        reactionTimes.push(reactionTime);
 
-      if (reactionModeWaiting) {
-         const reactionTime =
-            performance.now() - reactionModeStartTime;
+                        if (reactionTimes.length > 20) reactionTimes.shift();
 
-         reactionTimes.push(reactionTime);
+                        reactionModeWaiting = false;
+                     }
 
-         if (reactionTimes.length > 20)
-            reactionTimes.shift();
-
-         reactionModeWaiting = false;
-      }
-
-      dotManager._dots[0].health = 0;
-   }
-
-}
-
-else {
-
-   dotManager.handleDotsDamage(onTarget, keyPressed, dt);
-
-}
+                     dotManager._dots[0].health = 0;
+                  }
+               } else {
+                  dotManager.handleDotsDamage(onTarget, keyPressed, dt);
+               }
                updateReactionTime();
 
                const curDot = dotManager.current;
@@ -1163,24 +1194,20 @@ else {
                }
 
                if (Config.aim.reactionMode) {
-
-   if (dotManager.current && dotManager.current.health === 0) {
-      dotManager.reset();
-   }
-
-} else {
-
-   dotManager.handleVulnerability();
-
-}
+                  if (dotManager.current && dotManager.current.health === 0) {
+                     dotManager.reset();
+                  }
+               } else {
+                  dotManager.handleVulnerability();
+               }
 
                if (
-   !Config.aim.reactionMode &&
-   prevDot &&
-   prevLead &&
-   curLead &&
-   prevDot.healthWasZero
-) {
+                  !Config.aim.reactionMode &&
+                  prevDot &&
+                  prevLead &&
+                  curLead &&
+                  prevDot.healthWasZero
+               ) {
                   ctx.save();
                   ctx.strokeStyle = `rgba(255, 255, 255, 0.2)`;
                   ctx.lineWidth = Config.aim.maxDiviationFromTargetLine * 2;
@@ -1213,19 +1240,19 @@ else {
                   ctx.closePath();
 
                   if (!Config.aim.reactionMode && dot.maxHealth > 1) {
-   const r = dot.radius;
-   const hRatio = dot.health / dot.maxHealth;
-   const healthW = 2 * r;
-   const healthH = r / 4;
-   const healthX = dot.x - r;
-   const healthY = dot.y - r - 1.5 * healthH - 4;
+                     const r = dot.radius;
+                     const hRatio = dot.health / dot.maxHealth;
+                     const healthW = 2 * r;
+                     const healthH = r / 4;
+                     const healthX = dot.x - r;
+                     const healthY = dot.y - r - 1.5 * healthH - 4;
 
-   ctx.fillStyle = Config.color.healthbarBackground;
-   ctx.fillRect(healthX, healthY, healthW, healthH);
+                     ctx.fillStyle = Config.color.healthbarBackground;
+                     ctx.fillRect(healthX, healthY, healthW, healthH);
 
-   ctx.fillStyle = Config.color.healthbar;
-   ctx.fillRect(healthX, healthY, healthW * hRatio, healthH);
-}
+                     ctx.fillStyle = Config.color.healthbar;
+                     ctx.fillRect(healthX, healthY, healthW * hRatio, healthH);
+                  }
 
                   ctx.beginPath();
                   ctx.arc(leads[i].x, leads[i].y, dot.radius, 0, 2 * Math.PI);
