@@ -1,2034 +1,1587 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Combo + Aim Trainer</title>
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Combo + Aim Trainer</title>
 
-<style>
-* {
-    box-sizing: border-box;
-}
+      <style>
+         * {
+            box-sizing: border-box;
+         }
 
-html,
-body {
-    margin: 0;
-    width: 100%;
-    min-height: 100%;
-    background: #111318;
-    color: #eeeeee;
-    font-family: Arial, Helvetica, sans-serif;
-}
+         html,
+         body {
+            margin: 0;
+            width: 100%;
+            min-height: 100%;
+            background: #111318;
+            color: #eeeeee;
+            font-family: Arial, Helvetica, sans-serif;
+         }
 
-body {
-    overflow-x: hidden;
-}
+         body {
+            overflow-x: hidden;
+         }
 
-/* =========================================================
+         /* =========================================================
    TOP BAR
 ========================================================= */
 
-.topbar {
-    height: 70px;
-    background: #191c22;
-    border-bottom: 1px solid #30343c;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 25px;
-}
+         .topbar {
+            height: 70px;
+            background: #191c22;
+            border-bottom: 1px solid #30343c;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+         }
 
-.title {
-    font-size: 24px;
-    font-weight: bold;
-}
+         .title {
+            font-size: 24px;
+            font-weight: bold;
+         }
 
-.status {
-    margin-top: 4px;
-    color: #999;
-    font-size: 14px;
-}
+         .status {
+            margin-top: 4px;
+            color: #999;
+            font-size: 14px;
+         }
 
-.settings-button {
-    padding: 9px 15px;
-    background: #292e37;
-    color: white;
-    border: 1px solid #444b56;
-    border-radius: 6px;
-    cursor: pointer;
-}
+         .settings-button {
+            padding: 9px 15px;
+            background: #292e37;
+            color: white;
+            border: 1px solid #444b56;
+            border-radius: 6px;
+            cursor: pointer;
+         }
 
-.settings-button:hover {
-    background: #363d48;
-}
+         .settings-button:hover {
+            background: #363d48;
+         }
 
-/* =========================================================
+         /* =========================================================
    SETTINGS
 ========================================================= */
 
-.settings {
-    position: fixed;
-    top: 70px;
-    right: 0;
-    width: 390px;
-    height: calc(100vh - 70px);
-    padding: 20px;
-    background: #1a1d23;
-    border-left: 1px solid #353941;
-    overflow-y: auto;
-    transform: translateX(100%);
-    transition: transform .2s ease;
-    z-index: 100;
-}
+         .settings {
+            position: fixed;
+            top: 70px;
+            right: 0;
+            width: 390px;
+            height: calc(100vh - 70px);
+            padding: 20px;
+            background: #1a1d23;
+            border-left: 1px solid #353941;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.2s ease;
+            z-index: 100;
+         }
 
-.settings.open {
-    transform: translateX(0);
-}
+         .settings.open {
+            transform: translateX(0);
+         }
 
-.settings h2 {
-    margin-top: 0;
-}
+         .settings h2 {
+            margin-top: 0;
+         }
 
-.settings h3 {
-    margin-top: 25px;
-}
+         .settings h3 {
+            margin-top: 25px;
+         }
 
-.setting {
-    margin-bottom: 20px;
-}
+         .setting {
+            margin-bottom: 20px;
+         }
 
-.setting label {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 7px;
-    font-size: 14px;
-}
+         .setting label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 7px;
+            font-size: 14px;
+         }
 
-input[type="range"] {
-    width: 100%;
-}
+         input[type="range"] {
+            width: 100%;
+         }
 
-select {
-    width: 100%;
-    padding: 8px;
-    background: #111318;
-    color: white;
-    border: 1px solid #444;
-    border-radius: 5px;
-}
+         select {
+            width: 100%;
+            padding: 8px;
+            background: #111318;
+            color: white;
+            border: 1px solid #444;
+            border-radius: 5px;
+         }
 
-.checkbox-setting {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 18px;
-}
+         .checkbox-setting {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+         }
 
-.checkbox-setting input {
-    width: 18px;
-    height: 18px;
-}
+         .checkbox-setting input {
+            width: 18px;
+            height: 18px;
+         }
 
-.button-config {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-}
+         .button-config {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+         }
 
-.reset-btn {
-    width: 100%;
-    padding: 12px;
-    background: #3b424d;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-}
+         .reset-btn {
+            width: 100%;
+            padding: 12px;
+            background: #3b424d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+         }
 
-/* =========================================================
+         /* =========================================================
    MAIN
 ========================================================= */
 
-main {
-    max-width: 1400px;
-    margin: auto;
-    padding: 25px 25px 60px;
-}
+         main {
+            max-width: 1400px;
+            margin: auto;
+            padding: 25px 25px 60px;
+         }
 
-.instructions {
-    text-align: center;
-    color: #777e88;
-    margin-bottom: 18px;
-    line-height: 1.5;
-    font-size: 13px;
-}
+         .instructions {
+            text-align: center;
+            color: #777e88;
+            margin-bottom: 18px;
+            line-height: 1.5;
+            font-size: 13px;
+         }
 
-.instructions b {
-    color: #ccc;
-}
+         .instructions b {
+            color: #ccc;
+         }
 
-/* =========================================================
+         /* =========================================================
    AIM PANEL
 ========================================================= */
 
-.aim-section {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
+         .aim-section {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+         }
 
-.aim-panel {
-    position: relative;
+         .aim-panel {
+            position: relative;
 
-    width: min(1100px, 92vw);
-    height: min(650px, 65vh);
+            width: min(1100px, 92vw);
+            height: min(650px, 65vh);
 
-    min-height: 400px;
+            min-height: 400px;
 
-    background:
-        radial-gradient(
-            circle at center,
-            #20252d 0%,
-            #171b21 65%,
-            #13161b 100%
-        );
+            background: radial-gradient(
+               circle at center,
+               #20252d 0%,
+               #171b21 65%,
+               #13161b 100%
+            );
 
-    border: 2px solid #343b45;
-    border-radius: 14px;
+            border: 2px solid #343b45;
+            border-radius: 14px;
 
-    overflow: hidden;
+            overflow: hidden;
 
-    cursor: crosshair;
+            cursor: crosshair;
 
-    box-shadow:
-        0 0 40px rgba(0,0,0,.35),
-        inset 0 0 50px rgba(0,0,0,.25);
+            box-shadow:
+               0 0 40px rgba(0, 0, 0, 0.35),
+               inset 0 0 50px rgba(0, 0, 0, 0.25);
 
-    user-select: none;
-    touch-action: none;
-}
+            user-select: none;
+            touch-action: none;
+         }
 
-.aim-panel::before {
-    content: "";
-    position: absolute;
-    inset: 0;
+         /* =========================================================
+   SUCCESS FLASH
+========================================================= */
 
-    background:
-        linear-gradient(
-            rgba(255,255,255,.025) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(255,255,255,.025) 1px,
-            transparent 1px
-        );
+         .aim-panel.sequence-success {
+            animation: sequenceSuccessFlash 220ms ease-out;
+         }
 
-    background-size: 50px 50px;
+         @keyframes sequenceSuccessFlash {
+            0% {
+               background: radial-gradient(
+                  circle at center,
+                  #20252d 0%,
+                  #171b21 65%,
+                  #13161b 100%
+               );
+            }
 
-    pointer-events: none;
-}
+            35% {
+               background: radial-gradient(
+                  circle at center,
+                  rgba(91, 234, 139, 0.28) 0%,
+                  rgba(91, 234, 139, 0.12) 45%,
+                  #171b21 75%
+               );
+            }
 
-.aim-panel-label {
-    position: absolute;
-    top: 12px;
-    left: 15px;
+            100% {
+               background: radial-gradient(
+                  circle at center,
+                  #20252d 0%,
+                  #171b21 65%,
+                  #13161b 100%
+               );
+            }
+         }
 
-    color: #59616d;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+         .aim-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
 
-    pointer-events: none;
-}
+            background: linear-gradient(
+                  rgba(255, 255, 255, 0.025) 1px,
+                  transparent 1px
+               ),
+               linear-gradient(
+                  90deg,
+                  rgba(255, 255, 255, 0.025) 1px,
+                  transparent 1px
+               );
 
-.aim-center {
-    position: absolute;
-    left: 50%;
-    top: 50%;
+            background-size: 50px 50px;
 
-    width: 20px;
-    height: 20px;
+            pointer-events: none;
+         }
 
-    transform: translate(-50%, -50%);
+         .aim-panel-label {
+            position: absolute;
+            top: 12px;
+            left: 15px;
 
-    border: 1px solid rgba(255,255,255,.12);
-    border-radius: 50%;
+            color: #59616d;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
 
-    pointer-events: none;
-}
+            pointer-events: none;
+         }
 
-/* =========================================================
+         .aim-center {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+
+            width: 20px;
+            height: 20px;
+
+            transform: translate(-50%, -50%);
+
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 50%;
+
+            pointer-events: none;
+         }
+
+         /* =========================================================
    BALL
 ========================================================= */
 
-.ball {
-    position: absolute;
+         .ball {
+            position: absolute;
 
-    width: 60px;
-    height: 60px;
+            width: 60px;
+            height: 60px;
 
-    border-radius: 50%;
+            border-radius: 50%;
 
-    transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
 
-    /*
-       Neutral when not on target.
-       It is deliberately NOT red.
-    */
-    background: #aaaaaa;
+            background: #aaaaaa;
 
-    pointer-events: none;
+            pointer-events: none;
 
-    transition:
-        background .05s linear,
-}
+            transition: background 0.05s linear;
+         }
 
+         .ball.on-target {
+            background: #cc00cc;
 
-/*
-   Mouse is actually on the ball.
-*/
+            box-shadow:
+               0 0 25px rgba(91, 234, 139, 0.65),
+               0 0 25px rgba(91, 234, 139, 0.2);
+         }
 
-.ball.on-target {
-    background: #cc00cc;
-
-    box-shadow:
-        0 0 25px rgba(91,234,139,.65),
-        0 0 25px rgba(91,234,139,.20);
-}
-
-
-/* =========================================================
+         /* =========================================================
    TIMING RING
 ========================================================= */
 
-/*
-   The ring is positioned on the exact same center
-   as the ball.
+         .ball-timing-ring {
+            position: absolute;
 
-   Its diameter is slightly larger than the ball so
-   that its INNER EDGE touches the ball with no visible
-   gap.
+            left: 50%;
+            top: 50%;
 
-   The border itself is 5px thick.
-*/
+            width: 46px;
+            height: 46px;
 
-.ball-timing-ring {
-    position: absolute;
+            transform: translate(-50%, -50%);
 
-    left: 50%;
-    top: 50%;
+            border-radius: 50%;
 
-    width: 46px;
-    height: 46px;
+            border: 30px solid #ff666d;
 
-    transform: translate(-50%, -50%);
+            pointer-events: none;
 
-    border-radius: 60%;
+            transition: border-color 0.05s linear;
+         }
 
-    border: 30px solid #ff666d;
+         .ball-timing-ring.ready {
+            border-color: #69ee98;
 
-    pointer-events: none;
+            box-shadow:
+               0 0 8px rgba(91, 234, 139, 0.55),
+               0 0 16px rgba(91, 234, 139, 0.18);
+         }
 
-    transition:
-        border-color .05s linear,
-}
+         .ball-timing-ring.red {
+            border-color: #ff666d;
 
+            box-shadow:
+               0 0 8px rgba(255, 90, 100, 0.45),
+               0 0 16px rgba(255, 90, 100, 0.15);
+         }
 
-/*
-   Green = key can currently be pressed.
-*/
+         .ball-timing-ring.hold {
+            border-color: #79efa0;
 
-.ball-timing-ring.ready {
-    border-color: #69ee98;
+            opacity: 0.75;
 
-    box-shadow:
-        0 0 8px rgba(91,234,139,.55),
-        0 0 16px rgba(91,234,139,.18);
-}
+            box-shadow: 0 0 7px rgba(91, 234, 139, 0.35);
+         }
 
-
-/*
-   Red = key must NOT be pressed yet.
-*/
-
-.ball-timing-ring.red {
-    border-color: #ff666d;
-
-    box-shadow:
-        0 0 8px rgba(255,90,100,.45),
-        0 0 16px rgba(255,90,100,.15);
-}
-
-
-/*
-   During HOLD the button has already been pressed.
-   Make the ring slightly less prominent.
-*/
-
-.ball-timing-ring.hold {
-    border-color: #79efa0;
-
-    opacity: .75;
-
-    box-shadow:
-        0 0 7px rgba(91,234,139,.35);
-}
-
-
-/* =========================================================
+         /* =========================================================
    BALL MARKER
 ========================================================= */
 
-.ball-marker {
-    position: absolute;
+         .ball-marker {
+            position: absolute;
 
-    width: 4px;
-    height: 4px;
+            width: 4px;
+            height: 4px;
 
-    left: 50%;
-    top: 50%;
+            left: 50%;
+            top: 50%;
 
-    transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
 
-    border-radius: 50%;
+            border-radius: 50%;
 
-    background: rgba(255,255,255,.8);
+            background: rgba(255, 255, 255, 0.8);
 
-    pointer-events: none;
-}
+            pointer-events: none;
+         }
 
-
-/* =========================================================
+         /* =========================================================
    AIM STATUS
 ========================================================= */
 
-.aim-status {
-    position: absolute;
+         .aim-status {
+            position: absolute;
 
-    left: 50%;
-    bottom: 15px;
+            left: 50%;
+            bottom: 15px;
 
-    transform: translateX(-50%);
+            transform: translateX(-50%);
 
-    padding: 6px 13px;
+            padding: 6px 13px;
 
-    background: rgba(10,12,15,.7);
+            background: rgba(10, 12, 15, 0.7);
 
-    border: 1px solid rgba(255,255,255,.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
 
-    border-radius: 5px;
+            border-radius: 5px;
 
-    color: #777f89;
+            color: #777f89;
 
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
 
-    pointer-events: none;
-}
+            pointer-events: none;
+         }
 
-.aim-status.good {
-    color: #75f09b;
-    border-color: rgba(91,234,139,.35);
-}
+         .aim-status.good {
+            color: #75f09b;
+            border-color: rgba(91, 234, 139, 0.35);
+         }
 
-/* =========================================================
+         /* =========================================================
    STATS
 ========================================================= */
 
-.score {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+         .score {
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-    gap: 65px;
+            gap: 65px;
 
-    margin: 18px auto 0;
+            margin: 18px auto 0;
 
-    color: #777e88;
+            color: #777e88;
 
-    text-align: center;
-}
+            text-align: center;
+         }
 
-.score strong {
-    display: block;
+         .score strong {
+            display: block;
 
-    margin-top: 3px;
+            margin-top: 3px;
 
-    color: white;
+            color: white;
 
-    font-size: 20px;
-}
+            font-size: 20px;
+         }
 
-.score-label {
-    font-size: 12px;
-}
+         .score-label {
+            font-size: 12px;
+         }
 
-/* =========================================================
+         /* =========================================================
    AUXILIARY PANEL
 ========================================================= */
 
-.auxiliary-panel {
-    max-width: 650px;
+         .auxiliary-panel {
+            max-width: 650px;
 
-    margin: 18px auto 0;
+            margin: 18px auto 0;
 
-    padding: 11px 17px;
+            padding: 11px 17px;
 
-    background: #1b1f25;
+            background: #1b1f25;
 
-    border: 1px solid #30353d;
-    border-radius: 8px;
-}
+            border: 1px solid #30353d;
+            border-radius: 8px;
+         }
 
-.aux-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+         .aux-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
 
-    margin-bottom: 7px;
-}
+            margin-bottom: 7px;
+         }
 
-.aux-title {
-    font-size: 13px;
-    font-weight: bold;
-}
+         .aux-title {
+            font-size: 13px;
+            font-weight: bold;
+         }
 
-.aux-key {
-    padding: 3px 8px;
+         .aux-key {
+            padding: 3px 8px;
 
-    background: #292e37;
+            background: #292e37;
 
-    border: 1px solid #454b55;
+            border: 1px solid #454b55;
 
-    border-radius: 4px;
+            border-radius: 4px;
 
-    font-family: monospace;
-    font-size: 11px;
-    font-weight: bold;
-}
+            font-family: monospace;
+            font-size: 11px;
+            font-weight: bold;
+         }
 
-.aux-content {
-    display: grid;
+         .aux-content {
+            display: grid;
 
-    grid-template-columns: 1fr 110px;
+            grid-template-columns: 1fr 110px;
 
-    gap: 15px;
+            gap: 15px;
 
-    align-items: center;
-}
+            align-items: center;
+         }
 
-.aux-status {
-    font-size: 11px;
-    color: #888f99;
-}
+         .aux-status {
+            font-size: 11px;
+            color: #888f99;
+         }
 
-.aux-action {
-    margin-top: 2px;
+         .aux-action {
+            margin-top: 2px;
 
-    font-size: 14px;
-    font-weight: bold;
-}
+            font-size: 14px;
+            font-weight: bold;
+         }
 
-.aux-timer {
-    text-align: right;
+         .aux-timer {
+            text-align: right;
 
-    font-family: monospace;
-    font-size: 16px;
-    font-weight: bold;
-}
+            font-family: monospace;
+            font-size: 16px;
+            font-weight: bold;
+         }
 
-.aux-progress {
-    height: 4px;
+         .aux-progress {
+            height: 4px;
 
-    margin-top: 8px;
+            margin-top: 8px;
 
-    background: #292e37;
+            background: #292e37;
 
-    border-radius: 4px;
+            border-radius: 4px;
 
-    overflow: hidden;
-}
+            overflow: hidden;
+         }
 
-.aux-progress-bar {
-    height: 100%;
-    width: 0;
-}
+         .aux-progress-bar {
+            height: 100%;
+            width: 0;
+         }
 
-.aux-required {
-    background: #153d27;
-    border-color: #5bea8b;
-}
+         .aux-required {
+            background: #153d27;
+            border-color: #5bea8b;
+         }
 
-.aux-required .aux-action {
-    color: #75f09b;
-}
+         .aux-required .aux-action {
+            color: #75f09b;
+         }
 
-.aux-required .aux-progress-bar {
-    background: #72ef98;
-}
+         .aux-required .aux-progress-bar {
+            background: #72ef98;
+         }
 
-.aux-held {
-    background: #315b3d;
-    border-color: #8affad;
-}
+         .aux-held {
+            background: #315b3d;
+            border-color: #8affad;
+         }
 
-.aux-held .aux-action {
-    color: #a4ffbf;
-}
+         .aux-held .aux-action {
+            color: #a4ffbf;
+         }
 
-.aux-held .aux-progress-bar {
-    background: #9affb5;
-}
+         .aux-held .aux-progress-bar {
+            background: #9affb5;
+         }
 
-.aux-release,
-.aux-boundary {
-    background: #4b2426;
-    border-color: #ff6e73;
-}
+         .aux-release,
+         .aux-boundary {
+            background: #4b2426;
+            border-color: #ff6e73;
+         }
 
-.aux-release .aux-action,
-.aux-boundary .aux-action {
-    color: #ff858a;
-}
+         .aux-release .aux-action,
+         .aux-boundary .aux-action {
+            color: #ff858a;
+         }
 
-.aux-release .aux-progress-bar,
-.aux-boundary .aux-progress-bar {
-    background: #ff777c;
-}
+         .aux-release .aux-progress-bar,
+         .aux-boundary .aux-progress-bar {
+            background: #ff777c;
+         }
 
-.aux-disabled {
-    opacity: .4;
-}
+         .aux-disabled {
+            opacity: 0.4;
+         }
 
-/* =========================================================
+         /* =========================================================
    COMBO
 ========================================================= */
 
-.combo-wrapper {
-    margin-top: 15px;
-}
+         .combo-wrapper {
+            margin-top: 15px;
+         }
 
-.combo-title {
-    text-align: center;
+         .combo-title {
+            text-align: center;
 
-    color: #555d68;
+            color: #555d68;
 
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
 
-    margin-bottom: 6px;
-}
+            margin-bottom: 6px;
+         }
 
-.combo {
-    display: flex;
+         .combo {
+            display: flex;
 
-    justify-content: center;
+            justify-content: center;
 
-    gap: 5px;
+            gap: 5px;
 
-    flex-wrap: wrap;
-}
+            flex-wrap: wrap;
+         }
 
-.combo-item {
-    position: relative;
+         .combo-item {
+            position: relative;
 
-    width: 72px;
-    min-height: 57px;
+            width: 72px;
+            min-height: 57px;
 
-    background: #1a1e24;
+            background: #1a1e24;
 
-    border: 1px solid #30353d;
+            border: 1px solid #30353d;
 
-    border-radius: 6px;
+            border-radius: 6px;
 
-    overflow: hidden;
+            overflow: hidden;
 
-    opacity: .8;
-}
+            opacity: 0.8;
+         }
 
-.combo-item .key {
-    padding-top: 8px;
+         .combo-item .key {
+            padding-top: 8px;
 
-    text-align: center;
+            text-align: center;
 
-    font-size: 13px;
-    font-weight: bold;
+            font-size: 13px;
+            font-weight: bold;
 
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+         }
 
-.combo-item .phase {
-    margin-top: 3px;
+         .combo-item .phase {
+            margin-top: 3px;
 
-    text-align: center;
+            text-align: center;
 
-    font-size: 8px;
+            font-size: 8px;
 
-    text-transform: uppercase;
-    letter-spacing: .5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
 
-    color: #777;
-}
+            color: #777;
+         }
 
-.combo-item .timer {
-    margin-top: 2px;
+         .combo-item .timer {
+            margin-top: 2px;
 
-    text-align: center;
+            text-align: center;
 
-    font-family: monospace;
+            font-family: monospace;
 
-    font-size: 9px;
+            font-size: 9px;
 
-    color: #aaa;
-}
+            color: #aaa;
+         }
 
-.progress {
-    position: absolute;
+         .progress {
+            position: absolute;
 
-    bottom: 0;
-    left: 0;
+            bottom: 0;
+            left: 0;
 
-    height: 3px;
+            height: 3px;
 
-    width: 0;
-}
+            width: 0;
+         }
 
-.state-ready {
-    background: #153d27;
-    border-color: #5bea8b;
-}
+         .state-ready {
+            background: #153d27;
+            border-color: #5bea8b;
+         }
 
-.state-ready .phase {
-    color: #75f09b;
-}
+         .state-ready .phase {
+            color: #75f09b;
+         }
 
-.state-ready .progress {
-    background: #72ef98;
-}
+         .state-ready .progress {
+            background: #72ef98;
+         }
 
-.state-hold {
-    background: #315b3d;
-    border-color: #8affad;
-}
+         .state-hold {
+            background: #315b3d;
+            border-color: #8affad;
+         }
 
-.state-hold .phase {
-    color: #a4ffbf;
-}
+         .state-hold .phase {
+            color: #a4ffbf;
+         }
 
-.state-hold .progress {
-    background: #9affb5;
-}
+         .state-hold .progress {
+            background: #9affb5;
+         }
 
-.state-forbidden {
-    background: #4b2426;
-    border-color: #ff6e73;
-}
+         .state-forbidden {
+            background: #4b2426;
+            border-color: #ff6e73;
+         }
 
-.state-forbidden .phase {
-    color: #ff858a;
-}
+         .state-forbidden .phase {
+            color: #ff858a;
+         }
 
-.state-forbidden .progress {
-    background: #ff777c;
-}
+         .state-forbidden .progress {
+            background: #ff777c;
+         }
 
-/* =========================================================
+         /* =========================================================
    FAIL
 ========================================================= */
 
-.fail-overlay {
-    position: fixed;
+         .fail-overlay {
+            position: fixed;
 
-    inset: 0;
+            inset: 0;
 
-    display: none;
+            display: none;
 
-    align-items: center;
-    justify-content: center;
+            align-items: center;
+            justify-content: center;
 
-    background: rgba(120,0,0,.35);
+            background: rgba(120, 0, 0, 0.35);
 
-    pointer-events: none;
+            pointer-events: none;
 
-    z-index: 200;
-}
+            z-index: 200;
+         }
 
-.fail-overlay.show {
-    display: flex;
-}
+         .fail-overlay.show {
+            display: flex;
+         }
 
-.fail-message {
-    padding: 30px 50px;
+         .fail-message {
+            padding: 30px 50px;
 
-    background: #3a181a;
+            background: #3a181a;
 
-    border: 2px solid #ff555d;
+            border: 2px solid #ff555d;
 
-    border-radius: 12px;
+            border-radius: 12px;
 
-    font-size: 30px;
-    font-weight: bold;
-}
+            font-size: 30px;
+            font-weight: bold;
+         }
 
-/* =========================================================
+         /* =========================================================
    RESPONSIVE
 ========================================================= */
 
-@media (max-width: 800px) {
+         @media (max-width: 800px) {
+            .aim-panel {
+               width: 96vw;
+               height: 60vh;
+               min-height: 350px;
+            }
 
-    .aim-panel {
-        width: 96vw;
-        height: 60vh;
-        min-height: 350px;
-    }
+            .score {
+               gap: 25px;
+            }
 
-    .score {
-        gap: 25px;
-    }
+            .settings {
+               width: 100%;
+            }
+         }
+      </style>
+   </head>
 
-    .settings {
-        width: 100%;
-    }
+   <body>
+      <header class="topbar">
+         <div>
+            <div class="title">Combo + Aim Trainer</div>
 
-}
-</style>
-</head>
+            <div class="status" id="statusText">
+               Press the first button to start
+            </div>
+         </div>
 
-<body>
+         <button class="settings-button" onclick="toggleSettings()">
+            ⚙ Settings
+         </button>
+      </header>
 
-<header class="topbar">
-
-    <div>
-        <div class="title">
-            Combo + Aim Trainer
-        </div>
-
-        <div class="status" id="statusText">
-            Press the first button to start
-        </div>
-    </div>
-
-    <button
-        class="settings-button"
-        onclick="toggleSettings()">
-        ⚙ Settings
-    </button>
-
-</header>
-
-
-<!-- =======================================================
+      <!-- =======================================================
      SETTINGS
 ======================================================== -->
 
-<aside class="settings" id="settingsPanel">
+      <aside class="settings" id="settingsPanel">
+         <h2>Settings</h2>
 
-    <h2>Settings</h2>
+         <div class="setting">
+            <label>
+               <span>Number of buttons</span>
+               <span id="buttonCountValue">3</span>
+            </label>
 
-    <div class="setting">
-        <label>
-            <span>Number of buttons</span>
-            <span id="buttonCountValue">3</span>
-        </label>
+            <input type="range" id="buttonCount" min="2" max="6" value="3" />
+         </div>
 
-        <input
-            type="range"
-            id="buttonCount"
-            min="2"
-            max="6"
-            value="3">
-    </div>
+         <div class="setting">
+            <label>
+               <span>Press window</span>
+               <span id="readyWindowValue">1000 ms</span>
+            </label>
 
-    <div class="setting">
-        <label>
-            <span>Press window</span>
-            <span id="readyWindowValue">1000 ms</span>
-        </label>
+            <input
+               type="range"
+               id="readyWindow"
+               min="50"
+               max="2000"
+               value="1000"
+               step="10"
+            />
+         </div>
 
-        <input
-            type="range"
-            id="readyWindow"
-            min="50"
-            max="2000"
-            value="1000"
-            step="10">
-    </div>
+         <div class="setting">
+            <label>
+               <span>Red timing window</span>
+               <span id="forbiddenWindowValue">600 ms</span>
+            </label>
 
-    <div class="setting">
-        <label>
-            <span>Red timing window</span>
-            <span id="forbiddenWindowValue">600 ms</span>
-        </label>
+            <input
+               type="range"
+               id="forbiddenWindow"
+               min="0"
+               max="3000"
+               value="600"
+               step="10"
+            />
+         </div>
 
-        <input
-            type="range"
-            id="forbiddenWindow"
-            min="0"
-            max="3000"
-            value="600"
-            step="10">
-    </div>
+         <div class="setting">
+            <label>
+               <span>Maximum sequence-button hold</span>
+               <span id="holdWindowValue">500 ms</span>
+            </label>
 
-    <div class="setting">
-        <label>
-            <span>Maximum sequence-button hold</span>
-            <span id="holdWindowValue">500 ms</span>
-        </label>
+            <input
+               type="range"
+               id="holdWindow"
+               min="50"
+               max="2000"
+               value="500"
+               step="10"
+            />
+         </div>
 
-        <input
-            type="range"
-            id="holdWindow"
-            min="50"
-            max="2000"
-            value="500"
-            step="10">
-    </div>
+         <hr />
 
-    <hr>
+         <h3>Combo buttons</h3>
 
-    <h3>Combo buttons</h3>
+         <div class="button-config" id="buttonConfig"></div>
 
-    <div
-        class="button-config"
-        id="buttonConfig">
-    </div>
+         <hr />
 
-    <hr>
+         <h3>Auxiliary Hold</h3>
 
-    <h3>Auxiliary Hold</h3>
+         <div class="checkbox-setting">
+            <input type="checkbox" id="auxEnabled" checked />
 
-    <div class="checkbox-setting">
+            <label for="auxEnabled"> Hold auxiliary button </label>
+         </div>
 
-        <input
-            type="checkbox"
-            id="auxEnabled"
-            checked>
+         <div class="setting">
+            <label> Auxiliary button </label>
 
-        <label for="auxEnabled">
-            Hold auxiliary button
-        </label>
+            <select id="auxButton"></select>
+         </div>
 
-    </div>
+         <div class="setting">
+            <label>
+               <span>Auxiliary press window</span>
 
-    <div class="setting">
+               <span id="auxWindowValue"> 350 ms </span>
+            </label>
 
-        <label>
-            Auxiliary button
-        </label>
+            <input
+               type="range"
+               id="auxWindow"
+               min="50"
+               max="1500"
+               value="350"
+               step="10"
+            />
+         </div>
 
-        <select id="auxButton"></select>
+         <div class="checkbox-setting">
+            <input type="checkbox" id="unlimitedReleases" />
 
-    </div>
+            <label for="unlimitedReleases"> Allow unlimited releases </label>
+         </div>
 
-    <div class="setting">
+         <div class="setting" id="releaseCountSetting">
+            <label>
+               <span>Temporary releases per combo</span>
 
-        <label>
-            <span>Auxiliary press window</span>
+               <span id="auxReleaseCountValue"> 0 </span>
+            </label>
 
-            <span id="auxWindowValue">
-                350 ms
-            </span>
-        </label>
+            <input
+               type="range"
+               id="auxReleaseCount"
+               min="0"
+               max="5"
+               value="0"
+            />
+         </div>
 
-        <input
-            type="range"
-            id="auxWindow"
-            min="50"
-            max="1500"
-            value="350"
-            step="10">
+         <div class="setting">
+            <label>
+               <span>Maximum auxiliary release</span>
 
-    </div>
+               <span id="auxReleaseMaxValue"> 400 ms </span>
+            </label>
 
-    <div class="checkbox-setting">
+            <input
+               type="range"
+               id="auxReleaseMax"
+               min="50"
+               max="2000"
+               value="400"
+               step="10"
+            />
+         </div>
 
-        <input
-            type="checkbox"
-            id="unlimitedReleases">
+         <hr />
 
-        <label for="unlimitedReleases">
-            Allow unlimited releases
-        </label>
+         <h3>Aim / Ball</h3>
 
-    </div>
+         <div class="setting">
+            <label>
+               <span>Ball size</span>
+               <span id="ballSizeValue">60 px</span>
+            </label>
 
-    <div
-        class="setting"
-        id="releaseCountSetting">
+            <input type="range" id="ballSize" min="10" max="100" value="60" />
+         </div>
 
-        <label>
-            <span>Temporary releases per combo</span>
+         <div class="setting">
+            <label>
+               <span>Panel size</span>
+               <span id="panelSizeValue">100%</span>
+            </label>
 
-            <span id="auxReleaseCountValue">
-                0
-            </span>
-        </label>
+            <input type="range" id="panelSize" min="50" max="100" value="100" />
+         </div>
 
-        <input
-            type="range"
-            id="auxReleaseCount"
-            min="0"
-            max="5"
-            value="0">
+         <div class="setting">
+            <label>
+               <span>Ball speed</span>
+               <span id="ballSpeedValue">250 px/s</span>
+            </label>
 
-    </div>
+            <input
+               type="range"
+               id="ballSpeed"
+               min="50"
+               max="1000"
+               value="250"
+               step="10"
+            />
+         </div>
 
-    <div class="setting">
+         <div class="setting">
+            <label>
+               <span>Strafe pattern</span>
+            </label>
 
-        <label>
-            <span>Maximum auxiliary release</span>
+            <select id="strafePattern">
+               <option value="horizontal">Left ↔ Right</option>
 
-            <span id="auxReleaseMaxValue">
-                400 ms
-            </span>
-        </label>
+               <option value="random">Random direction changes</option>
+            </select>
+         </div>
 
-        <input
-            type="range"
-            id="auxReleaseMax"
-            min="50"
-            max="2000"
-            value="400"
-            step="10">
+         <button class="reset-btn" onclick="resetTrainer(true)">Reset</button>
+      </aside>
 
-    </div>
-
-    <hr>
-
-    <h3>Aim / Ball</h3>
-
-    <div class="setting">
-
-        <label>
-            <span>Ball size</span>
-            <span id="ballSizeValue">60 px</span>
-        </label>
-
-        <input
-            type="range"
-            id="ballSize"
-            min="10"
-            max="100"
-            value="60">
-    </div>
-
-    <div class="setting">
-
-        <label>
-            <span>Panel size</span>
-            <span id="panelSizeValue">100%</span>
-        </label>
-
-        <input
-            type="range"
-            id="panelSize"
-            min="50"
-            max="100"
-            value="100">
-    </div>
-
-    <div class="setting">
-
-        <label>
-            <span>Ball speed</span>
-            <span id="ballSpeedValue">250 px/s</span>
-        </label>
-
-        <input
-            type="range"
-            id="ballSpeed"
-            min="50"
-            max="1000"
-            value="250"
-            step="10">
-    </div>
-
-    <div class="setting">
-
-        <label>
-            <span>Strafe pattern</span>
-        </label>
-
-        <select id="strafePattern">
-
-            <option value="horizontal">
-                Left ↔ Right
-            </option>
-
-            <option value="random">
-                Random direction changes
-            </option>
-
-        </select>
-
-    </div>
-
-    <button
-        class="reset-btn"
-        onclick="resetTrainer(true)">
-        Reset
-    </button>
-
-</aside>
-
-
-<!-- =======================================================
+      <!-- =======================================================
      MAIN
 ======================================================== -->
 
-<main>
-
-    <div class="instructions">
-
-        Follow the combo while keeping your mouse on the ball.
-
-        <br>
-
-        <b>Green ball</b> = mouse is on target.
-
-        <br>
-
-        <b>Green ring</b> = current sequence button can be pressed.
-
-        <br>
-
-        <b>Red ring</b> = wait before pressing.
-
-    </div>
-
-
-    <!-- ===================================================
+      <main>
+         <!-- ===================================================
          AIM PANEL
     ================================================== -->
 
-    <section class="aim-section">
+         <section class="aim-section">
+            <div class="aim-panel" id="aimPanel">
+               <div class="aim-panel-label">AIM / STRAFE</div>
 
-        <div
-            class="aim-panel"
-            id="aimPanel">
+               <div class="aim-center"></div>
 
-            <div class="aim-panel-label">
-                AIM / STRAFE
+               <div class="ball-timing-ring" id="ballTimingRing"></div>
+
+               <div class="ball" id="ball">
+                  <div class="ball-marker"></div>
+               </div>
+
+               <div class="aim-status" id="aimStatus">OFF TARGET</div>
             </div>
+         </section>
 
-            <div class="aim-center"></div>
-
-
-            <!--
-                Timing ring.
-
-                It is a separate element from the ball so
-                aim state and timing state stay independent.
-            -->
-
-            <div
-                class="ball-timing-ring"
-                id="ballTimingRing">
-            </div>
-
-
-            <div
-                class="ball"
-                id="ball">
-
-                <div class="ball-marker"></div>
-
-            </div>
-
-            <div
-                class="aim-status"
-                id="aimStatus">
-
-                OFF TARGET
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ===================================================
+         <!-- ===================================================
          STATS
     ================================================== -->
 
-    <div class="score">
+         <div class="score">
+            <div>
+               <div class="score-label">Correct</div>
 
-        <div>
-            <div class="score-label">
-                Correct
+               <strong id="correctCount"> 0 </strong>
             </div>
 
-            <strong id="correctCount">
-                0
-            </strong>
-        </div>
+            <div>
+               <div class="score-label">Errors</div>
 
-        <div>
-            <div class="score-label">
-                Errors
+               <strong id="errorCount"> 0 </strong>
             </div>
 
-            <strong id="errorCount">
-                0
-            </strong>
-        </div>
+            <div>
+               <div class="score-label">Completed</div>
 
-        <div>
-            <div class="score-label">
-                Completed
+               <strong id="comboCount"> 0 </strong>
             </div>
 
-            <strong id="comboCount">
-                0
-            </strong>
-        </div>
+            <div>
+               <div class="score-label">Max Streak</div>
 
-        <div>
-            <div class="score-label">
-                Max Streak
+               <strong id="streakCount"> 0 </strong>
             </div>
 
-            <strong id="streakCount">
-                0
-            </strong>
-        </div>
+            <div>
+               <div class="score-label">Aim %</div>
 
-        <div>
-            <div class="score-label">
-                Aim %
+               <strong id="aimPercent"> 0% </strong>
             </div>
+         </div>
 
-            <strong id="aimPercent">
-                0%
-            </strong>
-        </div>
-
-    </div>
-
-
-    <!-- ===================================================
+         <!-- ===================================================
          AUXILIARY
     ================================================== -->
 
-    <div
-        class="auxiliary-panel"
-        id="auxiliaryPanel">
+         <div class="auxiliary-panel" id="auxiliaryPanel">
+            <div class="aux-header">
+               <div class="aux-title">Auxiliary Hold</div>
 
-        <div class="aux-header">
-
-            <div class="aux-title">
-                Auxiliary Hold
+               <div class="aux-key" id="auxKey">L SHIFT</div>
             </div>
 
-            <div
-                class="aux-key"
-                id="auxKey">
-                L SHIFT
+            <div class="aux-content">
+               <div>
+                  <div class="aux-status" id="auxStatus">Waiting</div>
+
+                  <div class="aux-action" id="auxAction">HOLD L SHIFT</div>
+               </div>
+
+               <div class="aux-timer" id="auxTimer">WAIT</div>
             </div>
 
-        </div>
-
-        <div class="aux-content">
-
-            <div>
-
-                <div
-                    class="aux-status"
-                    id="auxStatus">
-                    Waiting
-                </div>
-
-                <div
-                    class="aux-action"
-                    id="auxAction">
-                    HOLD L SHIFT
-                </div>
-
+            <div class="aux-progress">
+               <div class="aux-progress-bar" id="auxProgressBar"></div>
             </div>
+         </div>
 
-            <div
-                class="aux-timer"
-                id="auxTimer">
-                WAIT
-            </div>
-
-        </div>
-
-        <div class="aux-progress">
-
-            <div
-                class="aux-progress-bar"
-                id="auxProgressBar">
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- ===================================================
+         <!-- ===================================================
          COMBO
     ================================================== -->
 
-    <div class="combo-wrapper">
+         <div class="combo-wrapper">
+            <div class="combo-title">Sequence</div>
 
-        <div class="combo-title">
-            Sequence
-        </div>
+            <div class="combo" id="combo"></div>
+         </div>
+      </main>
 
-        <div
-            class="combo"
-            id="combo">
-        </div>
+      <div class="fail-overlay" id="failOverlay">
+         <div class="fail-message">✕ BOOM</div>
+      </div>
 
-    </div>
-
-</main>
-
-
-<div
-    class="fail-overlay"
-    id="failOverlay">
-
-    <div class="fail-message">
-        ✕ BOOM
-    </div>
-
-</div>
-
-
-<script>
-
-/* =========================================================
+      <script>
+         /* =========================================================
    BUTTON DEFINITIONS
 ========================================================= */
 
-const BUTTONS = [
+         const BUTTONS = [
+            {
+               id: "a",
+               name: "A",
+               type: "keyboard",
+               code: "KeyA",
+            },
 
-    {
-        id:"a",
-        name:"A",
-        type:"keyboard",
-        code:"KeyA"
-    },
+            {
+               id: "s",
+               name: "S",
+               type: "keyboard",
+               code: "KeyS",
+            },
 
-    {
-        id:"s",
-        name:"S",
-        type:"keyboard",
-        code:"KeyS"
-    },
+            {
+               id: "d",
+               name: "D",
+               type: "keyboard",
+               code: "KeyD",
+            },
 
-    {
-        id:"d",
-        name:"D",
-        type:"keyboard",
-        code:"KeyD"
-    },
+            {
+               id: "f",
+               name: "F",
+               type: "keyboard",
+               code: "KeyF",
+            },
 
-    {
-        id:"f",
-        name:"F",
-        type:"keyboard",
-        code:"KeyF"
-    },
+            {
+               id: "space",
+               name: "SPACE",
+               type: "keyboard",
+               code: "Space",
+            },
 
-    {
-        id:"space",
-        name:"SPACE",
-        type:"keyboard",
-        code:"Space"
-    },
+            {
+               id: "shift",
+               name: "L SHIFT",
+               type: "keyboard",
+               code: "ShiftLeft",
+            },
 
-    {
-        id:"shift",
-        name:"L SHIFT",
-        type:"keyboard",
-        code:"ShiftLeft"
-    },
+            {
+               id: "ctrl",
+               name: "L CTRL",
+               type: "keyboard",
+               code: "ControlLeft",
+            },
 
-    {
-        id:"ctrl",
-        name:"L CTRL",
-        type:"keyboard",
-        code:"ControlLeft"
-    },
+            {
+               id: "alt",
+               name: "L ALT",
+               type: "keyboard",
+               code: "AltLeft",
+            },
 
-    {
-        id:"alt",
-        name:"L ALT",
-        type:"keyboard",
-        code:"AltLeft"
-    },
+            {
+               id: "lmb",
+               name: "LMB",
+               type: "mouse",
+               button: 0,
+            },
 
-    {
-        id:"lmb",
-        name:"LMB",
-        type:"mouse",
-        button:0
-    },
+            {
+               id: "mmb",
+               name: "MMB",
+               type: "mouse",
+               button: 1,
+            },
 
-    {
-        id:"mmb",
-        name:"MMB",
-        type:"mouse",
-        button:1
-    },
+            {
+               id: "rmb",
+               name: "RMB",
+               type: "mouse",
+               button: 2,
+            },
+         ];
 
-    {
-        id:"rmb",
-        name:"RMB",
-        type:"mouse",
-        button:2
-    }
-
-];
-
-
-/* =========================================================
+         /* =========================================================
    SETTINGS
 ========================================================= */
 
-const settings = {
+         const settings = {
+            buttonCount: 3,
 
-    buttonCount: 3,
+            readyWindow: 1000,
 
-    readyWindow: 1000,
+            forbiddenWindow: 600,
 
-    forbiddenWindow: 600,
+            holdWindow: 500,
 
-    holdWindow: 500,
+            auxEnabled: true,
 
-    auxEnabled: true,
+            auxButton: "shift",
 
-    auxButton: "shift",
+            auxWindow: 350,
 
-    auxWindow: 350,
+            auxReleaseCount: 0,
 
-    auxReleaseCount: 0,
+            auxReleaseMax: 400,
 
-    auxReleaseMax: 400,
+            unlimitedReleases: false,
 
-    unlimitedReleases: false,
+            ballSize: 60,
 
-    ballSize: 60,
+            panelSize: 100,
 
-    panelSize: 100,
+            ballSpeed: 250,
 
-    ballSpeed: 250,
+            strafePattern: "horizontal",
+         };
 
-    strafePattern: "horizontal"
+         let sequence = ["space", "rmb", "space"];
 
-};
-
-
-let sequence = [
-    "space",
-    "rmb",
-    "space"
-];
-
-
-/* =========================================================
+         /* =========================================================
    COMBO STATE
 ========================================================= */
 
-let phase = "IDLE";
+         let phase = "IDLE";
 
-let currentIndex = 0;
+         let currentIndex = 0;
 
-let phaseStart = 0;
+         let phaseStart = 0;
 
-let sequenceButtonDown = false;
+         let sequenceButtonDown = false;
 
-
-/* =========================================================
+         /* =========================================================
    AUX STATE
 ========================================================= */
 
-let auxState = "WAITING";
+         let auxState = "WAITING";
 
-let auxPhysicalDown = false;
+         let auxPhysicalDown = false;
 
-let auxRequiredStart = 0;
+         let auxRequiredStart = 0;
 
-let auxReleaseStart = 0;
+         let auxReleaseStart = 0;
 
-let boundaryReleaseRequired = false;
+         let boundaryReleaseRequired = false;
 
-let completedAuxReleases = 0;
+         let completedAuxReleases = 0;
 
-
-/* =========================================================
+         /* =========================================================
    SCORE
 ========================================================= */
 
-let correct = 0;
-let errors = 0;
-let completedCombos = 0;
+         let correct = 0;
+         let errors = 0;
+         let completedCombos = 0;
 
-let currentStreak = 0;
-let maxComboStreak = 0;
+         let currentStreak = 0;
+         let maxComboStreak = 0;
 
-
-/* =========================================================
+         /* =========================================================
    AIM STATE
 ========================================================= */
 
-const aimPanel =
-    document.getElementById("aimPanel");
+         const aimPanel = document.getElementById("aimPanel");
 
-const ball =
-    document.getElementById("ball");
+         const ball = document.getElementById("ball");
 
-const ballTimingRing =
-    document.getElementById("ballTimingRing");
+         const ballTimingRing = document.getElementById("ballTimingRing");
 
-const aimStatus =
-    document.getElementById("aimStatus");
+         const aimStatus = document.getElementById("aimStatus");
 
-let ballX = 0;
-let ballY = 0;
+         let ballX = 0;
+         let ballY = 0;
 
-let ballVX = 1;
-let ballVY = 0;
+         let ballVX = 1;
+         let ballVY = 0;
 
-let lastBallTime = 0;
+         let lastBallTime = 0;
 
-let mouseX = -1000;
-let mouseY = -1000;
+         let mouseX = -1000;
+         let mouseY = -1000;
 
-let aimSamples = 0;
-let aimGoodSamples = 0;
+         let aimSamples = 0;
+         let aimGoodSamples = 0;
 
-
-/* =========================================================
+         /* =========================================================
    DOM
 ========================================================= */
 
-const comboElement =
-    document.getElementById("combo");
+         const comboElement = document.getElementById("combo");
 
-const statusElement =
-    document.getElementById("statusText");
+         const statusElement = document.getElementById("statusText");
 
-const auxiliaryPanel =
-    document.getElementById("auxiliaryPanel");
+         const auxiliaryPanel = document.getElementById("auxiliaryPanel");
 
-const auxStatus =
-    document.getElementById("auxStatus");
+         const auxStatus = document.getElementById("auxStatus");
 
-const auxAction =
-    document.getElementById("auxAction");
+         const auxAction = document.getElementById("auxAction");
 
-const auxTimer =
-    document.getElementById("auxTimer");
+         const auxTimer = document.getElementById("auxTimer");
 
-const auxKey =
-    document.getElementById("auxKey");
+         const auxKey = document.getElementById("auxKey");
 
-const auxProgressBar =
-    document.getElementById("auxProgressBar");
+         const auxProgressBar = document.getElementById("auxProgressBar");
 
-const failOverlay =
-    document.getElementById("failOverlay");
+         const failOverlay = document.getElementById("failOverlay");
 
+         function getButton(id) {
+            return BUTTONS.find((button) => button.id === id);
+         }
 
-function getButton(id) {
+         function getCurrentButton() {
+            return getButton(sequence[currentIndex]);
+         }
 
-    return BUTTONS.find(
-        button => button.id === id
-    );
+         function getAuxButton() {
+            return getButton(settings.auxButton);
+         }
 
-}
+         function matches(button, input) {
+            if (!button) {
+               return false;
+            }
 
+            if (button.type !== input.type) {
+               return false;
+            }
 
-function getCurrentButton() {
+            if (button.type === "keyboard") {
+               return button.code === input.code;
+            }
 
-    return getButton(
-        sequence[currentIndex]
-    );
+            return button.button === input.button;
+         }
 
-}
-
-
-function getAuxButton() {
-
-    return getButton(
-        settings.auxButton
-    );
-
-}
-
-
-function matches(button, input) {
-
-    if (!button) {
-        return false;
-    }
-
-    if (button.type !== input.type) {
-        return false;
-    }
-
-    if (button.type === "keyboard") {
-
-        return button.code === input.code;
-
-    }
-
-    return button.button === input.button;
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    SETTINGS PANEL
 ========================================================= */
 
-function toggleSettings() {
+         function toggleSettings() {
+            document.getElementById("settingsPanel").classList.toggle("open");
+         }
 
-    document
-        .getElementById("settingsPanel")
-        .classList.toggle("open");
+         function updateSettingLabels() {
+            document.getElementById("buttonCountValue").textContent =
+               settings.buttonCount;
 
-}
+            document.getElementById("readyWindowValue").textContent =
+               settings.readyWindow + " ms";
 
+            document.getElementById("forbiddenWindowValue").textContent =
+               settings.forbiddenWindow + " ms";
 
-function updateSettingLabels() {
+            document.getElementById("holdWindowValue").textContent =
+               settings.holdWindow + " ms";
 
-    document.getElementById(
-        "buttonCountValue"
-    ).textContent =
-        settings.buttonCount;
+            document.getElementById("auxWindowValue").textContent =
+               settings.auxWindow + " ms";
 
-    document.getElementById(
-        "readyWindowValue"
-    ).textContent =
-        settings.readyWindow + " ms";
+            document.getElementById("auxReleaseCountValue").textContent =
+               settings.auxReleaseCount;
 
-    document.getElementById(
-        "forbiddenWindowValue"
-    ).textContent =
-        settings.forbiddenWindow + " ms";
+            document.getElementById("auxReleaseMaxValue").textContent =
+               settings.auxReleaseMax + " ms";
 
-    document.getElementById(
-        "holdWindowValue"
-    ).textContent =
-        settings.holdWindow + " ms";
+            document.getElementById("ballSizeValue").textContent =
+               settings.ballSize + " px";
 
-    document.getElementById(
-        "auxWindowValue"
-    ).textContent =
-        settings.auxWindow + " ms";
+            document.getElementById("panelSizeValue").textContent =
+               settings.panelSize + "%";
 
-    document.getElementById(
-        "auxReleaseCountValue"
-    ).textContent =
-        settings.auxReleaseCount;
+            document.getElementById("ballSpeedValue").textContent =
+               settings.ballSpeed + " px/s";
+         }
 
-    document.getElementById(
-        "auxReleaseMaxValue"
-    ).textContent =
-        settings.auxReleaseMax + " ms";
+         function buildButtonConfiguration() {
+            const container = document.getElementById("buttonConfig");
 
-    document.getElementById(
-        "ballSizeValue"
-    ).textContent =
-        settings.ballSize + " px";
+            container.innerHTML = "";
 
-    document.getElementById(
-        "panelSizeValue"
-    ).textContent =
-        settings.panelSize + "%";
+            for (let i = 0; i < settings.buttonCount; i++) {
+               const select = document.createElement("select");
 
-    document.getElementById(
-        "ballSpeedValue"
-    ).textContent =
-        settings.ballSpeed + " px/s";
+               BUTTONS.forEach((button) => {
+                  const option = document.createElement("option");
 
-}
+                  option.value = button.id;
 
+                  option.textContent = button.name;
 
-function buildButtonConfiguration() {
+                  option.selected = sequence[i] === button.id;
 
-    const container =
-        document.getElementById(
-            "buttonConfig"
-        );
+                  select.appendChild(option);
+               });
 
-    container.innerHTML = "";
+               select.addEventListener("change", () => {
+                  sequence[i] = select.value;
 
-    for (
-        let i = 0;
-        i < settings.buttonCount;
-        i++
-    ) {
+                  resetTrainer(true);
+               });
 
-        const select =
-            document.createElement("select");
-
-        BUTTONS.forEach(button => {
-
-            const option =
-                document.createElement("option");
-
-            option.value =
-                button.id;
-
-            option.textContent =
-                button.name;
-
-            option.selected =
-                sequence[i] === button.id;
-
-            select.appendChild(option);
-
-        });
-
-        select.addEventListener(
-            "change",
-            () => {
-
-                sequence[i] =
-                    select.value;
-
-                resetTrainer(true);
-
+               container.appendChild(select);
             }
-        );
+         }
 
-        container.appendChild(select);
+         function buildAuxiliarySelect() {
+            const select = document.getElementById("auxButton");
 
-    }
+            select.innerHTML = "";
 
-}
+            BUTTONS.forEach((button) => {
+               const option = document.createElement("option");
 
+               option.value = button.id;
 
-function buildAuxiliarySelect() {
+               option.textContent = button.name;
 
-    const select =
-        document.getElementById(
-            "auxButton"
-        );
+               option.selected = button.id === settings.auxButton;
 
-    select.innerHTML = "";
+               select.appendChild(option);
+            });
 
-    BUTTONS.forEach(button => {
+            updateAuxiliaryLabel();
+         }
 
-        const option =
-            document.createElement("option");
+         function updateAuxiliaryLabel() {
+            auxKey.textContent = getAuxButton().name;
+         }
 
-        option.value =
-            button.id;
+         function updateReleaseCountUI() {
+            document.getElementById("releaseCountSetting").style.opacity =
+               settings.unlimitedReleases ? "0.45" : "1";
+         }
 
-        option.textContent =
-            button.name;
-
-        option.selected =
-            button.id ===
-            settings.auxButton;
-
-        select.appendChild(option);
-
-    });
-
-    updateAuxiliaryLabel();
-
-}
-
-
-function updateAuxiliaryLabel() {
-
-    auxKey.textContent =
-        getAuxButton().name;
-
-}
-
-
-function updateReleaseCountUI() {
-
-    document.getElementById(
-        "releaseCountSetting"
-    ).style.opacity =
-        settings.unlimitedReleases
-            ? "0.45"
-            : "1";
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    SETTINGS EVENTS
 ========================================================= */
 
-document
-    .getElementById("buttonCount")
-    .addEventListener(
-        "input",
-        function() {
+         document
+            .getElementById("buttonCount")
+            .addEventListener("input", function () {
+               settings.buttonCount = Number(this.value);
 
-            settings.buttonCount =
-                Number(this.value);
+               while (sequence.length < settings.buttonCount) {
+                  sequence.push(BUTTONS[sequence.length % BUTTONS.length].id);
+               }
 
-            while (
-                sequence.length <
-                settings.buttonCount
-            ) {
-
-                sequence.push(
-                    BUTTONS[
-                        sequence.length %
-                        BUTTONS.length
-                    ].id
-                );
-
-            }
-
-            sequence =
-                sequence.slice(
-                    0,
-                    settings.buttonCount
-                );
-
-            updateSettingLabels();
-            buildButtonConfiguration();
-            resetTrainer(true);
-
-        }
-    );
-
-
-document
-    .getElementById("readyWindow")
-    .addEventListener(
-        "input",
-        function() {
-
-            settings.readyWindow =
-                Number(this.value);
-
-            updateSettingLabels();
-
-        }
-    );
-
-
-document
-    .getElementById("forbiddenWindow")
-    .addEventListener(
-        "input",
-        function() {
-
-            settings.forbiddenWindow =
-                Number(this.value);
-
-            updateSettingLabels();
-
-        }
-    );
-
-
-document
-    .getElementById("holdWindow")
-    .addEventListener(
-        "input",
-        function() {
-
-            settings.holdWindow =
-                Number(this.value);
-
-            updateSettingLabels();
-
-        }
-    );
-
-
-document
-    .getElementById("auxWindow")
-    .addEventListener(
-        "input",
-        function() {
-
-            settings.auxWindow =
-                Number(this.value);
-
-            updateSettingLabels();
-
-        }
-    );
-
-
-document
-    .getElementById("auxReleaseCount")
-    .addEventListener(
-        "input",
-        function() {
-
-            settings.auxReleaseCount =
-                Number(this.value);
-
-            updateSettingLabels();
-
-        }
-    );
-
-
-document
-    .getElementById("auxReleaseMax")
-    .addEventListener(
-        "input",
-        function() {
-
-            settings.auxReleaseMax =
-                Number(this.value);
-
-            updateSettingLabels();
-
-        }
-    );
-
-
-document
-    .getElementById("auxButton")
-    .addEventListener(
-        "change",
-        function() {
-
-            settings.auxButton =
-                this.value;
-
-            updateAuxiliaryLabel();
-
-            resetTrainer(false);
-
-        }
-    );
-
-
-document
-    .getElementById("auxEnabled")
-    .addEventListener(
-        "change",
-        function() {
-
-            settings.auxEnabled =
-                this.checked;
-
-            resetTrainer(false);
-
-        }
-    );
-
-
-document
-    .getElementById("unlimitedReleases")
-    .addEventListener(
-        "change",
-        function() {
-
-            settings.unlimitedReleases =
-                this.checked;
-
-            updateReleaseCountUI();
-
-        }
-    );
-
-
-document
-    .getElementById("ballSize")
-    .addEventListener(
-        "input",
-        function() {
-
-            settings.ballSize =
-                Number(this.value);
-
-            updateSettingLabels();
-            updateBallSize();
-
-        }
-    );
-
-
-document
-    .getElementById("panelSize")
-    .addEventListener(
-        "input",
-        function() {
-
-            settings.panelSize =
-                Number(this.value);
-
-            updateSettingLabels();
-            updatePanelSize();
-
-        }
-    );
-
-
-document
-    .getElementById("ballSpeed")
-    .addEventListener(
-        "input",
-        function() {
-
-            settings.ballSpeed =
-                Number(this.value);
-
-            updateSettingLabels();
-
-        }
-    );
-
-
-document
-    .getElementById("strafePattern")
-    .addEventListener(
-        "change",
-        function() {
-
-            settings.strafePattern =
-                this.value;
-
-            resetBall();
-
-        }
-    );
-
-
-/* =========================================================
+               sequence = sequence.slice(0, settings.buttonCount);
+
+               updateSettingLabels();
+               buildButtonConfiguration();
+               resetTrainer(true);
+            });
+
+         document
+            .getElementById("readyWindow")
+            .addEventListener("input", function () {
+               settings.readyWindow = Number(this.value);
+
+               updateSettingLabels();
+            });
+
+         document
+            .getElementById("forbiddenWindow")
+            .addEventListener("input", function () {
+               settings.forbiddenWindow = Number(this.value);
+
+               updateSettingLabels();
+            });
+
+         document
+            .getElementById("holdWindow")
+            .addEventListener("input", function () {
+               settings.holdWindow = Number(this.value);
+
+               updateSettingLabels();
+            });
+
+         document
+            .getElementById("auxWindow")
+            .addEventListener("input", function () {
+               settings.auxWindow = Number(this.value);
+
+               updateSettingLabels();
+            });
+
+         document
+            .getElementById("auxReleaseCount")
+            .addEventListener("input", function () {
+               settings.auxReleaseCount = Number(this.value);
+
+               updateSettingLabels();
+            });
+
+         document
+            .getElementById("auxReleaseMax")
+            .addEventListener("input", function () {
+               settings.auxReleaseMax = Number(this.value);
+
+               updateSettingLabels();
+            });
+
+         document
+            .getElementById("auxButton")
+            .addEventListener("change", function () {
+               settings.auxButton = this.value;
+
+               updateAuxiliaryLabel();
+
+               resetTrainer(false);
+            });
+
+         document
+            .getElementById("auxEnabled")
+            .addEventListener("change", function () {
+               settings.auxEnabled = this.checked;
+
+               resetTrainer(false);
+            });
+
+         document
+            .getElementById("unlimitedReleases")
+            .addEventListener("change", function () {
+               settings.unlimitedReleases = this.checked;
+
+               updateReleaseCountUI();
+            });
+
+         document
+            .getElementById("ballSize")
+            .addEventListener("input", function () {
+               settings.ballSize = Number(this.value);
+
+               updateSettingLabels();
+               updateBallSize();
+            });
+
+         document
+            .getElementById("panelSize")
+            .addEventListener("input", function () {
+               settings.panelSize = Number(this.value);
+
+               updateSettingLabels();
+               updatePanelSize();
+            });
+
+         document
+            .getElementById("ballSpeed")
+            .addEventListener("input", function () {
+               settings.ballSpeed = Number(this.value);
+
+               updateSettingLabels();
+            });
+
+         document
+            .getElementById("strafePattern")
+            .addEventListener("change", function () {
+               settings.strafePattern = this.value;
+
+               resetBall();
+            });
+
+         /* =========================================================
    COMBO DISPLAY
 ========================================================= */
 
-function buildComboDisplay() {
+         function buildComboDisplay() {
+            comboElement.innerHTML = "";
 
-    comboElement.innerHTML = "";
+            sequence.forEach((id, index) => {
+               const button = getButton(id);
 
-    sequence.forEach(
-        (id, index) => {
+               const item = document.createElement("div");
 
-            const button =
-                getButton(id);
+               item.className = "combo-item";
 
-            const item =
-                document.createElement("div");
+               item.id = "combo-" + index;
 
-            item.className =
-                "combo-item";
-
-            item.id =
-                "combo-" + index;
-
-            item.innerHTML = `
+               item.innerHTML = `
 
                 <div class="key">
                     ${button.name}
@@ -2046,67 +1599,73 @@ function buildComboDisplay() {
 
             `;
 
-            comboElement.appendChild(item);
+               comboElement.appendChild(item);
+            });
+         }
 
-        }
-    );
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    RESET
 ========================================================= */
 
-function resetTrainer(rebuild = false) {
+         function resetTrainer(rebuild = false) {
+            phase = "IDLE";
 
-    phase = "IDLE";
+            currentIndex = 0;
 
-    currentIndex = 0;
+            phaseStart = 0;
 
-    phaseStart = 0;
+            sequenceButtonDown = false;
 
-    sequenceButtonDown = false;
+            auxRequiredStart = 0;
 
-    auxRequiredStart = 0;
+            auxReleaseStart = 0;
 
-    auxReleaseStart = 0;
+            boundaryReleaseRequired = false;
 
-    boundaryReleaseRequired = false;
+            completedAuxReleases = 0;
 
-    completedAuxReleases = 0;
+            auxState = settings.auxEnabled ? "WAITING" : "OFF";
 
-    auxState =
-        settings.auxEnabled
-            ? "WAITING"
-            : "OFF";
+            if (rebuild) {
+               buildComboDisplay();
+            }
+         }
 
-    if (rebuild) {
-        buildComboDisplay();
-    }
+         /* =========================================================
+   SUCCESS FLASH
+========================================================= */
 
-}
+         function showSequenceSuccess() {
+            aimPanel.classList.remove("sequence-success");
 
+            /*
+       Force a reflow so the animation
+       restarts even on rapid completions.
+    */
+            void aimPanel.offsetWidth;
 
-/* =========================================================
+            aimPanel.classList.add("sequence-success");
+
+            setTimeout(() => {
+               aimPanel.classList.remove("sequence-success");
+            }, 250);
+         }
+
+         /* =========================================================
    FAIL
 ========================================================= */
 
-function fail(reason) {
+         function fail(reason) {
+            errors++;
 
-    errors++;
+            currentStreak = 0;
 
-    currentStreak = 0;
+            document.getElementById("errorCount").textContent = errors;
 
-    document.getElementById(
-        "errorCount"
-    ).textContent =
-        errors;
+            statusElement.textContent = "ERROR: " + reason;
 
-    statusElement.textContent =
-        "ERROR: " + reason;
-
-   /* failOverlay.classList.add(
+            /*
+    failOverlay.classList.add(
         "show"
     );
 
@@ -2118,1860 +1677,1018 @@ function fail(reason) {
             );
 
         },
-        300 
-    );*/
+        300
+    );
+    */
 
-    phase = "IDLE";
+            phase = "IDLE";
 
-    currentIndex = 0;
+            currentIndex = 0;
 
-    phaseStart = 0;
+            phaseStart = 0;
 
-    sequenceButtonDown = false;
+            sequenceButtonDown = false;
 
-    auxRequiredStart = 0;
+            auxRequiredStart = 0;
 
-    auxReleaseStart = 0;
+            auxReleaseStart = 0;
 
-    boundaryReleaseRequired = false;
+            boundaryReleaseRequired = false;
 
-    completedAuxReleases = 0;
+            completedAuxReleases = 0;
 
-    auxState =
-        settings.auxEnabled
-            ? "WAITING"
-            : "OFF";
+            auxState = settings.auxEnabled ? "WAITING" : "OFF";
+         }
 
-}
-
-
-/* =========================================================
+         /* =========================================================
    FIRST SEQUENCE BUTTON
 ========================================================= */
 
-function startFirstButton(now) {
+         function startFirstButton(now) {
+            phase = "HOLD";
 
-    phase = "HOLD";
+            phaseStart = now;
 
-    phaseStart = now;
+            sequenceButtonDown = true;
 
-    sequenceButtonDown = true;
+            if (settings.auxEnabled) {
+               auxState = "REQUIRED";
 
-    if (settings.auxEnabled) {
+               auxRequiredStart = now;
+            }
+         }
 
-        auxState = "REQUIRED";
+         function startNormalButton(now) {
+            phase = "HOLD";
 
-        auxRequiredStart = now;
+            phaseStart = now;
 
-    }
+            sequenceButtonDown = true;
+         }
 
-}
-
-
-function startNormalButton(now) {
-
-    phase = "HOLD";
-
-    phaseStart = now;
-
-    sequenceButtonDown = true;
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    GAP
 ========================================================= */
 
-function startGap(now) {
+         function startGap(now) {
+            phase = "GAP";
 
-    phase = "GAP";
+            phaseStart = now;
 
-    phaseStart = now;
+            sequenceButtonDown = false;
 
-    sequenceButtonDown = false;
+            if (currentIndex === sequence.length - 1) {
+               boundaryReleaseRequired = settings.auxEnabled;
+            } else {
+               boundaryReleaseRequired = false;
+            }
+         }
 
-    if (
-        currentIndex ===
-        sequence.length - 1
-    ) {
-
-        boundaryReleaseRequired =
-            settings.auxEnabled;
-
-    } else {
-
-        boundaryReleaseRequired =
-            false;
-
-    }
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    FINISH GAP
 ========================================================= */
 
-function finishGap(now) {
+         function finishGap(now) {
+            if (currentIndex < sequence.length - 1) {
+               currentIndex++;
 
-    if (
-        currentIndex <
-        sequence.length - 1
-    ) {
+               phase = "READY";
 
-        currentIndex++;
+               phaseStart = now;
 
-        phase = "READY";
+               return;
+            }
 
-        phaseStart = now;
+            if (
+               settings.auxEnabled &&
+               boundaryReleaseRequired &&
+               auxPhysicalDown
+            ) {
+               fail("L SHIFT was not released during the final red window");
 
-        return;
+               return;
+            }
 
-    }
+            if (
+               settings.auxEnabled &&
+               !settings.unlimitedReleases &&
+               completedAuxReleases !== settings.auxReleaseCount
+            ) {
+               fail(
+                  "Wrong auxiliary release count: " +
+                     completedAuxReleases +
+                     "/" +
+                     settings.auxReleaseCount,
+               );
 
-    if (
-        settings.auxEnabled &&
-        boundaryReleaseRequired &&
-        auxPhysicalDown
-    ) {
+               return;
+            }
 
-        fail(
-            "L SHIFT was not released during the final red window"
-        );
+            /*
+       The complete sequence has been
+       successfully finished.
+    */
 
-        return;
+            completedCombos++;
 
-    }
+            currentStreak++;
 
-    if (
-        settings.auxEnabled &&
-        !settings.unlimitedReleases &&
-        completedAuxReleases !==
-        settings.auxReleaseCount
-    ) {
+            showSequenceSuccess();
 
-        fail(
-            "Wrong auxiliary release count: " +
-            completedAuxReleases +
-            "/" +
-            settings.auxReleaseCount
-        );
+            if (currentStreak > maxComboStreak) {
+               maxComboStreak = currentStreak;
+            }
 
-        return;
+            document.getElementById("comboCount").textContent = completedCombos;
 
-    }
+            document.getElementById("streakCount").textContent = maxComboStreak;
 
-    completedCombos++;
+            currentIndex = 0;
 
-    currentStreak++;
+            phase = "READY";
 
-    if (
-        currentStreak >
-        maxComboStreak
-    ) {
+            phaseStart = now;
 
-        maxComboStreak =
-            currentStreak;
+            boundaryReleaseRequired = false;
 
-    }
+            if (settings.auxEnabled) {
+               auxState = "WAITING";
 
-    document.getElementById(
-        "comboCount"
-    ).textContent =
-        completedCombos;
+               auxRequiredStart = 0;
 
-    document.getElementById(
-        "streakCount"
-    ).textContent =
-        maxComboStreak;
+               auxReleaseStart = 0;
 
-    currentIndex = 0;
+               completedAuxReleases = 0;
+            }
+         }
 
-    phase = "READY";
-
-    phaseStart = now;
-
-    boundaryReleaseRequired =
-        false;
-
-    if (settings.auxEnabled) {
-
-        auxState = "WAITING";
-
-        auxRequiredStart = 0;
-
-        auxReleaseStart = 0;
-
-        completedAuxReleases = 0;
-
-    }
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    AUX DOWN
 ========================================================= */
 
-function auxiliaryDown(now) {
+         function auxiliaryDown(now) {
+            if (auxPhysicalDown) {
+               return;
+            }
 
-    if (auxPhysicalDown) {
-        return;
-    }
+            auxPhysicalDown = true;
 
-    auxPhysicalDown = true;
+            if (auxState === "REQUIRED") {
+               const elapsed = now - auxRequiredStart;
 
-    if (
-        auxState === "REQUIRED"
-    ) {
+               if (elapsed <= settings.auxWindow) {
+                  auxState = "HELD";
 
-        const elapsed =
-            now -
-            auxRequiredStart;
+                  return;
+               }
 
-        if (
-            elapsed <=
-            settings.auxWindow
-        ) {
+               fail("Auxiliary pressed too late");
 
-            auxState = "HELD";
+               return;
+            }
 
-            return;
+            if (auxState === "TEMP_RELEASE") {
+               const releasedFor = now - auxReleaseStart;
 
-        }
+               if (releasedFor > settings.auxReleaseMax) {
+                  fail("Auxiliary release too long");
 
-        fail(
-            "Auxiliary pressed too late"
-        );
+                  return;
+               }
 
-        return;
+               completedAuxReleases++;
 
-    }
+               auxReleaseStart = 0;
 
-    if (
-        auxState === "TEMP_RELEASE"
-    ) {
+               auxState = "HELD";
 
-        const releasedFor =
-            now -
-            auxReleaseStart;
+               return;
+            }
 
-        if (
-            releasedFor >
-            settings.auxReleaseMax
-        ) {
+            if (phase === "GAP" && boundaryReleaseRequired) {
+               fail("L SHIFT pressed again before new combo started");
 
-            fail(
-                "Auxiliary release too long"
-            );
+               return;
+            }
 
-            return;
+            if (auxState === "WAITING") {
+               fail("Press the first sequence button before L SHIFT");
 
-        }
+               return;
+            }
 
-        completedAuxReleases++;
+            if (auxState === "HELD") {
+               return;
+            }
+         }
 
-        auxReleaseStart = 0;
-
-        auxState = "HELD";
-
-        return;
-
-    }
-
-    if (
-        phase === "GAP" &&
-        boundaryReleaseRequired
-    ) {
-
-        fail(
-            "L SHIFT pressed again before new combo started"
-        );
-
-        return;
-
-    }
-
-    if (
-        auxState === "WAITING"
-    ) {
-
-        fail(
-            "Press the first sequence button before L SHIFT"
-        );
-
-        return;
-
-    }
-
-    if (
-        auxState === "HELD"
-    ) {
-
-        return;
-
-    }
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    AUX UP
 ========================================================= */
 
-function auxiliaryUp(now) {
+         function auxiliaryUp(now) {
+            if (!auxPhysicalDown) {
+               return;
+            }
 
-    if (!auxPhysicalDown) {
-        return;
-    }
+            auxPhysicalDown = false;
 
-    auxPhysicalDown = false;
+            if (phase === "GAP" && boundaryReleaseRequired) {
+               auxState = "BOUNDARY_RELEASED";
 
-    if (
-        phase === "GAP" &&
-        boundaryReleaseRequired
-    ) {
+               return;
+            }
 
-        auxState =
-            "BOUNDARY_RELEASED";
+            if (auxState === "HELD") {
+               if (
+                  !settings.unlimitedReleases &&
+                  completedAuxReleases >= settings.auxReleaseCount
+               ) {
+                  fail("Too many auxiliary releases");
 
-        return;
+                  return;
+               }
 
-    }
+               auxState = "TEMP_RELEASE";
 
-    if (
-        auxState === "HELD"
-    ) {
+               auxReleaseStart = now;
 
-        if (
-            !settings.unlimitedReleases &&
-            completedAuxReleases >=
-            settings.auxReleaseCount
-        ) {
+               return;
+            }
 
-            fail(
-                "Too many auxiliary releases"
-            );
+            if (auxState === "REQUIRED") {
+               fail("Auxiliary released before being held");
 
-            return;
+               return;
+            }
+         }
 
-        }
-
-        auxState = "TEMP_RELEASE";
-
-        auxReleaseStart = now;
-
-        return;
-
-    }
-
-    if (
-        auxState === "REQUIRED"
-    ) {
-
-        fail(
-            "Auxiliary released before being held"
-        );
-
-        return;
-
-    }
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    SEQUENCE DOWN
 ========================================================= */
 
-function sequenceDown(input, now) {
+         function sequenceDown(input, now) {
+            if (phase === "GAP") {
+               fail("Sequence button pressed during red window");
 
-    if (
-        phase === "GAP"
-    ) {
+               return;
+            }
 
-        fail(
-            "Sequence button pressed during red window"
-        );
+            if (phase === "IDLE") {
+               const expected = getCurrentButton();
 
-        return;
+               if (matches(expected, input)) {
+                  correct++;
 
-    }
+                  document.getElementById("correctCount").textContent = correct;
 
-    if (
-        phase === "IDLE"
-    ) {
+                  startFirstButton(now);
+               } else {
+                  fail("Expected " + expected.name);
+               }
 
-        const expected =
-            getCurrentButton();
+               return;
+            }
 
-        if (
-            matches(
-                expected,
-                input
-            )
-        ) {
+            if (phase === "READY") {
+               const expected = getCurrentButton();
 
-            correct++;
+               if (!matches(expected, input)) {
+                  fail("Expected " + expected.name);
 
-            document.getElementById(
-                "correctCount"
-            ).textContent =
-                correct;
+                  return;
+               }
 
-            startFirstButton(now);
+               correct++;
 
-        } else {
+               document.getElementById("correctCount").textContent = correct;
 
-            fail(
-                "Expected " +
-                expected.name
-            );
+               if (currentIndex === 0) {
+                  startFirstButton(now);
+               } else {
+                  startNormalButton(now);
+               }
 
-        }
+               return;
+            }
 
-        return;
+            if (phase === "HOLD") {
+               return;
+            }
+         }
 
-    }
-
-    if (
-        phase === "READY"
-    ) {
-
-        const expected =
-            getCurrentButton();
-
-        if (
-            !matches(
-                expected,
-                input
-            )
-        ) {
-
-            fail(
-                "Expected " +
-                expected.name
-            );
-
-            return;
-
-        }
-
-        correct++;
-
-        document.getElementById(
-            "correctCount"
-        ).textContent =
-            correct;
-
-        if (
-            currentIndex === 0
-        ) {
-
-            startFirstButton(now);
-
-        } else {
-
-            startNormalButton(now);
-
-        }
-
-        return;
-
-    }
-
-    if (
-        phase === "HOLD"
-    ) {
-
-        return;
-
-    }
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    SEQUENCE UP
 ========================================================= */
 
-function sequenceUp(input, now) {
+         function sequenceUp(input, now) {
+            if (phase !== "HOLD") {
+               return;
+            }
 
-    if (
-        phase !== "HOLD"
-    ) {
+            const expected = getCurrentButton();
 
-        return;
+            if (!matches(expected, input)) {
+               return;
+            }
 
-    }
+            sequenceButtonDown = false;
 
-    const expected =
-        getCurrentButton();
+            const heldFor = now - phaseStart;
 
-    if (
-        !matches(
-            expected,
-            input
-        )
-    ) {
+            if (heldFor > settings.holdWindow) {
+               fail(
+                  expected.name +
+                     " held longer than " +
+                     settings.holdWindow +
+                     " ms",
+               );
 
-        return;
+               return;
+            }
 
-    }
+            startGap(now);
+         }
 
-    sequenceButtonDown = false;
-
-    const heldFor =
-        now -
-        phaseStart;
-
-    if (
-        heldFor >
-        settings.holdWindow
-    ) {
-
-        fail(
-            expected.name +
-            " held longer than " +
-            settings.holdWindow +
-            " ms"
-        );
-
-        return;
-
-    }
-
-    startGap(now);
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    INPUT
 ========================================================= */
 
-function inputDown(input) {
+         function inputDown(input) {
+            const now = performance.now();
 
-    const now =
-        performance.now();
+            if (settings.auxEnabled && matches(getAuxButton(), input)) {
+               auxiliaryDown(now);
 
-    if (
-        settings.auxEnabled &&
-        matches(
-            getAuxButton(),
-            input
-        )
-    ) {
+               return;
+            }
 
-        auxiliaryDown(now);
+            sequenceDown(input, now);
+         }
 
-        return;
+         function inputUp(input) {
+            const now = performance.now();
 
-    }
+            if (settings.auxEnabled && matches(getAuxButton(), input)) {
+               auxiliaryUp(now);
 
-    sequenceDown(
-        input,
-        now
-    );
+               return;
+            }
 
-}
+            sequenceUp(input, now);
+         }
 
-
-function inputUp(input) {
-
-    const now =
-        performance.now();
-
-    if (
-        settings.auxEnabled &&
-        matches(
-            getAuxButton(),
-            input
-        )
-    ) {
-
-        auxiliaryUp(now);
-
-        return;
-
-    }
-
-    sequenceUp(
-        input,
-        now
-    );
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    COMBO LOGIC UPDATE
 ========================================================= */
 
-function updateLogic(now) {
+         function updateLogic(now) {
+            if (settings.auxEnabled && auxState === "REQUIRED") {
+               if (now - auxRequiredStart >= settings.auxWindow) {
+                  if (!auxPhysicalDown) {
+                     fail("L SHIFT was not pressed in time");
 
-    if (
-        settings.auxEnabled &&
-        auxState === "REQUIRED"
-    ) {
-
-        if (
-            now -
-            auxRequiredStart >=
-            settings.auxWindow
-        ) {
-
-            if (!auxPhysicalDown) {
-
-                fail(
-                    "L SHIFT was not pressed in time"
-                );
-
-                return;
-
+                     return;
+                  }
+               }
             }
 
-        }
+            if (settings.auxEnabled && auxState === "TEMP_RELEASE") {
+               if (now - auxReleaseStart >= settings.auxReleaseMax) {
+                  fail(
+                     "L SHIFT release exceeded " +
+                        settings.auxReleaseMax +
+                        " ms",
+                  );
 
-    }
+                  return;
+               }
+            }
 
-    if (
-        settings.auxEnabled &&
-        auxState === "TEMP_RELEASE"
-    ) {
+            if (phase === "GAP") {
+               if (now - phaseStart >= settings.forbiddenWindow) {
+                  finishGap(now);
+               }
+            }
 
-        if (
-            now -
-            auxReleaseStart >=
-            settings.auxReleaseMax
-        ) {
+            if (phase === "READY") {
+               if (now - phaseStart >= settings.readyWindow) {
+                  fail("Missed " + getCurrentButton().name);
 
-            fail(
-                "L SHIFT release exceeded " +
-                settings.auxReleaseMax +
-                " ms"
-            );
+                  return;
+               }
+            }
+         }
 
-            return;
-
-        }
-
-    }
-
-    if (
-        phase === "GAP"
-    ) {
-
-        if (
-            now -
-            phaseStart >=
-            settings.forbiddenWindow
-        ) {
-
-            finishGap(now);
-
-        }
-
-    }
-
-    if (
-        phase === "READY"
-    ) {
-
-        if (
-            now -
-            phaseStart >=
-            settings.readyWindow
-        ) {
-
-            fail(
-                "Missed " +
-                getCurrentButton().name
-            );
-
-            return;
-
-        }
-
-    }
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    TIMING RING VISUAL
 ========================================================= */
 
-/*
-   This is completely independent from aim.
+         function updateTimingRing() {
+            ballTimingRing.classList.remove("ready", "red", "hold");
 
-   IDLE:
-       first button is available -> GREEN
+            if (phase === "IDLE") {
+               ballTimingRing.classList.add("ready");
 
-   READY:
-       current button is available -> GREEN
+               return;
+            }
 
-   HOLD:
-       button is already pressed -> GREEN, subdued
+            if (phase === "READY") {
+               ballTimingRing.classList.add("ready");
 
-   GAP:
-       next button is forbidden -> RED
-*/
+               return;
+            }
 
-function updateTimingRing() {
+            if (phase === "HOLD") {
+               ballTimingRing.classList.add("hold");
 
-    ballTimingRing.classList.remove(
-        "ready",
-        "red",
-        "hold"
-    );
+               return;
+            }
 
-    if (
-        phase === "IDLE"
-    ) {
+            if (phase === "GAP") {
+               ballTimingRing.classList.add("red");
 
-        ballTimingRing.classList.add(
-            "ready"
-        );
+               return;
+            }
+         }
 
-        return;
-
-    }
-
-    if (
-        phase === "READY"
-    ) {
-
-        ballTimingRing.classList.add(
-            "ready"
-        );
-
-        return;
-
-    }
-
-    if (
-        phase === "HOLD"
-    ) {
-
-        ballTimingRing.classList.add(
-            "hold"
-        );
-
-        return;
-
-    }
-
-    if (
-        phase === "GAP"
-    ) {
-
-        ballTimingRing.classList.add(
-            "red"
-        );
-
-        return;
-
-    }
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    SEQUENCE VISUALS
 ========================================================= */
 
-function updateSequenceVisuals(now) {
+         function updateSequenceVisuals(now) {
+            for (let i = 0; i < sequence.length; i++) {
+               const card = document.getElementById("combo-" + i);
 
-    for (
-        let i = 0;
-        i < sequence.length;
-        i++
-    ) {
+               if (!card) {
+                  continue;
+               }
 
-        const card =
-            document.getElementById(
-                "combo-" + i
-            );
+               card.className = "combo-item";
 
-        if (!card) {
-            continue;
-        }
+               card.querySelector(".phase").textContent = "WAIT";
 
-        card.className =
-            "combo-item";
+               card.querySelector(".timer").textContent = "--";
 
-        card.querySelector(
-            ".phase"
-        ).textContent =
-            "WAIT";
+               card.querySelector(".progress").style.width = "0%";
+            }
 
-        card.querySelector(
-            ".timer"
-        ).textContent =
-            "--";
+            if (phase === "IDLE") {
+               const card = document.getElementById("combo-0");
 
-        card.querySelector(
-            ".progress"
-        ).style.width =
-            "0%";
+               card.classList.add("state-ready");
 
-    }
+               card.querySelector(".phase").textContent = "START";
 
+               card.querySelector(".timer").textContent = "READY";
 
-    if (
-        phase === "IDLE"
-    ) {
+               card.querySelector(".progress").style.width = "100%";
 
-        const card =
-            document.getElementById(
-                "combo-0"
-            );
+               return;
+            }
 
-        card.classList.add(
-            "state-ready"
-        );
+            if (phase === "READY") {
+               const card = document.getElementById("combo-" + currentIndex);
 
-        card.querySelector(
-            ".phase"
-        ).textContent =
-            "START";
+               card.classList.add("state-ready");
 
-        card.querySelector(
-            ".timer"
-        ).textContent =
-            "READY";
+               const elapsed = now - phaseStart;
 
-        card.querySelector(
-            ".progress"
-        ).style.width =
-            "100%";
+               const remaining = Math.max(0, settings.readyWindow - elapsed);
 
-        return;
+               card.querySelector(".phase").textContent = "PRESS";
 
-    }
+               card.querySelector(".timer").textContent =
+                  Math.ceil(remaining) + " ms";
 
+               card.querySelector(".progress").style.width =
+                  Math.min(100, (elapsed / settings.readyWindow) * 100) + "%";
 
-    if (
-        phase === "READY"
-    ) {
+               return;
+            }
 
-        const card =
-            document.getElementById(
-                "combo-" +
-                currentIndex
-            );
+            if (phase === "HOLD") {
+               const card = document.getElementById("combo-" + currentIndex);
 
-        card.classList.add(
-            "state-ready"
-        );
+               card.classList.add("state-hold");
 
-        const elapsed =
-            now -
-            phaseStart;
+               const elapsed = now - phaseStart;
 
-        const remaining =
-            Math.max(
-                0,
-                settings.readyWindow -
-                elapsed
-            );
+               const remaining = Math.max(0, settings.holdWindow - elapsed);
 
-        card.querySelector(
-            ".phase"
-        ).textContent =
-            "PRESS";
+               card.querySelector(".phase").textContent = "RELEASE";
 
-        card.querySelector(
-            ".timer"
-        ).textContent =
-            Math.ceil(
-                remaining
-            ) + " ms";
+               card.querySelector(".timer").textContent =
+                  Math.ceil(remaining) + " ms";
 
-        card.querySelector(
-            ".progress"
-        ).style.width =
-            Math.min(
-                100,
-                elapsed /
-                settings.readyWindow *
-                100
-            ) + "%";
+               card.querySelector(".progress").style.width =
+                  Math.min(100, (elapsed / settings.holdWindow) * 100) + "%";
 
-        return;
+               return;
+            }
 
-    }
+            if (phase === "GAP") {
+               let nextIndex;
 
+               if (currentIndex < sequence.length - 1) {
+                  nextIndex = currentIndex + 1;
+               } else {
+                  nextIndex = 0;
+               }
 
-    if (
-        phase === "HOLD"
-    ) {
+               const card = document.getElementById("combo-" + nextIndex);
 
-        const card =
-            document.getElementById(
-                "combo-" +
-                currentIndex
-            );
+               card.classList.add("state-forbidden");
 
-        card.classList.add(
-            "state-hold"
-        );
+               const elapsed = now - phaseStart;
 
-        const elapsed =
-            now -
-            phaseStart;
+               const remaining = Math.max(
+                  0,
+                  settings.forbiddenWindow - elapsed,
+               );
 
-        const remaining =
-            Math.max(
-                0,
-                settings.holdWindow -
-                elapsed
-            );
+               if (currentIndex === sequence.length - 1) {
+                  card.querySelector(".phase").textContent = settings.auxEnabled
+                     ? "RED + AUX"
+                     : "RED";
+               } else {
+                  card.querySelector(".phase").textContent = "RED";
+               }
 
-        card.querySelector(
-            ".phase"
-        ).textContent =
-            "RELEASE";
+               card.querySelector(".timer").textContent =
+                  Math.ceil(remaining) + " ms";
 
-        card.querySelector(
-            ".timer"
-        ).textContent =
-            Math.ceil(
-                remaining
-            ) + " ms";
+               card.querySelector(".progress").style.width =
+                  Math.min(100, (elapsed / settings.forbiddenWindow) * 100) +
+                  "%";
+            }
+         }
 
-        card.querySelector(
-            ".progress"
-        ).style.width =
-            Math.min(
-                100,
-                elapsed /
-                settings.holdWindow *
-                100
-            ) + "%";
-
-        return;
-
-    }
-
-
-    if (
-        phase === "GAP"
-    ) {
-
-        let nextIndex;
-
-        if (
-            currentIndex <
-            sequence.length - 1
-        ) {
-
-            nextIndex =
-                currentIndex + 1;
-
-        } else {
-
-            nextIndex = 0;
-
-        }
-
-        const card =
-            document.getElementById(
-                "combo-" +
-                nextIndex
-            );
-
-        card.classList.add(
-            "state-forbidden"
-        );
-
-        const elapsed =
-            now -
-            phaseStart;
-
-        const remaining =
-            Math.max(
-                0,
-                settings.forbiddenWindow -
-                elapsed
-            );
-
-        if (
-            currentIndex ===
-            sequence.length - 1
-        ) {
-
-            card.querySelector(
-                ".phase"
-            ).textContent =
-                settings.auxEnabled
-                    ? "RED + AUX"
-                    : "RED";
-
-        } else {
-
-            card.querySelector(
-                ".phase"
-            ).textContent =
-                "RED";
-
-        }
-
-        card.querySelector(
-            ".timer"
-        ).textContent =
-            Math.ceil(
-                remaining
-            ) + " ms";
-
-        card.querySelector(
-            ".progress"
-        ).style.width =
-            Math.min(
-                100,
-                elapsed /
-                settings.forbiddenWindow *
-                100
-            ) + "%";
-
-    }
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    AUX VISUALS
 ========================================================= */
 
-function updateAuxiliaryVisuals(now) {
+         function updateAuxiliaryVisuals(now) {
+            if (!settings.auxEnabled) {
+               auxiliaryPanel.className = "auxiliary-panel aux-disabled";
 
-    if (
-        !settings.auxEnabled
-    ) {
+               auxStatus.textContent = "Disabled";
 
-        auxiliaryPanel.className =
-            "auxiliary-panel aux-disabled";
+               auxAction.textContent = "OFF";
 
-        auxStatus.textContent =
-            "Disabled";
+               auxTimer.textContent = "--";
 
-        auxAction.textContent =
-            "OFF";
+               auxProgressBar.style.width = "0%";
 
-        auxTimer.textContent =
-            "--";
+               return;
+            }
 
-        auxProgressBar.style.width =
-            "0%";
+            const aux = getAuxButton();
 
-        return;
+            if (auxState === "WAITING") {
+               auxiliaryPanel.className = "auxiliary-panel";
 
-    }
+               auxStatus.textContent = "Press first sequence button";
 
-    const aux =
-        getAuxButton();
+               auxAction.textContent = "THEN PRESS " + aux.name;
 
+               auxTimer.textContent = "WAIT";
 
-    if (
-        auxState === "WAITING"
-    ) {
+               auxProgressBar.style.width = "0%";
 
-        auxiliaryPanel.className =
-            "auxiliary-panel";
+               return;
+            }
 
-        auxStatus.textContent =
-            "Press first sequence button";
+            if (auxState === "REQUIRED") {
+               auxiliaryPanel.className = "auxiliary-panel aux-required";
 
-        auxAction.textContent =
-            "THEN PRESS " +
-            aux.name;
+               const elapsed = now - auxRequiredStart;
 
-        auxTimer.textContent =
-            "WAIT";
+               const remaining = Math.max(0, settings.auxWindow - elapsed);
 
-        auxProgressBar.style.width =
-            "0%";
+               auxStatus.textContent = "Press auxiliary";
 
-        return;
+               auxAction.textContent = "PRESS " + aux.name;
 
-    }
+               auxTimer.textContent = Math.ceil(remaining) + " ms";
 
+               auxProgressBar.style.width =
+                  Math.min(100, (elapsed / settings.auxWindow) * 100) + "%";
 
-    if (
-        auxState === "REQUIRED"
-    ) {
+               return;
+            }
 
-        auxiliaryPanel.className =
-            "auxiliary-panel aux-required";
+            if (auxState === "HELD") {
+               auxiliaryPanel.className = "auxiliary-panel aux-held";
 
-        const elapsed =
-            now -
-            auxRequiredStart;
+               auxStatus.textContent = "HOLDING";
 
-        const remaining =
-            Math.max(
-                0,
-                settings.auxWindow -
-                elapsed
-            );
+               auxAction.textContent = "HOLD " + aux.name;
 
-        auxStatus.textContent =
-            "Press auxiliary";
+               auxTimer.textContent = "HELD";
 
-        auxAction.textContent =
-            "PRESS " +
-            aux.name;
+               auxProgressBar.style.width = "100%";
 
-        auxTimer.textContent =
-            Math.ceil(
-                remaining
-            ) + " ms";
+               return;
+            }
 
-        auxProgressBar.style.width =
-            Math.min(
-                100,
-                elapsed /
-                settings.auxWindow *
-                100
-            ) + "%";
+            if (auxState === "TEMP_RELEASE") {
+               auxiliaryPanel.className = "auxiliary-panel aux-release";
 
-        return;
+               const elapsed = now - auxReleaseStart;
 
-    }
+               const remaining = Math.max(0, settings.auxReleaseMax - elapsed);
 
+               auxStatus.textContent = settings.unlimitedReleases
+                  ? "Temporary release"
+                  : "Temporary release #" + (completedAuxReleases + 1);
 
-    if (
-        auxState === "HELD"
-    ) {
+               auxAction.textContent = "PRESS " + aux.name + " AGAIN";
 
-        auxiliaryPanel.className =
-            "auxiliary-panel aux-held";
+               auxTimer.textContent = Math.ceil(remaining) + " ms";
 
-        auxStatus.textContent =
-            "HOLDING";
+               auxProgressBar.style.width =
+                  Math.min(100, (elapsed / settings.auxReleaseMax) * 100) + "%";
 
-        auxAction.textContent =
-            "HOLD " +
-            aux.name;
+               return;
+            }
 
-        auxTimer.textContent =
-            "HELD";
+            if (phase === "GAP" && boundaryReleaseRequired) {
+               auxiliaryPanel.className = "auxiliary-panel aux-boundary";
 
-        auxProgressBar.style.width =
-            "100%";
+               const elapsed = now - phaseStart;
 
-        return;
+               const remaining = Math.max(
+                  0,
+                  settings.forbiddenWindow - elapsed,
+               );
 
-    }
+               if (auxPhysicalDown) {
+                  auxStatus.textContent = "FIRST BUTTON RED";
 
+                  auxAction.textContent = "RELEASE " + aux.name;
+               } else {
+                  auxStatus.textContent = "RELEASED";
 
-    if (
-        auxState === "TEMP_RELEASE"
-    ) {
+                  auxAction.textContent = "KEEP " + aux.name + " RELEASED";
+               }
 
-        auxiliaryPanel.className =
-            "auxiliary-panel aux-release";
+               auxTimer.textContent = Math.ceil(remaining) + " ms";
 
-        const elapsed =
-            now -
-            auxReleaseStart;
+               auxProgressBar.style.width =
+                  Math.min(100, (elapsed / settings.forbiddenWindow) * 100) +
+                  "%";
+            }
+         }
 
-        const remaining =
-            Math.max(
-                0,
-                settings.auxReleaseMax -
-                elapsed
-            );
-
-        auxStatus.textContent =
-            settings.unlimitedReleases
-                ? "Temporary release"
-                : "Temporary release #" +
-                  (completedAuxReleases + 1);
-
-        auxAction.textContent =
-            "PRESS " +
-            aux.name +
-            " AGAIN";
-
-        auxTimer.textContent =
-            Math.ceil(
-                remaining
-            ) + " ms";
-
-        auxProgressBar.style.width =
-            Math.min(
-                100,
-                elapsed /
-                settings.auxReleaseMax *
-                100
-            ) + "%";
-
-        return;
-
-    }
-
-
-    if (
-        phase === "GAP" &&
-        boundaryReleaseRequired
-    ) {
-
-        auxiliaryPanel.className =
-            "auxiliary-panel aux-boundary";
-
-        const elapsed =
-            now -
-            phaseStart;
-
-        const remaining =
-            Math.max(
-                0,
-                settings.forbiddenWindow -
-                elapsed
-            );
-
-        if (
-            auxPhysicalDown
-        ) {
-
-            auxStatus.textContent =
-                "FIRST BUTTON RED";
-
-            auxAction.textContent =
-                "RELEASE " +
-                aux.name;
-
-        } else {
-
-            auxStatus.textContent =
-                "RELEASED";
-
-            auxAction.textContent =
-                "KEEP " +
-                aux.name +
-                " RELEASED";
-
-        }
-
-        auxTimer.textContent =
-            Math.ceil(
-                remaining
-            ) + " ms";
-
-        auxProgressBar.style.width =
-            Math.min(
-                100,
-                elapsed /
-                settings.forbiddenWindow *
-                100
-            ) + "%";
-
-    }
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    AIM / BALL
 ========================================================= */
 
-function updateBallSize() {
+         function updateBallSize() {
+            ball.style.width = settings.ballSize + "px";
 
-    ball.style.width =
-        settings.ballSize + "px";
+            ball.style.height = settings.ballSize + "px";
 
-    ball.style.height =
-        settings.ballSize + "px";
+            /*
+       Ring thickness is always 20%
+       of the ball diameter.
+    */
 
+            const ringThickness = settings.ballSize * 0.2;
 
-   const ringThickness = settings.ballSize * 0.20;
+            const ringSize = settings.ballSize + ringThickness * 2;
 
-    const ringSize =
-        settings.ballSize  +
-        ringThickness * 2;
+            ballTimingRing.style.width = ringSize + "px";
 
-    ballTimingRing.style.width =
-        ringSize + "px";
+            ballTimingRing.style.height = ringSize + "px";
 
-    ballTimingRing.style.height =
-        ringSize + "px";
+            ballTimingRing.style.borderWidth = ringThickness + "px";
+         }
 
-    ballTimingRing.style.borderWidth =
-        ringThickness + "px";
+         function updatePanelSize() {
+            aimPanel.style.width = "min(" + settings.panelSize + "vw, 1100px)";
+         }
 
-}
+         function resetBall() {
+            const rect = aimPanel.getBoundingClientRect();
 
+            ballX = rect.width / 2;
 
-function updatePanelSize() {
+            ballY = rect.height / 2;
 
-    aimPanel.style.width =
-        "min(" +
-        settings.panelSize +
-        "vw, 1100px)";
+            ballVX = Math.random() > 0.5 ? 1 : -1;
 
-}
+            ballVY = 0;
 
+            lastBallTime = performance.now();
+         }
 
-function resetBall() {
+         function changeRandomDirection() {
+            const angle = Math.random() * Math.PI * 2;
 
-    const rect =
-        aimPanel.getBoundingClientRect();
+            ballVX = Math.cos(angle);
 
-    ballX =
-        rect.width / 2;
+            ballVY = Math.sin(angle);
+         }
 
-    ballY =
-        rect.height / 2;
+         function updateBall(now) {
+            if (!lastBallTime) {
+               lastBallTime = now;
 
-    ballVX =
-        Math.random() > .5
-            ? 1
-            : -1;
+               return;
+            }
 
-    ballVY =
-        0;
+            const dt = Math.min((now - lastBallTime) / 1000, 0.05);
 
-    lastBallTime =
-        performance.now();
+            lastBallTime = now;
 
-}
+            const rect = aimPanel.getBoundingClientRect();
 
+            const radius = settings.ballSize / 2;
 
-function changeRandomDirection() {
+            const minX = radius;
 
-    const angle =
-        Math.random() *
-        Math.PI * 2;
+            const maxX = rect.width - radius;
 
-    ballVX =
-        Math.cos(angle);
+            const minY = radius;
 
-    ballVY =
-        Math.sin(angle);
+            const maxY = rect.height - radius;
 
-}
-
-
-function updateBall(now) {
-
-    if (!lastBallTime) {
-
-        lastBallTime =
-            now;
-
-        return;
-
-    }
-
-    const dt =
-        Math.min(
-            (now - lastBallTime) / 1000,
-            0.05
-        );
-
-    lastBallTime =
-        now;
-
-    const rect =
-        aimPanel.getBoundingClientRect();
-
-    const radius =
-        settings.ballSize / 2;
-
-    const minX =
-        radius;
-
-    const maxX =
-        rect.width -
-        radius;
-
-    const minY =
-        radius;
-
-    const maxY =
-        rect.height -
-        radius;
-
-
-    /*
+            /*
        Horizontal strafe.
     */
 
-    if (
-        settings.strafePattern ===
-        "horizontal"
-    ) {
+            if (settings.strafePattern === "horizontal") {
+               ballX += ballVX * settings.ballSpeed * dt;
 
-        ballX +=
-            ballVX *
-            settings.ballSpeed *
-            dt;
+               if (ballX >= maxX) {
+                  ballX = maxX;
 
-        if (
-            ballX >= maxX
-        ) {
+                  ballVX = -1;
+               }
 
-            ballX = maxX;
+               if (ballX <= minX) {
+                  ballX = minX;
 
-            ballVX = -1;
+                  ballVX = 1;
+               }
+            } else {
 
-        }
-
-        if (
-            ballX <= minX
-        ) {
-
-            ballX = minX;
-
-            ballVX = 1;
-
-        }
-
-    }
-
-
-    /*
+            /*
        Random direction changes.
     */
+               ballX += ballVX * settings.ballSpeed * dt;
 
-    else {
+               ballY += ballVY * settings.ballSpeed * dt;
 
-        ballX +=
-            ballVX *
-            settings.ballSpeed *
-            dt;
+               if (ballX <= minX || ballX >= maxX) {
+                  ballX = Math.max(minX, Math.min(maxX, ballX));
 
-        ballY +=
-            ballVY *
-            settings.ballSpeed *
-            dt;
+                  changeRandomDirection();
+               }
 
-        if (
-            ballX <= minX ||
-            ballX >= maxX
-        ) {
+               if (ballY <= minY || ballY >= maxY) {
+                  ballY = Math.max(minY, Math.min(maxY, ballY));
 
-            ballX =
-                Math.max(
-                    minX,
-                    Math.min(
-                        maxX,
-                        ballX
-                    )
-                );
+                  changeRandomDirection();
+               }
+            }
 
-            changeRandomDirection();
-
-        }
-
-        if (
-            ballY <= minY ||
-            ballY >= maxY
-        ) {
-
-            ballY =
-                Math.max(
-                    minY,
-                    Math.min(
-                        maxY,
-                        ballY
-                    )
-                );
-
-            changeRandomDirection();
-
-        }
-
-    }
-
-
-    /*
+            /*
        Ball and timing ring share exactly
        the same coordinates.
     */
 
-    ball.style.left =
-        ballX + "px";
+            ball.style.left = ballX + "px";
 
-    ball.style.top =
-        ballY + "px";
+            ball.style.top = ballY + "px";
 
-    ballTimingRing.style.left =
-        ballX + "px";
+            ballTimingRing.style.left = ballX + "px";
 
-    ballTimingRing.style.top =
-        ballY + "px";
+            ballTimingRing.style.top = ballY + "px";
 
-
-    /* =====================================================
+            /* =====================================================
        AIM CHECK
-
-       This is the actual on-target calculation.
 
        The mouse must be inside the BALL itself.
 
        The timing ring does NOT count as target area.
     ===================================================== */
 
-    const ballRadius =
-        settings.ballSize / 2;
+            const ballRadius = settings.ballSize / 2;
 
-    const dx =
-        mouseX - ballX;
+            const dx = mouseX - ballX;
 
-    const dy =
-        mouseY - ballY;
+            const dy = mouseY - ballY;
 
-    const distance =
-        Math.sqrt(
-            dx * dx +
-            dy * dy
-        );
+            const distance = Math.sqrt(dx * dx + dy * dy);
 
-    const onTarget =
-        distance <=
-        ballRadius;
+            const onTarget = distance <= ballRadius;
 
+            if (onTarget) {
+               ball.classList.add("on-target");
 
-    if (onTarget) {
+               aimStatus.textContent = "ON TARGET";
 
-        ball.classList.add(
-            "on-target"
-        );
+               aimStatus.classList.add("good");
+            } else {
+               ball.classList.remove("on-target");
 
-        aimStatus.textContent =
-            "ON TARGET";
+               aimStatus.textContent = "OFF TARGET";
 
-        aimStatus.classList.add(
-            "good"
-        );
+               aimStatus.classList.remove("good");
+            }
 
-    } else {
+            aimSamples++;
 
-        ball.classList.remove(
-            "on-target"
-        );
+            if (onTarget) {
+               aimGoodSamples++;
+            }
 
-        aimStatus.textContent =
-            "OFF TARGET";
+            if (aimSamples % 10 === 0) {
+               const percent =
+                  aimSamples > 0
+                     ? Math.round((aimGoodSamples / aimSamples) * 100)
+                     : 0;
 
-        aimStatus.classList.remove(
-            "good"
-        );
+               document.getElementById("aimPercent").textContent =
+                  percent + "%";
+            }
+         }
 
-    }
-
-
-    aimSamples++;
-
-    if (onTarget) {
-        aimGoodSamples++;
-    }
-
-    if (
-        aimSamples % 10 === 0
-    ) {
-
-        const percent =
-            aimSamples > 0
-                ? Math.round(
-                    aimGoodSamples /
-                    aimSamples *
-                    100
-                )
-                : 0;
-
-        document.getElementById(
-            "aimPercent"
-        ).textContent =
-            percent + "%";
-
-    }
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    MOUSE TRACKING
 ========================================================= */
 
-aimPanel.addEventListener(
-    "mousemove",
-    event => {
+         aimPanel.addEventListener(
+            "mousemove",
+            (event) => {
+               const rect = aimPanel.getBoundingClientRect();
 
-        const rect =
-            aimPanel.getBoundingClientRect();
+               mouseX = event.clientX - rect.left;
 
-        mouseX =
-            event.clientX -
-            rect.left;
+               mouseY = event.clientY - rect.top;
 
-        mouseY =
-            event.clientY -
-            rect.top;
+               event.preventDefault();
+            },
+            {
+               passive: false,
+            },
+         );
 
-        event.preventDefault();
+         aimPanel.addEventListener("mouseenter", (event) => {
+            const rect = aimPanel.getBoundingClientRect();
 
-    },
-    {
-        passive: false
-    }
-);
+            mouseX = event.clientX - rect.left;
 
+            mouseY = event.clientY - rect.top;
+         });
 
-aimPanel.addEventListener(
-    "mouseenter",
-    event => {
+         aimPanel.addEventListener("mouseleave", () => {
+            mouseX = -10000;
+            mouseY = -10000;
+         });
 
-        const rect =
-            aimPanel.getBoundingClientRect();
-
-        mouseX =
-            event.clientX -
-            rect.left;
-
-        mouseY =
-            event.clientY -
-            rect.top;
-
-    }
-);
-
-
-aimPanel.addEventListener(
-    "mouseleave",
-    () => {
-
-        mouseX = -10000;
-        mouseY = -10000;
-
-    }
-);
-
-
-document.addEventListener(
-    "contextmenu",
-    event => {
-
-        event.preventDefault();
-
-    }
-);
-
-
-document.addEventListener(
-    "mousedown",
-    event => {
-
-        if (
-            event.button === 1 ||
-            event.button === 2
-        ) {
-
+         document.addEventListener("contextmenu", (event) => {
             event.preventDefault();
+         });
 
-        }
+         document.addEventListener(
+            "mousedown",
+            (event) => {
+               if (event.button === 1 || event.button === 2) {
+                  event.preventDefault();
+               }
+            },
+            {
+               passive: false,
+            },
+         );
 
-    },
-    {
-        passive: false
-    }
-);
+         aimPanel.addEventListener(
+            "wheel",
+            (event) => {
+               event.preventDefault();
+            },
+            {
+               passive: false,
+            },
+         );
 
-
-aimPanel.addEventListener(
-    "wheel",
-    event => {
-
-        event.preventDefault();
-
-    },
-    {
-        passive: false
-    }
-);
-
-
-/* =========================================================
+         /* =========================================================
    KEYBOARD INPUT
 ========================================================= */
 
-document.addEventListener(
-    "keydown",
-    event => {
+         document.addEventListener("keydown", (event) => {
+            if (event.repeat) {
+               return;
+            }
 
-        if (event.repeat) {
-            return;
-        }
+            inputDown({
+               type: "keyboard",
 
-        inputDown({
+               code: event.code,
+            });
+         });
 
-            type: "keyboard",
+         document.addEventListener("keyup", (event) => {
+            inputUp({
+               type: "keyboard",
 
-            code: event.code
+               code: event.code,
+            });
+         });
 
-        });
-
-    }
-);
-
-
-document.addEventListener(
-    "keyup",
-    event => {
-
-        inputUp({
-
-            type: "keyboard",
-
-            code: event.code
-
-        });
-
-    }
-);
-
-
-/* =========================================================
+         /* =========================================================
    MOUSE INPUT
 ========================================================= */
 
-document.addEventListener(
-    "mousedown",
-    event => {
+         document.addEventListener(
+            "mousedown",
+            (event) => {
+               inputDown({
+                  type: "mouse",
 
-        inputDown({
+                  button: event.button,
+               });
+            },
+            {
+               passive: false,
+            },
+         );
 
-            type: "mouse",
+         document.addEventListener("mouseup", (event) => {
+            inputUp({
+               type: "mouse",
 
-            button: event.button
+               button: event.button,
+            });
+         });
 
-        });
-
-    },
-    {
-        passive: false
-    }
-);
-
-
-document.addEventListener(
-    "mouseup",
-    event => {
-
-        inputUp({
-
-            type: "mouse",
-
-            button: event.button
-
-        });
-
-    }
-);
-
-
-/* =========================================================
+         /* =========================================================
    MAIN LOOP
 ========================================================= */
 
-function animationLoop(now) {
+         function animationLoop(now) {
+            updateLogic(now);
 
-    updateLogic(now);
+            updateBall(now);
 
-    updateBall(now);
+            updateTimingRing();
 
-    updateTimingRing();
+            updateSequenceVisuals(now);
 
-    updateSequenceVisuals(now);
+            updateAuxiliaryVisuals(now);
 
-    updateAuxiliaryVisuals(now);
+            requestAnimationFrame(animationLoop);
+         }
 
-    requestAnimationFrame(
-        animationLoop
-    );
-
-}
-
-
-/* =========================================================
+         /* =========================================================
    INITIALIZATION
 ========================================================= */
 
-document.getElementById(
-    "auxEnabled"
-).checked =
-    settings.auxEnabled;
+         document.getElementById("auxEnabled").checked = settings.auxEnabled;
 
-document.getElementById(
-    "auxWindow"
-).value =
-    settings.auxWindow;
+         document.getElementById("auxWindow").value = settings.auxWindow;
 
-document.getElementById(
-    "auxReleaseCount"
-).value =
-    settings.auxReleaseCount;
+         document.getElementById("auxReleaseCount").value =
+            settings.auxReleaseCount;
 
-document.getElementById(
-    "auxReleaseMax"
-).value =
-    settings.auxReleaseMax;
+         document.getElementById("auxReleaseMax").value =
+            settings.auxReleaseMax;
 
-document.getElementById(
-    "unlimitedReleases"
-).checked =
-    settings.unlimitedReleases;
+         document.getElementById("unlimitedReleases").checked =
+            settings.unlimitedReleases;
 
-document.getElementById(
-    "ballSize"
-).value =
-    settings.ballSize;
+         document.getElementById("ballSize").value = settings.ballSize;
 
-document.getElementById(
-    "panelSize"
-).value =
-    settings.panelSize;
+         document.getElementById("panelSize").value = settings.panelSize;
 
-document.getElementById(
-    "ballSpeed"
-).value =
-    settings.ballSpeed;
+         document.getElementById("ballSpeed").value = settings.ballSpeed;
 
-document.getElementById(
-    "strafePattern"
-).value =
-    settings.strafePattern;
+         document.getElementById("strafePattern").value =
+            settings.strafePattern;
 
-updateSettingLabels();
+         updateSettingLabels();
 
-updateReleaseCountUI();
+         updateReleaseCountUI();
 
-buildButtonConfiguration();
+         buildButtonConfiguration();
 
-buildAuxiliarySelect();
+         buildAuxiliarySelect();
 
-buildComboDisplay();
+         buildComboDisplay();
 
-updateBallSize();
+         updateBallSize();
 
-updatePanelSize();
+         updatePanelSize();
 
-resetTrainer(false);
+         resetTrainer(false);
 
-setTimeout(
-    resetBall,
-    50
-);
+         setTimeout(resetBall, 50);
 
-requestAnimationFrame(
-    animationLoop
-);
-
-</script>
-
-</body>
+         requestAnimationFrame(animationLoop);
+      </script>
+   </body>
 </html>
