@@ -824,6 +824,21 @@
 
             <input type="range" id="buttonCount" min="2" max="6" value="3" />
          </div>
+         <div class="setting">
+            <label>
+               <span>Global press time window</span>
+               <span id="globalTimeWindowValue">300 ms</span>
+            </label>
+
+            <input
+               type="range"
+               id="globalTimeWindow"
+               min="50"
+               max="2000"
+               value="300"
+               step="10"
+            />
+         </div>
 
          <div class="setting">
             <label>
@@ -850,8 +865,8 @@
             <input
                type="range"
                id="forbiddenWindow"
-               min="0"
-               max="3000"
+               min="50"
+               max="2000"
                value="300"
                step="10"
             />
@@ -906,7 +921,7 @@
                type="range"
                id="auxWindow"
                min="50"
-               max="1500"
+               max="2000"
                value="300"
                step="10"
             />
@@ -946,7 +961,7 @@
                id="auxReleaseMax"
                min="50"
                max="2000"
-               value="400"
+               value="300"
                step="10"
             />
          </div>
@@ -1200,6 +1215,8 @@
          const settings = {
             buttonCount: 3,
 
+            globalTimeWindow: 300,
+
             readyWindow: 300,
 
             forbiddenWindow: 300,
@@ -1359,10 +1376,48 @@
             document.getElementById("settingsPanel").classList.toggle("open");
          }
 
-         function updateSettingLabels() {
-            document.getElementById("buttonCountValue").textContent =
+         function updateSettingsValues() {
+          document.getElementById("buttonCount").value =
                settings.buttonCount;
 
+            document.getElementById("globalTimeWindow").value =
+               settings.globalTimeWindow;
+            
+            document.getElementById("readyWindow").value =
+               settings.readyWindow;
+
+            document.getElementById("forbiddenWindow").value =
+               settings.forbiddenWindow;
+
+            document.getElementById("holdWindow").value =
+               settings.holdWindow;
+
+            document.getElementById("auxWindow").value =
+               settings.auxWindow;
+
+            document.getElementById("auxReleaseCount").value =
+               settings.auxReleaseCount;
+
+            document.getElementById("auxReleaseMax").value =
+               settings.auxReleaseMax;
+
+            document.getElementById("ballSize").value =
+               settings.ballSize;
+
+            document.getElementById("panelSize").value =
+               settings.panelSize;
+
+            document.getElementById("ballSpeed").value =
+               settings.ballSpeed;
+         }
+
+         function updateSettingLabels() {
+             document.getElementById("buttonCountValue").textContent =
+               settings.buttonCount;
+
+            document.getElementById("globalTimeWindowValue").textContent =
+               settings.globalTimeWindow + " ms";
+            
             document.getElementById("readyWindowValue").textContent =
                settings.readyWindow + " ms";
 
@@ -1390,7 +1445,7 @@
             document.getElementById("ballSpeedValue").textContent =
                settings.ballSpeed + " px/s";
          }
-
+         
          function buildButtonConfiguration() {
             const container = document.getElementById("buttonConfig");
 
@@ -1468,6 +1523,20 @@
                updateSettingLabels();
                buildButtonConfiguration();
                resetTrainer(true);
+            });
+
+         document
+            .getElementById("globalTimeWindow")
+            .addEventListener("input", function () {
+               settings.globalTimeWindow = Number(this.value);
+               settings.readyWindow = Number(this.value);
+               settings.forbiddenWindow = Number(this.value);
+               settings.holdWindow = Number(this.value);
+               settings.auxWindow = Number(this.value);
+               settings.auxReleaseMax = Number(this.value);
+
+               updateSettingsValues();
+               updateSettingLabels();
             });
 
          document
