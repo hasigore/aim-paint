@@ -909,6 +909,17 @@
 
             <select id="auxButton"></select>
          </div>
+         <hr />
+
+         <h3>Auxiliary Click</h3>
+
+         <div class="setting">
+            <label>
+               <span>Auxiliary click button</span>
+            </label>
+
+            <select id="auxClickButton"></select>
+         </div>
 
          <div class="setting">
             <label>
@@ -1078,6 +1089,10 @@
 
                <strong id="aimPercent"> 0% </strong>
             </div>
+            <div>
+               <div class="score-label">Aux Clicks</div>
+               <strong id="auxClickCount">0</strong>
+            </div>
          </div>
 
          <!-- ===================================================
@@ -1216,31 +1231,22 @@
             buttonCount: 3,
 
             globalTimeWindow: 300,
-
             readyWindow: 300,
-
             forbiddenWindow: 300,
-
             holdWindow: 300,
 
             auxEnabled: true,
-
             auxButton: "shift",
-
             auxWindow: 300,
-
             auxReleaseCount: 0,
-
             auxReleaseMax: 300,
-
             unlimitedReleases: true,
 
+            auxClickButton: "lmb",
+
             ballSize: 60,
-
             panelSize: 100,
-
             ballSpeed: 250,
-
             strafePattern: "horizontal",
          };
 
@@ -1284,6 +1290,7 @@
 
          let currentStreak = 0;
          let maxComboStreak = 0;
+         let auxiliaryClicks = 0;
 
          /* =========================================================
    AIM STATE
@@ -1377,23 +1384,19 @@
          }
 
          function updateSettingsValues() {
-          document.getElementById("buttonCount").value =
-               settings.buttonCount;
+            document.getElementById("buttonCount").value = settings.buttonCount;
 
             document.getElementById("globalTimeWindow").value =
                settings.globalTimeWindow;
-            
-            document.getElementById("readyWindow").value =
-               settings.readyWindow;
+
+            document.getElementById("readyWindow").value = settings.readyWindow;
 
             document.getElementById("forbiddenWindow").value =
                settings.forbiddenWindow;
 
-            document.getElementById("holdWindow").value =
-               settings.holdWindow;
+            document.getElementById("holdWindow").value = settings.holdWindow;
 
-            document.getElementById("auxWindow").value =
-               settings.auxWindow;
+            document.getElementById("auxWindow").value = settings.auxWindow;
 
             document.getElementById("auxReleaseCount").value =
                settings.auxReleaseCount;
@@ -1401,23 +1404,20 @@
             document.getElementById("auxReleaseMax").value =
                settings.auxReleaseMax;
 
-            document.getElementById("ballSize").value =
-               settings.ballSize;
+            document.getElementById("ballSize").value = settings.ballSize;
 
-            document.getElementById("panelSize").value =
-               settings.panelSize;
+            document.getElementById("panelSize").value = settings.panelSize;
 
-            document.getElementById("ballSpeed").value =
-               settings.ballSpeed;
+            document.getElementById("ballSpeed").value = settings.ballSpeed;
          }
 
          function updateSettingLabels() {
-             document.getElementById("buttonCountValue").textContent =
+            document.getElementById("buttonCountValue").textContent =
                settings.buttonCount;
 
             document.getElementById("globalTimeWindowValue").textContent =
                settings.globalTimeWindow + " ms";
-            
+
             document.getElementById("readyWindowValue").textContent =
                settings.readyWindow + " ms";
 
@@ -1445,7 +1445,7 @@
             document.getElementById("ballSpeedValue").textContent =
                settings.ballSpeed + " px/s";
          }
-         
+
          function buildButtonConfiguration() {
             const container = document.getElementById("buttonConfig");
 
@@ -1523,6 +1523,11 @@
                updateSettingLabels();
                buildButtonConfiguration();
                resetTrainer(true);
+            });
+         document
+            .getElementById("auxClickButton")
+            .addEventListener("change", function () {
+               settings.auxClickButton = this.value;
             });
 
          document
@@ -1903,6 +1908,21 @@
                completedAuxReleases = 0;
             }
          }
+         function buildAuxiliaryClickSelect() {
+            const select = document.getElementById("auxClickButton");
+
+            select.innerHTML = "";
+
+            BUTTONS.forEach((button) => {
+               const option = document.createElement("option");
+
+               option.value = button.id;
+               option.textContent = button.name;
+               option.selected = button.id === settings.auxClickButton;
+
+               select.appendChild(option);
+            });
+         }
 
          /* =========================================================
    AUX DOWN
@@ -2099,24 +2119,43 @@
          function inputDown(input) {
             const now = performance.now();
 
+            // SECOND AUXILIARY CLICK
+            // Consume this input completely so it can NEVER
+            // become a false sequence press.
+            if (matches(getButton(settings.auxClickButton), input)) {
+               auxiliaryClick(input, now);
+
+               return;
+            }
+
+            // FIRST AUXILIARY HOLD
             if (settings.auxEnabled && matches(getAuxButton(), input)) {
                auxiliaryDown(now);
 
                return;
             }
 
+            // NORMAL SEQUENCE BUTTON
             sequenceDown(input, now);
          }
 
          function inputUp(input) {
             const now = performance.now();
 
+            // SECOND AUXILIARY CLICK
+            // Consume release completely.
+            if (matches(getButton(settings.auxClickButton), input)) {
+               return;
+            }
+
+            // FIRST AUXILIARY HOLD
             if (settings.auxEnabled && matches(getAuxButton(), input)) {
                auxiliaryUp(now);
 
                return;
             }
 
+            // NORMAL SEQUENCE BUTTON
             sequenceUp(input, now);
          }
 
@@ -2680,7 +2719,46 @@
                code: event.code,
             });
          });
+         function isMouseOnTarget() {
+            const dx = mouseX - ballX;
+            const dy = mouseY - ballY;
 
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            return distance <= settings.ballSize / 2;
+         }
+
+         function isSequenceRunning() {
+            return phase === "READY" || phase === "HOLD" || phase === "GAP";
+         }
+         function auxiliaryClick(input, now) {
+            if (!isSequenceRunning()) {
+               return;
+            }
+
+            if (input.type !== "mouse") {
+               return;
+            }
+
+            const auxClickButton = getButton(settings.auxClickButton);
+
+            if (!auxClickButton) {
+               return;
+            }
+
+            if (input.button !== auxClickButton.button) {
+               return;
+            }
+
+            if (!isMouseOnTarget()) {
+               return;
+            }
+
+            auxiliaryClicks++;
+
+            document.getElementById("auxClickCount").textContent =
+               auxiliaryClicks;
+         }
          /* =========================================================
    MOUSE INPUT
 ========================================================= */
@@ -2688,9 +2766,12 @@
          document.addEventListener(
             "mousedown",
             (event) => {
+               // Second auxiliary click counter.
+               // This is independent of the combo/hold logic.
+               auxiliaryClick(event);
+
                inputDown({
                   type: "mouse",
-
                   button: event.button,
                });
             },
@@ -2780,6 +2861,8 @@
          buildButtonConfiguration();
 
          buildAuxiliarySelect();
+
+         buildAuxiliaryClickSelect();
 
          buildComboDisplay();
 
