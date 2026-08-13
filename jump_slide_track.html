@@ -181,10 +181,10 @@
          .aim-panel {
             position: relative;
 
-            width: min(1100px, 92vw);
+            width: min(1400px, 92vw);
             height: min(650px, 65vh);
 
-            min-height: 400px;
+            min-height: 40px;
 
             background: radial-gradient(
                circle at center,
@@ -192,15 +192,16 @@
                #171b21 65%,
                #13161b 100%
             );
+            border: 2px solid #68717e;
+            box-shadow:
+               0 0 0 1px rgba(255, 255, 255, 0.06),
+               0 0 18px rgba(100, 110, 125, 0.12),
+               0 8px 30px rgba(0, 0, 0, 0.5),
+               inset 0 0 50px rgba(0, 0, 0, 0.22);
 
-            border: 2px solid #000000;
             border-radius: 14px;
 
             overflow: hidden;
-
-            box-shadow:
-               0 0 40px rgba(0, 0, 0, 0.35),
-               inset 0 0 50px rgba(0, 0, 0, 0.25);
 
             user-select: none;
             touch-action: none;
@@ -259,19 +260,6 @@
                );
 
             background-size: 50px 50px;
-
-            pointer-events: none;
-         }
-
-         .aim-panel-label {
-            position: absolute;
-            top: 12px;
-            left: 15px;
-
-            color: #59616d;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
 
             pointer-events: none;
          }
@@ -395,13 +383,44 @@
    AIM STATUS
 ========================================================= */
 
+         .aim-container {
+            position: relative;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding-top: 25px;
+            padding-bottom: 45px;
+         }
+
+         /* Top-left status */
+         .aim-panel-label {
+            position: absolute;
+
+            top: 0;
+            left: 15px;
+
+            color: #59616d;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+
+            pointer-events: none;
+         }
+
+         /* Bottom-center status */
          .aim-status {
             position: absolute;
 
             left: 50%;
-            bottom: 15px;
+            bottom: 5px;
 
             transform: translateX(-50%);
+
+            display: flex;
+            align-items: center;
+            gap: 12px;
 
             padding: 6px 13px;
 
@@ -418,11 +437,28 @@
             text-transform: uppercase;
 
             pointer-events: none;
+            white-space: nowrap;
          }
 
          .aim-status.good {
             color: #75f09b;
             border-color: rgba(91, 234, 139, 0.35);
+         }
+
+         .aim-max {
+            color: #777f89;
+            padding-left: 12px;
+            border-left: 1px solid rgba(255, 255, 255, 0.12);
+         }
+
+         .aim-max strong {
+            color: #aaaaaa;
+            font-family: monospace;
+            font-weight: bold;
+         }
+
+         .aim-status.good .aim-max strong {
+            color: #75f09b;
          }
 
          /* =========================================================
@@ -993,10 +1029,10 @@
          <div class="setting">
             <label>
                <span>Panel size</span>
-               <span id="panelSizeValue">100%</span>
+               <span id="panelSizeValue">100</span>
             </label>
 
-            <input type="range" id="panelSize" min="50" max="100" value="100" />
+            <input type="range" id="panelSize" min="10" max="150" value="100" />
          </div>
 
          <div class="setting">
@@ -1038,20 +1074,27 @@
          <!-- ===================================================
          AIM PANEL
     ================================================== -->
-
          <section class="aim-section">
-            <div class="aim-panel" id="aimPanel">
+            <div class="aim-container">
                <div class="aim-panel-label">AIM / STRAFE</div>
 
-               <div class="aim-center"></div>
+               <div class="aim-panel" id="aimPanel">
+                  <div class="aim-center"></div>
 
-               <div class="ball-timing-ring" id="ballTimingRing"></div>
+                  <div class="ball-timing-ring" id="ballTimingRing"></div>
 
-               <div class="ball" id="ball">
-                  <div class="ball-marker"></div>
+                  <div class="ball" id="ball">
+                     <div class="ball-marker"></div>
+                  </div>
                </div>
 
-               <div class="aim-status" id="aimStatus">OFF TARGET</div>
+               <div class="aim-status" id="aimStatus">
+                  <span id="aimStatusText">OFF TARGET</span>
+
+                  <span class="aim-max">
+                     MAX <strong id="maxOnTarget">0 ms</strong>
+                  </span>
+               </div>
             </div>
          </section>
 
@@ -1167,10 +1210,10 @@
             },
 
             {
-               id: "f",
-               name: "F",
+               id: "w",
+               name: "W",
                type: "keyboard",
-               code: "KeyF",
+               code: "KeyW",
             },
 
             {
@@ -1303,6 +1346,8 @@
          const ballTimingRing = document.getElementById("ballTimingRing");
 
          const aimStatus = document.getElementById("aimStatus");
+         const aimStatusText = document.getElementById("aimStatusText");
+         const maxOnTargetElement = document.getElementById("maxOnTarget");
 
          let ballX = 0;
          let ballY = 0;
@@ -1317,6 +1362,10 @@
 
          let aimSamples = 0;
          let aimGoodSamples = 0;
+         let onTargetStart = 0;
+         let currentOnTargetTime = 0;
+         let maxOnTargetTime = 0;
+         let wasOnTarget = false;
 
          /* =========================================================
    DOM
@@ -1440,7 +1489,7 @@
                settings.ballSize + " px";
 
             document.getElementById("panelSizeValue").textContent =
-               settings.panelSize + "%";
+               settings.panelSize;
 
             document.getElementById("ballSpeedValue").textContent =
                settings.ballSpeed + " px/s";
@@ -2488,7 +2537,27 @@
          }
 
          function updatePanelSize() {
-            aimPanel.style.width = "min(" + settings.panelSize + "vw, 1100px)";
+            const scale = settings.panelSize / 100;
+
+            aimPanel.style.width = `${1100 * scale}px`;
+            aimPanel.style.height = `${650 * scale}px`;
+            aimPanel.style.minHeight = "0";
+            aimPanel.style.maxWidth = "none";
+
+            requestAnimationFrame(() => {
+               const rect = aimPanel.getBoundingClientRect();
+
+               ballX = rect.width / 2;
+               ballY = rect.height / 2;
+
+               ball.style.left = ballX + "px";
+               ball.style.top = ballY + "px";
+
+               ballTimingRing.style.left = ballX + "px";
+               ballTimingRing.style.top = ballY + "px";
+
+               lastBallTime = performance.now();
+            });
          }
 
          function resetBall() {
@@ -2609,15 +2678,37 @@
             if (onTarget) {
                ball.classList.add("on-target");
 
-               aimStatus.textContent = "ON TARGET";
-
+               aimStatusText.textContent = "ON TARGET";
                aimStatus.classList.add("good");
+
+               // Just entered the ball
+               if (!wasOnTarget) {
+                  onTargetStart = now;
+                  currentOnTargetTime = 0;
+                  wasOnTarget = true;
+               }
+
+               // Current continuous time on the ball
+               currentOnTargetTime = now - onTargetStart;
+
+               // Update maximum only if this attempt beats the previous record
+               if (currentOnTargetTime > maxOnTargetTime) {
+                  maxOnTargetTime = currentOnTargetTime;
+
+                  maxOnTargetElement.textContent =
+                     Math.floor(maxOnTargetTime) + " ms";
+               }
             } else {
                ball.classList.remove("on-target");
 
-               aimStatus.textContent = "OFF TARGET";
-
+               aimStatusText.textContent = "OFF TARGET";
                aimStatus.classList.remove("good");
+
+               // We just left the ball
+               if (wasOnTarget) {
+                  wasOnTarget = false;
+                  currentOnTargetTime = 0;
+               }
             }
 
             aimSamples++;
