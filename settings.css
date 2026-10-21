@@ -4,7 +4,7 @@
 
 #settings-toggle-btn {
    position: absolute;
-   top: 55px;
+   top: 100px;
    left: 20px;
    background: rgba(40, 40, 40, 0.8);
    color: #fff;
@@ -24,7 +24,7 @@
 
 #settings {
    position: absolute;
-   top: 100px;
+   top: 140px;
    left: 20px;
    width: 320px;
    max-height: calc(100vh - 120px);
