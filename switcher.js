@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
    switcherDiv.innerHTML = `
       <label for="global-scenario-select">Scenario:</label>
       <select id="global-scenario-select">
-         <option value="" disabled selected>Loading...</option>
       </select>
    `;
    
