@@ -87,8 +87,7 @@
 
       <button id="settings-toggle-btn">Settings (Esc)</button>
 
-      <!-- Configuration Menu -->
-      <div id="settings" class="hidden-menu">
+      <div id="settings" class="hidden-settings">
          <h3>Micro Trainer Settings</h3>
          <div class="config-group">
             <label>Canvas Width (px) <span class="range-value" id="val-canvasWidth">1200</span></label>
@@ -302,7 +301,7 @@
          const menu = document.getElementById("settings");
 
          function toggleMenu() {
-            menu.classList.toggle("hidden-menu");
+            menu.classList.toggle("hidden-settings");
          }
 
          menuBtn.addEventListener("click", toggleMenu);
