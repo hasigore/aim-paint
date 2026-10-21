@@ -102,15 +102,14 @@
          .hud-item span {
             color: #0f0;
          }
-
          
-       
-
-         /* Menu Overlay Styling matching Straight Balls */
-         #menu-toggle-btn {
-            position: fixed;
-            top: 60px;
-            right: 15px;
+/* Menu Overlay Styling matching Straight Balls */
+#menu-toggle-btn {
+            position: relative; /* Nicht mehr fixed, sondern im Flexbox-Flow */
+            top: 0;
+            left: 0;
+            margin: 10px 20px; /* Etwas Abstand nach oben/unten und links */
+            align-self: flex-start; /* Links ausrichten */
             background: rgba(40, 40, 40, 0.8);
             color: #fff;
             border: 1px solid #666;
@@ -125,12 +124,16 @@
          #menu-toggle-btn:hover {
             background: rgba(70, 70, 70, 0.9);
          }
-         #advanced-menu {
-            position: fixed;
-            top: 105px;
-            right: 15px;
+         
+       
+
+         
+        #advanced-menu {
+            position: absolute;
+            top: 110px; /* Direkt unterhalb von HUD-Bar und Button */
+            left: 20px;  /* Bündig mit dem Button auf der linken Seite */
             width: 320px;
-            max-height: calc(100vh - 120px);
+            max-height: calc(100vh - 130px);
             background: rgba(18, 18, 18, 0.95);
             border: 1px solid #444;
             border-radius: 8px;
