@@ -2,6 +2,7 @@
 <html lang="en">
    <head>
       <link rel="stylesheet" href="switcher.css" />
+      <link rel="stylesheet" href="settings.css" />
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Micro Aim Trainer</title>
@@ -72,108 +73,6 @@
                inset 0 0 15px rgba(255, 255, 255, 0.05);
             flex-shrink: 0;
          }
-
-         /* Menu Overlay Styling */
-         #menu-toggle-btn {
-            position: fixed;
-            top: 60px;
-            right: 15px;
-            background: rgba(40, 40, 40, 0.8);
-            color: #fff;
-            border: 1px solid #666;
-            padding: 8px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            z-index: 1000;
-            font-size: 14px;
-            backdrop-filter: blur(4px);
-            transition: background 0.2s;
-         }
-         #menu-toggle-btn:hover {
-            background: rgba(70, 70, 70, 0.9);
-         }
-         #config-menu {
-            position: fixed;
-            top: 105px;
-            right: 15px;
-            width: 320px;
-            background: rgba(18, 18, 18, 0.95);
-            border: 1px solid #444;
-            border-radius: 8px;
-            padding: 20px;
-            z-index: 999;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            max-height: calc(100vh - 120px);
-            overflow-y: auto;
-            display: none;
-         }
-         #config-menu.open {
-            display: block;
-         }
-         .config-group {
-            margin-bottom: 14px;
-         }
-         .config-group label {
-            display: block;
-            font-size: 12px;
-            color: #aaa;
-            margin-bottom: 4px;
-         }
-         .config-group input[type="text"],
-         .config-group select {
-            width: 100%;
-            background: #2a2a2a;
-            border: 1px solid #555;
-            color: #fff;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-size: 13px;
-         }
-         .config-group input[type="range"] {
-            width: 100%;
-            cursor: pointer;
-            accent-color: #00d4ff;
-         }
-         .range-value {
-            float: right;
-            color: #00d4ff;
-            font-size: 12px;
-         }
-         .config-group input[type="checkbox"] {
-            width: auto;
-            margin-right: 8px;
-            accent-color: #00d4ff;
-         }
-         .checkbox-label {
-            display: flex !important;
-            align-items: center;
-            cursor: pointer;
-            color: #fff !important;
-            font-size: 13px !important;
-         }
-         .btn-action {
-            width: 100%;
-            background: #333;
-            border: 1px solid #666;
-            color: #fff;
-            padding: 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 13px;
-            margin-top: 5px;
-            transition: background 0.2s;
-         }
-         .btn-action:hover {
-            background: #444;
-         }
-         h3 {
-            font-size: 16px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #444;
-            padding-bottom: 6px;
-            color: #00d4ff;
-         }
       </style>
    </head>
    <body>
@@ -186,10 +85,10 @@
          <div class="hud-item">Penalties: <span id="hud-penalties">0</span></div>
       </div>
 
-      <button id="menu-toggle-btn">Settings (Esc)</button>
+      <button id="settings-toggle-btn">Settings (Esc)</button>
 
       <!-- Configuration Menu -->
-      <div id="config-menu">
+      <div id="settings" class="hidden-menu">
          <h3>Micro Trainer Settings</h3>
          <div class="config-group">
             <label>Canvas Width (px) <span class="range-value" id="val-canvasWidth">1200</span></label>
@@ -283,7 +182,7 @@
          let rectTimeRemaining = Config.rect.timer;
          let isPenalty = false;
          let penaltyTimeRemaining = 0;
-         let currentDot = null; // { x, y, createdAt, lifespan }
+         let currentDot = null;
 
          const canvas = document.getElementById("aimCanvas");
          const ctx = canvas.getContext("2d");
@@ -343,7 +242,6 @@
             currentDot = null;
          }
 
-         // Interpolate Dot Color from Green (#00ff88) to Red (#ff3344)
          function getDotColor(lifeRatio) {
             const clamped = Math.max(0, Math.min(1, lifeRatio));
             const r = Math.round(255 * (1 - clamped));
@@ -360,12 +258,10 @@
             const cx = canvas.width / 2;
             const cy = canvas.height / 2;
 
-            // Calculate current growing rectangle bounds
             const timeRatio = Math.max(0, rectTimeRemaining / Config.rect.timer);
             const currentSize = Config.rect.baseSize + (1 - timeRatio) * Config.rect.maxGrowth;
             const halfSize = currentSize / 2;
 
-            // Check Central Rectangle
             if (
                mousePos.x >= cx - halfSize &&
                mousePos.x <= cx + halfSize &&
@@ -377,7 +273,6 @@
                return;
             }
 
-            // Check Surrounding Micro Dot
             if (currentDot) {
                const dist = Math.hypot(mousePos.x - currentDot.x, mousePos.y - currentDot.y);
                if (dist <= Config.dot.radius + 2) {
@@ -403,19 +298,21 @@
             }
          });
 
+         const menuBtn = document.getElementById("settings-toggle-btn");
+         const menu = document.getElementById("settings");
+
+         function toggleMenu() {
+            menu.classList.toggle("hidden-menu");
+         }
+
+         menuBtn.addEventListener("click", toggleMenu);
+
          window.addEventListener("keydown", (e) => {
             if (e.key === "Escape" || e.key === "Tab") {
                e.preventDefault();
                toggleMenu();
             }
          });
-
-         const menuBtn = document.getElementById("menu-toggle-btn");
-         const menu = document.getElementById("config-menu");
-         function toggleMenu() {
-            menu.classList.toggle("open");
-         }
-         menuBtn.addEventListener("click", toggleMenu);
 
          document.getElementById("btn-fullscreen").addEventListener("click", () => {
             if (!document.fullscreenElement) {
@@ -493,7 +390,6 @@
                   resetState();
                }
             } else {
-               // Continuous check in hover mode to keep rectangle at min size while hovering
                if (Config.aim.justHover) {
                   const timeRatio = Math.max(0, rectTimeRemaining / Config.rect.timer);
                   const currentSize = Config.rect.baseSize + (1 - timeRatio) * Config.rect.maxGrowth;
@@ -509,13 +405,11 @@
                   }
                }
 
-               // Rect Timer Update
                rectTimeRemaining -= dt;
                if (rectTimeRemaining <= 0) {
                   triggerPenalty();
                }
 
-               // Micro Dot Lifespan Update
                if (currentDot) {
                   const elapsed = (now - currentDot.createdAt) / 1000;
                   if (elapsed >= currentDot.lifespan) {
@@ -526,7 +420,6 @@
                }
             }
 
-            // Draw Central Rectangle (Electric Blue, subtle scale)
             ctx.save();
             ctx.translate(cx, cy);
 
@@ -542,7 +435,6 @@
             ctx.strokeRect(-halfSize, -halfSize, currentSize, currentSize);
             ctx.restore();
 
-            // Draw Surrounding Micro Dot (Green to Red color transition)
             if (!isPenalty && currentDot) {
                const elapsed = (now - currentDot.createdAt) / 1000;
                const lifeRatio = Math.max(0, 1 - (elapsed / currentDot.lifespan));
@@ -555,7 +447,6 @@
                ctx.closePath();
             }
 
-            // Update Top HUD
             document.getElementById("hud-fps").innerText = Math.round(currentFps);
             document.getElementById("hud-hits").innerText = hits;
             document.getElementById("hud-misses").innerText = misses;
