@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .then(data => {
          const selectEl = document.getElementById('global-scenario-select');
-         selectEl.innerHTML = '<option value="" disabled>-- Switch Scenario --</option>';
 
          const lines = data.split('\n');
          const currentFileName = window.location.pathname.split('/').pop();
