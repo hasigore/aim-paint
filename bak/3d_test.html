@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPS - Fully Fixed Jump & Controls</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #111;
+            font-family: sans-serif;
+            user-select: none;
+        }
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 18px;
+            text-shadow: 1px 1px 2px black;
+            pointer-events: none;
+        }
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            margin-top: -5px;
+            margin-left: -5px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            pointer-events: none;
+            transition: transform 0.1s ease;
+        }
+        #instructions {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui">
+        <div>Score: <span id="score">0</span></div>
+        <div style="font-size: 14px; color: #aaa; margin-top: 5px;">[WASD] Move | [ALT] Toggle Run | [SPACE] Jump | [RMB] Slide (fast) | [LSHIFT] ADS | [LMB] Shoot</div>
+    </div>
+    
+    <div id="crosshair"></div>
+
+    <div id="instructions">
+        <h2>FPS Shooter Arena</h2>
+        <p>Click here to start</p>
+        <p style="font-size: 12px; color: #888;">WASD to Move, ALT to Toggle Run<br>SPACE to Jump, RMB to Slide (Fast, at full run on floor)<br>LSHIFT to ADS, LMB to Shoot Spheres</p>
+    </div>
+
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        let scene, camera, renderer;
+        let score = 0;
+        let targets = [];
+        let isADS = false;
+        
+        // FOV settings
+        const normalFOV = 103;
+        const adsFOV = 103;
+
+        // Player controls & state
+        const player = {
+            position: new THREE.Vector3(0, 1.6, 0),
+            velocity: new THREE.Vector3(0, 0, 0),
+            walkSpeed: 8.0,
+            runSpeed: 14.0,
+            jumpForce: 12.0,
+            gravity: 30.0,
+            height: 1.6,
+            crouchHeight: 0.9,
+            isJumping: false,
+            isSliding: false,
+            isRunning: false,
+            slideTimer: 0,
+            slideDir: new THREE.Vector3(),
+            slideJumpQueued: false,
+slideJumpQueueTime: 0
+
+        };          
+        const slideBufferTime = 0.30; // 300 ms
+        const slideJumpBufferTime = 0.30;
+
+
+        const keys = { w: false, a: false, s: false, d: false };
+        let yaw = 0;
+        let pitch = 0;
+        const maxPitch = Math.PI / 2 - 0.05;
+
+        const instructions = document.getElementById('instructions');
+        const scoreEl = document.getElementById('score');
+        const crosshair = document.getElementById('crosshair');
+        
+const fireInterval = 80; // milliseconds between shots
+let isShooting = false;
+let fireTimer = null;
+
+let isBursting = false;
+
+        let clock = new THREE.Clock();
+
+        init();
+        animate();
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x1a1a1a);
+            scene.fog = new THREE.FogExp2(0x1a1a1a, 0.015);
+
+            camera = new THREE.PerspectiveCamera(normalFOV, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.copy(player.position);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            document.body.appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+
+            const pointLight = new THREE.PointLight(0xffffff, 0.8, 100);
+            pointLight.position.set(0, 20, 0);
+            scene.add(pointLight);
+
+            const floorGeo = new THREE.PlaneGeometry(150, 150);
+            const floorMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.9 });
+            const floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            scene.add(floor);
+
+            const grid = new THREE.GridHelper(150, 30, 0x444444, 0x333333);
+            grid.position.y = 0.01;
+            scene.add(grid);
+
+            spawnTargets();
+
+            instructions.addEventListener('click', () => {
+                document.body.requestPointerLock();
+            });
+
+            document.addEventListener('pointerlockchange', () => {
+                if (document.pointerLockElement === document.body) {
+                    instructions.style.display = 'none';
+                } else {
+                    instructions.style.display = 'block';
+                }
+            });
+
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mousedown', onMouseDown);
+            window.addEventListener('keydown', onKeyDown);
+            window.addEventListener('keyup', onKeyUp);
+            window.addEventListener('contextmenu', e => e.preventDefault());
+            window.addEventListener('resize', onWindowResize);
+            window.addEventListener('mouseup', onMouseUp);
+        }
+
+        function spawnTargets() {
+            for (let i = 0; i < 50; i++) {
+                const geometry = new THREE.SphereGeometry(1.2, 32, 32);
+                const material = new THREE.MeshStandardMaterial({ 
+                    color: Math.random() * 0xffffff, 
+                    roughness: 0.3,
+                    metalness: 0.2
+                });
+                const target = new THREE.Mesh(geometry, material);
+                
+                resetTargetPosition(target);
+                scene.add(target);
+                targets.push(target);
+            }
+        }
+
+        function resetTargetPosition(target) {
+            const radius = 15 + Math.random() * 45;
+            const theta = Math.random() * Math.PI * 2;
+            target.position.set(
+                Math.cos(theta) * radius, 
+                1.2 + Math.random() * 5, 
+                Math.sin(theta) * radius
+            );
+        }
+
+        function onMouseMove(event) {
+            if (document.pointerLockElement !== document.body) return;
+
+            const sensitivity = 0.002;
+            yaw -= event.movementX * sensitivity;
+            pitch -= event.movementY * sensitivity;
+
+            pitch = Math.max(-maxPitch, Math.min(maxPitch, pitch));
+
+            const euler = new THREE.Euler(pitch, yaw, 0, 'YXZ');
+            camera.quaternion.setFromEuler(euler);
+        }
+
+        function onKeyDown(event) {
+            if (event.code === 'KeyW') keys.w = true;
+            if (event.code === 'KeyA') keys.a = true;
+            if (event.code === 'KeyS') keys.s = true;
+            if (event.code === 'KeyD') keys.d = true;
+
+            // Toggle Run with Left Alt key
+            if (event.code === 'AltLeft' || event.code === 'AltRight') {
+                event.preventDefault();
+                player.isRunning = !player.isRunning;
+            }
+
+            // ADS with Left Shift
+            if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
+                isADS = true;
+                crosshair.style.transform = 'scale(0.5)';
+                crosshair.style.borderColor = 'rgba(255, 0, 0, 0.8)';
+            }
+
+            // Jump with Spacebar - Direct check against base floor height
+          if (event.code === 'Space') {
+    event.preventDefault();
+
+    // Jump normally from the ground
+    if (!player.isSliding && !player.isJumping) {
+        if (player.position.y <= player.height + 0.01) {
+            player.velocity.y = player.jumpForce;
+            player.isJumping = true;
+        }
+        return;
+    }
+
+    // During slide: buffer jump if <=300 ms remain
+    if (player.isSliding && player.slideTimer <= slideJumpBufferTime) {
+        player.slideJumpQueued = true;
+        player.slideJumpQueueTime = slideJumpBufferTime;
+    }
+}
+        }
+
+        function onKeyUp(event) {
+            if (event.code === 'KeyW') keys.w = false;
+            if (event.code === 'KeyA') keys.a = false;
+            if (event.code === 'KeyS') keys.s = false;
+            if (event.code === 'KeyD') keys.d = false;
+
+            if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
+                isADS = false;
+                crosshair.style.transform = 'scale(1)';
+                crosshair.style.borderColor = 'rgba(255, 255, 255, 0.7)';
+            }
+        }
+        
+      function startShooting() {
+    if (isShooting) return;
+
+    isShooting = true;
+
+    // Shoot immediately
+    shoot();
+
+    // Continue shooting while LMB is held
+    fireTimer = setInterval(() => {
+        if (isShooting) {
+            shoot();
+        }
+    }, fireInterval);
+}
+function stopShooting() {
+    isShooting = false;
+
+    if (fireTimer !== null) {
+        clearInterval(fireTimer);
+        fireTimer = null;
+    }
+}
+
+function onMouseDown(event) {
+    if (document.pointerLockElement !== document.body) return;
+
+    if (event.button === 0) {
+        startShooting();
+    } else if (event.button === 2) {
+        requestSlide();
+    }
+}
+function onMouseUp(event) {
+    if (event.button === 0) {
+        stopShooting();
+    }
+}
+function requestSlide() {
+    if (player.isSliding || !player.isRunning || !keys.w) {
+        return;
+    }
+
+    const isOnFloor =
+        !player.isJumping &&
+        player.position.y <= player.height + 0.01;
+
+    // Already on ground → slide immediately
+    if (isOnFloor) {
+        startSlide();
+        return;
+    }
+
+    // Airborne → buffer the slide
+    player.slideQueued = true;
+    player.slideQueueTime = slideBufferTime;
+}
+
+       function startSlide() {
+    if (player.isSliding || !player.isRunning || !keys.w) {
+        player.slideQueued = false;
+        return;
+    }
+
+    const forward = new THREE.Vector3(0, 0, -1)
+        .applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+
+    player.isSliding = true;
+    player.slideTimer = 0.5;
+    player.slideDir.copy(forward);
+
+    player.slideQueued = false;
+    player.slideQueueTime = 0;
+}
+
+        function shoot() {
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+
+            const intersects = raycaster.intersectObjects(targets);
+
+            if (intersects.length > 0) {
+                const hitTarget = intersects[0].object;
+                resetTargetPosition(hitTarget);
+
+                score += 10;
+                scoreEl.innerText = score;
+            }
+        }
+
+        function updatePhysics(delta) {
+            const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+            const right = new THREE.Vector3(1, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+
+            let moveVector = new THREE.Vector3();
+ 
+            if (player.isSliding) {
+                player.slideTimer -= delta;
+                const slideSpeedFactor = Math.max(0, player.slideTimer / 0.5) * 28.0 + 10.0;
+                moveVector.copy(player.slideDir).multiplyScalar(slideSpeedFactor);
+
+                if (player.slideTimer <= 0 || !keys.w) {
+                    player.isSliding = false;
+                }
+                 // Jump immediately when the slide finishes
+        if (player.slideJumpQueued) {
+            player.slideJumpQueued = false;
+            player.slideJumpQueueTime = 0;
+
+            player.position.y = player.height;
+            player.velocity.y = player.jumpForce;
+            player.isJumping = true;
+        }
+            } else {
+                let currentSpeed = player.isRunning ? player.runSpeed : player.walkSpeed;
+                if (isADS) currentSpeed *= 0.6;
+
+                if (keys.w) moveVector.add(forward);
+                if (keys.s) moveVector.sub(forward);
+                if (keys.a) moveVector.sub(right);
+                if (keys.d) moveVector.add(right);
+
+                moveVector.normalize();
+                moveVector.multiplyScalar(currentSpeed);
+            }
+
+            player.position.x += moveVector.x * delta;
+            player.position.z += moveVector.z * delta;
+
+            // Apply Gravity & Vertical Movement
+            player.velocity.y -= player.gravity * delta;
+            player.position.y += player.velocity.y * delta;
+// Floor collision check
+const targetFloorHeight = player.isSliding
+    ? player.crouchHeight
+    : player.height;
+
+if (player.position.y <= targetFloorHeight) {
+
+    const wasAirborne = player.isJumping;
+
+    player.position.y = targetFloorHeight;
+    player.velocity.y = 0;
+    player.isJumping = false;
+
+    // Execute buffered slide immediately on landing
+    if (
+        wasAirborne &&
+        player.slideQueued &&
+        player.slideQueueTime > 0
+    ) {
+        startSlide();
+    }
+}
+            // Camera follows the player's actual vertical position
+            camera.position.x = player.position.x;
+            camera.position.y = player.position.y;
+            camera.position.z = player.position.z;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = clock.getDelta();
+            // Reduce slide input buffer while airborne
+             
+if (player.slideQueued) {
+    player.slideQueueTime -= delta;
+
+    if (player.slideQueueTime <= 0) {
+        player.slideQueued = false;
+        player.slideQueueTime = 0;
+    }
+}
+
+           
+
+            updatePhysics(delta);
+
+            const targetFOV = isADS ? adsFOV : normalFOV;
+            camera.fov += (targetFOV - camera.fov) * 0.15;
+            camera.updateProjectionMatrix();
+
+            targets.forEach(t => t.rotation.y += delta * 0.5);
+
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+</html> 

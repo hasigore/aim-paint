@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curve-Optimized Vectorizer with Fixed SVG Scaling</title>
+    <!-- Load ImageTracer.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/imagetracerjs@1.2.6/imagetracer_v1.2.6.min.js"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        /* Sidebar Controls */
+        .sidebar {
+            width: 320px;
+            background: #1e293b;
+            border-right: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 20px;
+            box-shadow: 5px 0 25px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+            z-index: 10;
+            overflow-y: auto;
+            max-height: 100vh;
+            box-sizing: border-box;
+        }
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+        /* Main Display Workspace */
+        .workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: #090d16;
+            padding: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        /* Toggle Menu Button */
+        .toggle-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 20;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: background 0.2s;
+        }
+        .toggle-btn:hover {
+            background: #2563eb;
+        }
+        .controls-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #0f172a;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            color: #f8fafc;
+            font-weight: 500;
+        }
+        .control-group span {
+            color: #38bdf8;
+            font-family: monospace;
+        }
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+        input[type="file"] {
+            background: #334155;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #475569;
+            color: #fff;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #f8fafc;
+            cursor: pointer;
+        }
+        .checkbox-group input {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+        .preview-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+        .preview-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 14px;
+            color: #94a3b8;
+            flex: 1;
+            max-width: 500px;
+            height: 80vh;
+        }
+        .preview-box.hidden {
+            display: none !important;
+        }
+        img, svg {
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            object-fit: contain;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        /* Fix SVG internal scaling and aspect ratio */
+        #svgContainer svg {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        button.action-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+        button.action-btn:hover {
+            background: #2563eb;
+        }
+        button.action-btn:disabled {
+            background: #475569;
+            cursor: not-allowed;
+        }
+        h2, h3 {
+            margin: 0 0 4px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="toggle-btn" id="toggleMenuBtn">Toggle Menu</button>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+        <h2>Vector Settings</h2>
+        <p style="font-size: 13px; color: #94a3b8; margin: 0;">Upload an image and customize parameters.</p>
+        
+        <input type="file" id="upload" accept="image/*">
+        
+        <div class="controls-section">
+            <h3>View Mode</h3>
+            <label class="checkbox-group">
+                <input type="checkbox" id="showSourceOnly"> Show Source Only
+            </label>
+            <label class="checkbox-group">
+                <input type="checkbox" id="showOutputOnly"> Show Output Only
+            </label>
+        </div>
+
+        <div class="controls-section">
+            <h3>Parameters</h3>
+            
+            <div class="control-group">
+                <label>Spline Tolerance (qtres): <span id="qtresVal">3</span></label>
+                <input type="range" id="qtres" min="0.5" max="10" step="0.5" value="3">
+            </div>
+
+            <div class="control-group">
+                <label>Line Tolerance (ltres): <span id="ltresVal">3</span></label>
+                <input type="range" id="ltres" min="0.5" max="10" step="0.5" value="3">
+            </div>
+
+            <div class="control-group">
+                <label>Blur Radius: <span id="blurVal">5</span></label>
+                <input type="range" id="blur" min="0" max="15" step="1" value="5">
+            </div>
+
+            <div class="control-group">
+                <label>Path Omit: <span id="omitVal">20</span></label>
+                <input type="range" id="omit" min="0" max="100" step="5" value="20">
+            </div>
+
+            <div class="control-group">
+                <label>Max Colors: <span id="colorsVal">4</span></label>
+                <input type="range" id="colors" min="2" max="32" step="1" value="4">
+            </div>
+        </div>
+
+        <button class="action-btn" id="downloadBtn" disabled>Download SVG File</button>
+    </div>
+
+    <!-- Main Workspace Preview Area -->
+    <div class="workspace" id="workspace">
+        <div class="preview-container" id="previewContainer">
+            <div class="preview-box" id="sourceBox">
+                <span>Original Source</span>
+                <img id="sourceImage" alt="Preview">
+            </div>
+            <div class="preview-box" id="outputBox">
+                <span>Smooth Vector Output</span>
+                <div id="svgContainer" style="width:100%; height:100%; display:flex;"></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const upload = document.getElementById('upload');
+    const sourceImage = document.getElementById('sourceImage');
+    const svgContainer = document.getElementById('svgContainer');
+    const downloadBtn = document.getElementById('downloadBtn');
+    
+    const sidebar = document.getElementById('sidebar');
+    const toggleMenuBtn = document.getElementById('toggleMenuBtn');
+    
+    const showSourceOnlyCheckbox = document.getElementById('showSourceOnly');
+    const showOutputOnlyCheckbox = document.getElementById('showOutputOnly');
+    const sourceBox = document.getElementById('sourceBox');
+    const outputBox = document.getElementById('outputBox');
+
+    // Sliders
+    const qtresRange = document.getElementById('qtres');
+    const ltresRange = document.getElementById('ltres');
+    const blurRange = document.getElementById('blur');
+    const omitRange = document.getElementById('omit');
+    const colorsRange = document.getElementById('colors');
+
+    // Label Displays
+    const qtresVal = document.getElementById('qtresVal');
+    const ltresVal = document.getElementById('ltresVal');
+    const blurVal = document.getElementById('blurVal');
+    const omitVal = document.getElementById('omitVal');
+    const colorsVal = document.getElementById('colorsVal');
+
+    let currentImageDataUrl = null;
+    let generatedSvgString = '';
+
+    // Menu toggle logic
+    toggleMenuBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('hidden');
+    });
+
+    // Exclusive view logic checkboxes
+    showSourceOnlyCheckbox.addEventListener('change', () => {
+        if (showSourceOnlyCheckbox.checked) {
+            showOutputOnlyCheckbox.checked = false;
+            sourceBox.classList.remove('hidden');
+            outputBox.classList.add('hidden');
+        } else {
+            sourceBox.classList.remove('hidden');
+            outputBox.classList.remove('hidden');
+        }
+    });
+
+    showOutputOnlyCheckbox.addEventListener('change', () => {
+        if (showOutputOnlyCheckbox.checked) {
+            showSourceOnlyCheckbox.checked = false;
+            outputBox.classList.remove('hidden');
+            sourceBox.classList.add('hidden');
+        } else {
+            sourceBox.classList.remove('hidden');
+            outputBox.classList.remove('hidden');
+        }
+    });
+
+    function updateLabels() {
+        qtresVal.textContent = qtresRange.value;
+        ltresVal.textContent = ltresRange.value;
+        blurVal.textContent = blurRange.value;
+        omitVal.textContent = omitRange.value;
+        colorsVal.textContent = colorsRange.value;
+    }
+
+    function executeTracing() {
+        if (!currentImageDataUrl) return;
+
+        const options = {
+            ltres: parseFloat(ltresRange.value),
+            qtres: parseFloat(qtresRange.value),
+            pathomit: parseInt(omitRange.value),
+            rightangleenhance: false,
+            colorsampling: 0,
+            numberofcolors: parseInt(colorsRange.value),
+            blurradius: parseInt(blurRange.value),
+            blurdelta: 30
+        };
+
+        ImageTracer.imageToSVG(currentImageDataUrl, (svgString) => {
+            // Fix strict viewbox sizing to prevent internal cropping/zooming distortion
+            let fixedSvg = svgString;
+            if (!svgString.includes('viewBox') && svgString.includes('width="')) {
+                // Extracts width and height to construct a proper scalable viewBox if missing
+                const wMatch = svgString.match(/width="([^"]+)"/);
+                const hMatch = svgString.match(/height="([^"]+)"/);
+                if (wMatch && hMatch) {
+                    fixedSvg = svgString.replace('<svg ', `<svg viewBox="0 0 ${wMatch[1]} ${hMatch[1]}" preserveAspectRatio="xMidYMid meet" `);
+                }
+            } else if (svgString.includes('viewBox')) {
+                // Ensure correct aspect ratio mapping attribute is forced on native svg elements
+                fixedSvg = svgString.replace('<svg ', '<svg preserveAspectRatio="xMidYMid meet" ');
+            }
+
+            generatedSvgString = fixedSvg;
+            svgContainer.innerHTML = fixedSvg;
+            
+            const svgElement = svgContainer.querySelector('svg');
+            if (svgElement) {
+                svgElement.removeAttribute('width');
+                svgElement.removeAttribute('height');
+                svgElement.style.width = '100%';
+                svgElement.style.height = '100%';
+                svgElement.style.display = 'block';
+            }
+
+            downloadBtn.disabled = false;
+        }, options);
+    }
+
+    let debounceTimer;
+    function debouncedProcess() {
+        updateLabels();
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(executeTracing, 150);
+    }
+
+    upload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            currentImageDataUrl = event.target.result;
+            sourceImage.src = currentImageDataUrl;
+            sourceImage.onload = () => {
+                executeTracing();
+            };
+        };
+        reader.readAsDataURL(file);
+    });
+
+    [qtresRange, ltresRange, blurRange, omitRange, colorsRange].forEach(slider => {
+        slider.addEventListener('input', () => {
+            updateLabels();
+            debouncedProcess();
+        });
+    });
+
+    downloadBtn.addEventListener('click', () => {
+        if (!generatedSvgString) return;
+        
+        const blob = new Blob([generatedSvgString], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'custom-smooth-curves.svg';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    });
+</script>
+
+</body>
+</html>
