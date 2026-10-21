@@ -76,7 +76,7 @@
 
       <button id="settings-toggle-btn">Settings (Esc)</button>
 
-      <div id="settings" class="hidden-menu">
+      <div id="settings" class="hidden-settings">
          <h3>Urgency Aim Settings</h3>
          <div class="config-group">
             <label>Canvas Width <span class="range-value" id="val-canvasWidth">1200</span></label>
@@ -222,7 +222,7 @@
          window.addEventListener("mouseup", () => isMouseDown = false);
 
          const menu = document.getElementById("settings");
-         const toggleMenu = () => menu.classList.toggle("hidden-menu");
+         const toggleMenu = () => menu.classList.toggle("hidden-settings");
 
          document.getElementById("settings-toggle-btn").onclick = toggleMenu;
 
