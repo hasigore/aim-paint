@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-   // 1. Switcher-HTML erstellen und einfügen
+   // 1. Create the switcher element
    const switcherDiv = document.createElement('div');
    switcherDiv.id = 'global-scenario-switcher';
    switcherDiv.innerHTML = `
@@ -8,9 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
          <option value="" disabled selected>Loading...</option>
       </select>
    `;
-   document.body.appendChild(switcherDiv);
+   
+   // 2. Insert it at the absolute top of the body
+   document.body.prepend(switcherDiv);
 
-   // 2. scenarios.txt laden und Dropdown füllen
+   // 3. Fetch scenarios.txt and populate dropdown
    fetch('scenarios.txt')
       .then(response => {
          if (!response.ok) throw new Error("Could not load scenarios file.");
@@ -36,7 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
                option.value = filename;
                option.textContent = headingText;
 
-               // Aktive Seite vorauswählen
                if (filename === currentFileName) {
                   option.selected = true;
                }
@@ -47,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .catch(error => console.error("Error loading scenarios for switcher:", error));
 
-   // 3. On-the-fly Wechsel bei Änderung
+   // 4. On-the-fly switching
    document.addEventListener('change', (e) => {
       if (e.target && e.target.id === 'global-scenario-select') {
          const selectedFile = e.target.value;
