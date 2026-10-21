@@ -119,13 +119,13 @@
        <div class="hud-item">Mode: <span id="hud-mode">Shapes</span></div>
     </div>
 
-    <button id="menu-toggle-btn">Settings (Esc)</button>
+    <button id="settings-toggle-btn">Settings (Esc)</button>
 
     <div id="canvas-container">
       <canvas id="main-canvas"></canvas>
     </div>
 
-    <div id="config-menu" class="hidden-menu">
+    <div id="settings" class="hidden-settings">
       <div class="control-row" style="flex-direction: column;">
         <div class="file-input-wrapper">
           <button class="btn-action">🖼️ Load Custom Image</button>
@@ -246,8 +246,8 @@
       const canvas = document.getElementById("main-canvas");
       const ctx = canvas.getContext("2d", { alpha: false });
       const invertModeCheckbox = document.getElementById("invert-mode");
-      const toggleMenuBtn = document.getElementById("menu-toggle-btn");
-      const advancedMenu = document.getElementById("config-menu");
+      const toggleMenuBtn = document.getElementById("settings-toggle-btn");
+      const advancedMenu = document.getElementById("settings");
       const fullscreenBtn = document.getElementById("fullscreen-btn");
 
       const cfgElements = {
@@ -394,7 +394,7 @@
 
       toggleMenuBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        advancedMenu.classList.toggle("hidden-menu");
+        advancedMenu.classList.toggle("hidden-settings");
       });
 
       document.addEventListener("click", (e) => {
@@ -403,7 +403,7 @@
           e.target !== toggleMenuBtn &&
           !e.target.closest(".file-input-wrapper")
         ) {
-          advancedMenu.classList.add("hidden-menu");
+          advancedMenu.classList.add("hidden-settings");
         }
       });
       
@@ -412,7 +412,7 @@
       window.addEventListener("keydown", (e) => {
          if (e.key === "Escape" || e.key === "Tab") {
             e.preventDefault();
-            advancedMenu.classList.toggle("hidden-menu");
+            advancedMenu.classList.toggle("hidden-settings");
          }
       });
 
