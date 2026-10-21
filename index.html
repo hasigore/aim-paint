@@ -86,26 +86,15 @@
             background: #2a2a2a;
             border: 1px solid #555;
             color: #fff;
-            padding: 10px;
-            border-radius: 4px;
-            font-size: 14px;
-            margin-bottom: 20px;
-            cursor: pointer;
-         }
-         .selector-box button {
-            width: 100%;
-            background: #00ff88;
-            color: #111;
-            border: none;
             padding: 12px;
             border-radius: 4px;
-            font-weight: bold;
             font-size: 15px;
             cursor: pointer;
-            transition: background 0.2s;
+            outline: none;
+            transition: border-color 0.2s;
          }
-         .selector-box button:hover {
-            background: #00cc6a;
+         .selector-box select:hover {
+            border-color: #00ff88;
          }
       </style>
    </head>
@@ -116,8 +105,7 @@
          <header class="hub-header">
             <h1>Aim Training Hub - Free Browser FPS Aim Trainer</h1>
             <p>
-               Select a scenario from the dropdown below to start training your precision, smoothness,
-               movement, and mouse control.
+               Select a scenario from the dropdown below to instantly start training.
             </p>
          </header>
 
@@ -125,9 +113,8 @@
             <div class="selector-box">
                <label for="scenario-select">Choose Training Scenario:</label>
                <select id="scenario-select">
-                  <option value="">Loading scenarios...</option>
+                  <option value="" disabled selected>Loading scenarios...</option>
                </select>
-               <button id="btn-launch">Launch Scenario</button>
             </div>
          </main>
       </div>
@@ -143,7 +130,7 @@
       </footer>
 
       <script>
-         // Liest die scenarios.txt ein und hängt .html automatisch an den Namen an
+         // Liest die scenarios.txt ein (Format: Anzeigename, dateinameOhneHtml)
          fetch('scenarios.txt')
             .then(response => {
                if (!response.ok) throw new Error("Could not load scenarios file.");
@@ -151,27 +138,26 @@
             })
             .then(data => {
                const selectEl = document.getElementById('scenario-select');
-               selectEl.innerHTML = ""; // Lade-Text entfernen
+               selectEl.innerHTML = '<option value="" disabled selected>-- Select a scenario --</option>';
 
                const lines = data.split('\n');
                let addedCount = 0;
 
                lines.forEach(line => {
                   const trimmed = line.trim();
-                  if (!trimmed) return; // Leere Zeilen überspringen
+                  if (!trimmed) return;
 
-                  // Trennt nach Komma: [Überschrift, Szenario-Name]
                   const parts = trimmed.split(',');
                   if (parts.length >= 2) {
                      const headingText = parts[0].trim();
                      const scenarioName = parts[1].trim();
                      
-                     // Hier wird .html vom JavaScript angehängt
+                     // .html wird hier direkt vom JavaScript angehängt
                      const filename = scenarioName + '.html';
 
                      const option = document.createElement('option');
-                     option.value = filename;          // z.B. straightballs.html
-                     option.textContent = headingText; // z.B. Straight Balls
+                     option.value = filename;
+                     option.textContent = headingText;
                      selectEl.appendChild(option);
                      addedCount++;
                   }
@@ -189,14 +175,11 @@
                selectEl.innerHTML = '<option value="">Error loading scenarios.txt</option>';
             });
 
-         // Weiterleitung beim Klick auf den Launch-Button
-         document.getElementById('btn-launch').addEventListener('click', () => {
-            const selectEl = document.getElementById('scenario-select');
-            const selectedFile = selectEl.value;
+         // Sofortiges Laden auf "on-the-fly" Basis bei Änderung des Dropdowns
+         document.getElementById('scenario-select').addEventListener('change', (e) => {
+            const selectedFile = e.target.value;
             if (selectedFile) {
                window.location.href = selectedFile;
-            } else {
-               alert("Please select a valid scenario first.");
             }
          });
       </script>
