@@ -1,10 +1,6 @@
-/* ==========================================
-   Settings Menu & Toggle Button Styling
-   ========================================== */
-
 #menu-toggle-btn {
    position: absolute;
-   top: 90px; /* Directly below the HUD bar */
+   top: 90px;
    left: 20px;
    background: rgba(40, 40, 40, 0.8);
    color: #fff;
@@ -22,9 +18,10 @@
    background: rgba(70, 70, 70, 0.9);
 }
 
+/* Aim Paint Menu IDs & Classes */
 #advanced-menu {
    position: absolute;
-   top: 130px;
+   top: 140px;
    left: 20px;
    width: 320px;
    max-height: calc(100vh - 120px);
@@ -43,10 +40,31 @@
    display: none;
 }
 
-.control-row {
-   display: flex;
-   gap: 10px;
-   margin-bottom: 12px;
+/* Straight Balls Menu IDs & Classes */
+#config-menu {
+   position: absolute;
+   top: 100px;
+   left: 20px;
+   width: 320px;
+   max-height: calc(100vh - 120px);
+   background: rgba(18, 18, 18, 0.95);
+   border: 1px solid #444;
+   border-radius: 8px;
+   padding: 20px;
+   z-index: 999;
+   backdrop-filter: blur(8px);
+   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+   overflow-y: auto;
+   display: none;
+}
+
+#config-menu.open {
+   display: block;
+}
+
+/* Shared Form Controls & Groups */
+.control-row, .config-group {
+   margin-bottom: 14px;
 }
 
 .file-input-wrapper {
@@ -96,11 +114,11 @@ h3:first-of-type {
    margin-top: 0;
 }
 
-.setting-group {
+.setting-group, .config-group {
    margin-bottom: 14px;
 }
 
-.setting-group label {
+.setting-group label, .config-group label {
    display: flex;
    justify-content: space-between;
    font-size: 12px;
@@ -108,7 +126,7 @@ h3:first-of-type {
    margin-bottom: 4px;
 }
 
-.setting-group input[type="range"] {
+.setting-group input[type="range"], .config-group input[type="range"] {
    width: 100%;
    cursor: pointer;
 }
@@ -121,22 +139,39 @@ h3:first-of-type {
    background: none;
 }
 
+.range-value {
+   float: right;
+   color: #0f0;
+   font-size: 12px;
+}
+
+.config-group input[type="text"],
+.config-group select {
+   width: 100%;
+   background: #2a2a2a;
+   border: 1px solid #555;
+   color: #fff;
+   padding: 6px 10px;
+   border-radius: 4px;
+   font-size: 13px;
+}
+
 .inline-setting {
    display: flex;
    align-items: center;
    justify-content: space-between;
 }
 
-.checkbox-container {
-   display: flex;
+.checkbox-container, .checkbox-label {
+   display: flex !important;
    align-items: center;
    gap: 8px;
-   font-size: 13px;
+   font-size: 13px !important;
    cursor: pointer;
-   color: #fff;
+   color: #fff !important;
 }
 
-.checkbox-container input {
+.checkbox-container input, .config-group input[type="checkbox"] {
    width: auto;
    margin-right: 8px;
 }
