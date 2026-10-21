@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="switcher.css" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Aim Paint</title>
+    <title>Aim Contour | Free Online FPS Aim Trainer & Mouse Tracking Tool</title>
     <meta
       name="description"
       content="Improve your FPS gaming precision with Aim Contour. Practice smooth mouse tracking, follow geometric grids and waves, and upload custom targets entirely in your browser for free."
@@ -63,6 +63,24 @@
             display: flex;
             flex-direction: column;
          }
+
+         #canvas-container {
+            flex-grow: 1;
+            width: 100%;
+            height: 100%; /* Let flexbox handle the remaining height naturally */
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+         }
+           canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+            background: #000;
+         }
          /* External HUD Bar Style matching Straight Balls */
          #hud-bar {
             height: 45px;
@@ -85,24 +103,8 @@
             color: #0f0;
          }
 
-         /* Scrollable container that fills the rest of the screen */
-         #canvas-container {
-            flex-grow: 1;
-            width: 100%;
-            height: calc(100vh - 45px);
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-         }
-         canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            cursor: crosshair;
-            background: #000;
-         }
+         
+       
 
          /* Menu Overlay Styling matching Straight Balls */
          #menu-toggle-btn {
