@@ -781,7 +781,7 @@
          window.addEventListener("keydown", (e) => {
             if (e.key === "Escape" || e.key === "Tab") {
                e.preventDefault();
-               toggleMenu();
+               menu.classList.toggle("hidden-settings");
             }
             isKeyDown = true;
          });
@@ -790,10 +790,24 @@
             e.preventDefault();
          });
 
-         const menuBtn = document.getElementById("menu-toggle-btn");
+         const toggleMenuBtn = document.getElementById("settings-toggle-btn");
          const menu = document.getElementById("config-menu");
         
-         menuBtn.addEventListener("click", toggleMenu);
+          toggleMenuBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        menu.classList.toggle("hidden-settings");
+      });
+
+      document.addEventListener("click", (e) => {
+        if (
+          !menu.contains(e.target) &&
+          e.target !== toggleMenuBtn &&
+          !e.target.closest(".file-input-wrapper")
+        ) {
+          menu.classList.add("hidden-settings");
+        }
+      });
+   
 
          const fullscreenBtn = document.getElementById("btn-fullscreen");
          fullscreenBtn.addEventListener("click", () => {
