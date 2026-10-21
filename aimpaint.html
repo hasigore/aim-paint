@@ -125,7 +125,7 @@
       <canvas id="main-canvas"></canvas>
     </div>
 
-    <div id="advanced-menu" class="hidden-menu">
+    <div id="config-menu" class="hidden-menu">
       <div class="control-row" style="flex-direction: column;">
         <div class="file-input-wrapper">
           <button class="btn-action">🖼️ Load Custom Image</button>
@@ -247,7 +247,7 @@
       const ctx = canvas.getContext("2d", { alpha: false });
       const invertModeCheckbox = document.getElementById("invert-mode");
       const toggleMenuBtn = document.getElementById("menu-toggle-btn");
-      const advancedMenu = document.getElementById("advanced-menu");
+      const advancedMenu = document.getElementById("config-menu");
       const fullscreenBtn = document.getElementById("fullscreen-btn");
 
       const cfgElements = {
