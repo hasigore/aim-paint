@@ -1,6 +1,10 @@
-#menu-toggle-btn {
+/* ==========================================
+   Universal Settings Menu & Toggle Button Styling
+   ========================================== */
+
+#settings-toggle-btn {
    position: absolute;
-   top: 100px;
+   top: 55px;
    left: 20px;
    background: rgba(40, 40, 40, 0.8);
    color: #fff;
@@ -14,13 +18,13 @@
    transition: background 0.2s;
 }
 
-#menu-toggle-btn:hover {
+#settings-toggle-btn:hover {
    background: rgba(70, 70, 70, 0.9);
 }
 
-#config-menu {
+#settings {
    position: absolute;
-   top: 150px;
+   top: 100px;
    left: 20px;
    width: 320px;
    max-height: calc(100vh - 120px);
@@ -32,15 +36,14 @@
    backdrop-filter: blur(8px);
    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
    overflow-y: auto;
+   transition: opacity 0.2s, transform 0.2s;
+}
+
+#settings.hidden-menu {
    display: none;
 }
 
-#config-menu.open {
-   display: block;
-}
-
-/* Shared Form Controls & Groups */
-.control-row, .config-group {
+.control-row, .setting-group, .config-group {
    margin-bottom: 14px;
 }
 
@@ -89,10 +92,6 @@ h3 {
 
 h3:first-of-type {
    margin-top: 0;
-}
-
-.setting-group, .config-group {
-   margin-bottom: 14px;
 }
 
 .setting-group label, .config-group label {
