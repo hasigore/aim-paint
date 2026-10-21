@@ -613,10 +613,12 @@
 
         if (backgroundImage) return;
 
-        const rect = canvas.getBoundingClientRect();
-        const clickX = isMouseClick ? e.clientX - rect.left : lastMouseX;                
-        const clickY = isMouseClick ? e.clientY - rect.top : lastMouseY;
-
+const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const clickX = isMouseClick ? (e.clientX - rect.left) * scaleX : lastMouseX;                
+        const clickY = isMouseClick ? (e.clientY - rect.top) * scaleY : lastMouseY;
+        
         const hitRadius = 6;
 
         for (let i = cachedBackgroundPoints.length - 1; i >= 0; i--) {
@@ -718,10 +720,16 @@
       canvas.addEventListener("contextmenu", handlePress);
 canvas.addEventListener("mousemove", (e) => {
         const rect = canvas.getBoundingClientRect();
-        lastMouseX = e.clientX - rect.left;
-        lastMouseY = e.clientY - rect.top;
+        
+        // Berechne das genaue Verhältnis zwischen interner Auflösung und echter Display-Größe
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
 
-        if (isPaintBlocked) return; // Respects whether drawing is allowed right now
+        // Wende den Faktor an, damit der Trail perfekt unter dem Cursor sitzt
+        lastMouseX = (e.clientX - rect.left) * scaleX;
+        lastMouseY = (e.clientY - rect.top) * scaleY;
+
+        if (isPaintBlocked) return;
 
         const now = Date.now();
         if (trackingPoints.length > 0) {
