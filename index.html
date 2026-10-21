@@ -62,41 +62,9 @@
          }
       </script>
 
+      <!-- Stylesheets -->
       <link rel="stylesheet" href="style.css" />
-      <style>
-         .selector-box {
-            background: rgba(25, 25, 25, 0.9);
-            border: 1px solid #444;
-            padding: 30px;
-            border-radius: 8px;
-            max-width: 500px;
-            margin: 40px auto;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-         }
-         .selector-box label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: #00ff88;
-            font-size: 16px;
-         }
-         .selector-box select {
-            width: 100%;
-            background: #2a2a2a;
-            border: 1px solid #555;
-            color: #fff;
-            padding: 12px;
-            border-radius: 4px;
-            font-size: 15px;
-            cursor: pointer;
-            outline: none;
-            transition: border-color 0.2s;
-         }
-         .selector-box select:hover {
-            border-color: #00ff88;
-         }
-      </style>
+      <link rel="stylesheet" href="switcher.css" />
    </head>
 
    <body class="hub-body">
@@ -105,17 +73,12 @@
          <header class="hub-header">
             <h1>Aim Training Hub - Free Browser FPS Aim Trainer</h1>
             <p>
-               Select a scenario from the dropdown below to instantly start training.
+               Welcome! Use the scenario dropdown menu in the <strong>top-left corner</strong> to select a training module and start practicing your precision, smoothness, and mouse control.
             </p>
          </header>
 
          <main>
-            <div class="selector-box">
-               <label for="scenario-select">Choose Training Scenario:</label>
-               <select id="scenario-select">
-                  <option value="" disabled selected>Loading scenarios...</option>
-               </select>
-            </div>
+            <!-- Hier könnten optional auch direkt Karten stehen, oder du nutzt komplett das Dropdown oben links -->
          </main>
       </div>
 
@@ -129,59 +92,7 @@
          <div>Copyright &copy; 2026 Aim Contour</div>
       </footer>
 
-      <script>
-         // Liest die scenarios.txt ein (Format: Anzeigename, dateinameOhneHtml)
-         fetch('scenarios.txt')
-            .then(response => {
-               if (!response.ok) throw new Error("Could not load scenarios file.");
-               return response.text();
-            })
-            .then(data => {
-               const selectEl = document.getElementById('scenario-select');
-               selectEl.innerHTML = '<option value="" disabled selected>-- Select a scenario --</option>';
-
-               const lines = data.split('\n');
-               let addedCount = 0;
-
-               lines.forEach(line => {
-                  const trimmed = line.trim();
-                  if (!trimmed) return;
-
-                  const parts = trimmed.split(',');
-                  if (parts.length >= 2) {
-                     const headingText = parts[0].trim();
-                     const scenarioName = parts[1].trim();
-                     
-                     // .html wird hier direkt vom JavaScript angehängt
-                     const filename = scenarioName + '.html';
-
-                     const option = document.createElement('option');
-                     option.value = filename;
-                     option.textContent = headingText;
-                     selectEl.appendChild(option);
-                     addedCount++;
-                  }
-               });
-
-               if (addedCount === 0) {
-                  const option = document.createElement('option');
-                  option.textContent = "No scenarios found in text file.";
-                  selectEl.appendChild(option);
-               }
-            })
-            .catch(error => {
-               console.error("Error loading scenarios:", error);
-               const selectEl = document.getElementById('scenario-select');
-               selectEl.innerHTML = '<option value="">Error loading scenarios.txt</option>';
-            });
-
-         // Sofortiges Laden auf "on-the-fly" Basis bei Änderung des Dropdowns
-         document.getElementById('scenario-select').addEventListener('change', (e) => {
-            const selectedFile = e.target.value;
-            if (selectedFile) {
-               window.location.href = selectedFile;
-            }
-         });
-      </script>
+      <!-- Global Switcher Script -->
+      <script src="switcher.js"></script>
    </body>
 </html>
