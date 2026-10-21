@@ -27,7 +27,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
          lines.forEach(line => {
             const trimmed = line.trim();
-            if (!trimmed) return;
+            
+            // Skip empty lines AND lines that start with '#' (comments)
+            if (!trimmed || trimmed.startsWith('#')) return;
 
             const parts = trimmed.split(',');
             if (parts.length >= 2) {
@@ -47,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
          });
       })
       .catch(error => console.error("Error loading scenarios for switcher:", error));
-
+   
    // 4. On-the-fly switching
    document.addEventListener('change', (e) => {
       if (e.target && e.target.id === 'global-scenario-select') {
