@@ -391,13 +391,10 @@
                   ctx.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2);
 
                   if (dot.isUrgent) {
-                     const p = dot.urgentProgress;
-                     const r = Math.round(255 * p);
-                     const g = Math.round(255 * (1 - p));
-                     ctx.fillStyle = `rgb(${r},${g},50)`;
+                     ctx.fillStyle = "#ff3344"; // Immediately red
                      ctx.fill();
                   } else {
-                     ctx.fillStyle = "#00ff88";
+                     ctx.fillStyle = "#00ff88"; // Normal green
                      ctx.fill();
                   }
                }
