@@ -45,37 +45,24 @@
     }
     </script>
 
-    <style>
-      :root {
-        --bg-color: #121214;
-        --panel-bg: #1e1e24;
-        --accent-color: #5865f2;
-        --text-color: #f3f4f6;
-        --border-color: #2d2d34;
-      }
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      body {
-         margin: 0;
-         height: 100vh;
-         display: flex;
-         flex-direction: column; /* Stacks the switcher bar on top, canvas underneath */
-         overflow: hidden;
-         background-color: var(--bg-color);
-         color: var(--text-color);
-      }
-     #app-viewport {
-         position: relative;
-         flex-grow: 1; /* Fills the rest of the screen below the 45px switcher bar */
-         height: calc(100vh - 45px); 
-      }
-      #app-viewport.drag-over {
-        background-color: #1a1a2e;
-        border: 3px dashed var(--accent-color);
-      }
+   	<style>
+	* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+         }
+         body,
+         html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #111;
+            font-family: sans-serif;
+            color: #fff;
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+         }
       canvas {
         display: block;
         width: 100%;
