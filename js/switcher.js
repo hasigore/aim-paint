@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
    document.body.prepend(switcherDiv);
 
    // 3. Fetch scenarios.txt and populate dropdown
-   fetch('scenarios.txt')
+   fetch('../files/scenarios.txt')
       .then(response => {
          if (!response.ok) throw new Error("Could not load scenarios file.");
          return response.text();
