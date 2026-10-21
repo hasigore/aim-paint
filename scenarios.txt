@@ -1,0 +1,5 @@
+Straight Balls, straightballs
+Aim Paint, aimpaint
+Aim Strafe, trackmove
+Battlefield 6 Jump Slide Trainer, jump_slide_track
+Urgency Aim Trainer, urgency_aim_trainer
