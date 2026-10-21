@@ -39,7 +39,7 @@
    transition: opacity 0.2s, transform 0.2s;
 }
 
-#settings.hidden-menu {
+#settings.hidden-settings {
    display: none;
 }
 
