@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const parts = trimmed.split(',');
             if (parts.length >= 2) {
                const headingText = parts[0].trim();
-               const filename = parts[1].trim() + '.html';
+               const filename = 'html/'+ parts[1].trim() + '.html';
 
                const option = document.createElement('option');
                option.value = filename;
