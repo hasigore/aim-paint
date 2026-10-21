@@ -770,6 +770,9 @@
          let reactionModeWaiting = false;
          let lastVulnerableIndex = 0;
          let reactionActive = false;
+         const toggleMenuBtn = document.getElementById("settings-toggle-btn");
+         const menu = document.getElementById("config-menu");
+        
 
          window.addEventListener("mousedown", () => (isMouseDown = true));
          window.addEventListener("mouseup", () => (isMouseDown = false));
@@ -785,15 +788,14 @@
             }
             isKeyDown = true;
          });
+         
          window.addEventListener("keyup", () => (isKeyDown = false));
          canvas.addEventListener("contextmenu", (e) => {
             e.preventDefault();
          });
 
-         const toggleMenuBtn = document.getElementById("settings-toggle-btn");
-         const menu = document.getElementById("config-menu");
-        
-          toggleMenuBtn.addEventListener("click", (e) => {
+      
+      toggleMenuBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         menu.classList.toggle("hidden-settings");
       });
