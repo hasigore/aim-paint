@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <link rel="stylesheet" href="switcher.css" />
+    <link rel="stylesheet" href="settings.css" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Aim Contour | Free Online FPS Aim Trainer & Mouse Tracking Tool</title>
@@ -101,131 +102,6 @@
          }
          .hud-item span {
             color: #0f0;
-         }
-         
-/* Menu Overlay Styling matching Straight Balls */
-         #menu-toggle-btn {
-            position: absolute;
-            top: 90px; /* Direkt unter der 45px hohen HUD-Leiste + 10px Abstand */
-            left: 20px;
-            background: rgba(40, 40, 40, 0.8);
-            color: #fff;
-            border: 1px solid #666;
-            padding: 8px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            z-index: 1000;
-            font-size: 14px;
-            backdrop-filter: blur(4px);
-            transition: background 0.2s;
-         }
-         #menu-toggle-btn:hover {
-            background: rgba(70, 70, 70, 0.9);
-         }
-
-         /* Das Menü öffnet sich direkt darunter auf der linken Seite */
-         #advanced-menu {
-            position: absolute;
-            top: 135px; /* Unterhalb des Buttons */
-            left: 20px;
-            width: 320px;
-            max-height: calc(100vh - 120px);
-            background: rgba(18, 18, 18, 0.95);
-            border: 1px solid #444;
-            border-radius: 8px;
-            padding: 20px;
-            z-index: 999;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            overflow-y: auto;
-            transition: opacity 0.2s, transform 0.2s;
-         }
-         #advanced-menu.hidden-menu {
-            display: none;
-         }
-         .control-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 12px;
-         }
-         .file-input-wrapper {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-         }
-         .file-input-wrapper input[type="file"] {
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-         }
-         .btn-action {
-            width: 100%;
-            background: #333;
-            border: 1px solid #666;
-            color: #fff;
-            padding: 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 13px;
-            margin-top: 5px;
-            transition: background 0.2s;
-         }
-         .btn-action:hover {
-            background: #444;
-         }
-         h3 {
-            font-size: 16px;
-            margin: 15px 0 10px;
-            border-bottom: 1px solid #444;
-            padding-bottom: 6px;
-            color: #0f0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-         }
-         h3:first-of-type {
-            margin-top: 0;
-         }
-         .setting-group {
-            margin-bottom: 14px;
-         }
-         .setting-group label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #aaa;
-            margin-bottom: 4px;
-         }
-         .setting-group input[type="range"] {
-            width: 100%;
-            cursor: pointer;
-         }
-         .setting-group input[type="color"] {
-            width: 40px;
-            height: 25px;
-            border: none;
-            cursor: pointer;
-            background: none;
-         }
-         .inline-setting {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-         }
-         .checkbox-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            cursor: pointer;
-            color: #fff;
-         }
-         .checkbox-container input {
-            width: auto;
-            margin-right: 8px;
          }
     </style>
   </head>
