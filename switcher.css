@@ -1,18 +1,16 @@
-/* Floating Scenario Switcher (Top-Left corner, positioned above or beside UI layer) */
+/* Global Scenario Switcher Header Bar */
 #global-scenario-switcher {
-   position: fixed;
-   top: 15px;
-   left: 380px; /* Shifted right so it doesn't overlap your 320px settings menu/buttons */
-   background: rgba(30, 30, 36, 0.9);
-   border: 1px solid #2d2d34;
-   padding: 8px 12px;
-   border-radius: 6px;
-   z-index: 9999;
+   width: 100%;
+   height: 45px;
+   background: rgba(18, 18, 20, 0.95);
+   border-bottom: 1px solid #2d2d34;
    display: flex;
    align-items: center;
-   gap: 8px;
-   backdrop-filter: blur(8px);
-   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+   padding: 0 15px;
+   gap: 10px;
+   z-index: 9999;
+   box-sizing: border-box;
+   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 #global-scenario-switcher label {
@@ -21,19 +19,17 @@
    color: #9ca3af;
    text-transform: uppercase;
    letter-spacing: 0.5px;
-   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 #global-scenario-select {
    background: #1e1e24;
    border: 1px solid #2d2d34;
    color: #f3f4f6;
-   padding: 6px 10px;
+   padding: 5px 10px;
    border-radius: 6px;
    font-size: 13px;
    cursor: pointer;
    outline: none;
-   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
    transition: all 0.2s;
 }
 
