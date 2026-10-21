@@ -4,7 +4,7 @@
 
 #menu-toggle-btn {
    position: absolute;
-   top: 55px; /* Directly below the HUD bar */
+   top: 90px; /* Directly below the HUD bar */
    left: 20px;
    background: rgba(40, 40, 40, 0.8);
    color: #fff;
@@ -24,7 +24,7 @@
 
 #advanced-menu {
    position: absolute;
-   top: 100px;
+   top: 130px;
    left: 20px;
    width: 320px;
    max-height: calc(100vh - 120px);
