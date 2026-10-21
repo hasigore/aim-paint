@@ -2,9 +2,10 @@
 <html lang="en">
    <head>
       <link rel="stylesheet" href="switcher.css" />
+      <link rel="stylesheet" href="settings.css" />
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Urgency Aim Trainer</title>
+      <title>Urgency Dots</title>
       <style>
          * {
             margin: 0;
@@ -63,74 +64,6 @@
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
             flex-shrink: 0;
          }
-
-         #menu-toggle-btn {
-            position: fixed;
-            top: 60px;
-            right: 15px;
-            background: rgba(40, 40, 40, 0.8);
-            color: #fff;
-            border: 1px solid #666;
-            padding: 8px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            z-index: 1000;
-            font-size: 14px;
-            backdrop-filter: blur(4px);
-         }
-         #config-menu {
-            position: fixed;
-            top: 105px;
-            right: 15px;
-            width: 320px;
-            background: rgba(18, 18, 18, 0.95);
-            border: 1px solid #444;
-            border-radius: 8px;
-            padding: 20px;
-            z-index: 999;
-            backdrop-filter: blur(8px);
-            max-height: calc(100vh - 120px);
-            overflow-y: auto;
-            display: none;
-         }
-         #config-menu.open {
-            display: block;
-         }
-         .config-group {
-            margin-bottom: 14px;
-         }
-         .config-group label {
-            display: block;
-            font-size: 12px;
-            color: #aaa;
-            margin-bottom: 4px;
-         }
-         .config-group input[type="range"] {
-            width: 100%;
-            cursor: pointer;
-         }
-         .range-value {
-            float: right;
-            color: #00ff88;
-            font-size: 12px;
-         }
-         .checkbox-label {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            color: #fff;
-            font-size: 13px;
-         }
-         .checkbox-label input {
-            margin-right: 8px;
-         }
-         h3 {
-            font-size: 16px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #444;
-            padding-bottom: 6px;
-            color: #00ff88;
-         }
       </style>
    </head>
    <body>
@@ -141,9 +74,9 @@
          <div class="hud-item">Penalties: <span id="hud-penalties">0</span></div>
       </div>
 
-      <button id="menu-toggle-btn">Settings (Esc)</button>
+      <button id="settings-toggle-btn">Settings (Esc)</button>
 
-      <div id="config-menu">
+      <div id="settings" class="hidden-menu">
          <h3>Urgency Aim Settings</h3>
          <div class="config-group">
             <label>Canvas Width <span class="range-value" id="val-canvasWidth">1200</span></label>
@@ -288,12 +221,13 @@
          window.addEventListener("mousedown", () => isMouseDown = true);
          window.addEventListener("mouseup", () => isMouseDown = false);
 
-         document.getElementById("menu-toggle-btn").onclick = () => {
-            document.getElementById("config-menu").classList.toggle("open");
-         };
+         const menu = document.getElementById("settings");
+         const toggleMenu = () => menu.classList.toggle("hidden-menu");
+
+         document.getElementById("settings-toggle-btn").onclick = toggleMenu;
 
          window.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") document.getElementById("config-menu").classList.toggle("open");
+            if (e.key === "Escape") toggleMenu();
          });
 
          function bindInput(id, key, parser = parseFloat, callback) {
@@ -376,8 +310,8 @@
                      }
                   }
 
-                  const dist = Math.hypot(mousePos.x - dot.x, mousePos.y - dot.y);
-                  if (dist <= dot.radius && activeTrigger) {
+                  const dotDist = Math.hypot(mousePos.x - dot.x, mousePos.y - dot.y);
+                  if (dotDist <= dot.radius && activeTrigger) {
                      if (dot.isUrgent) {
                         stats.urgentHits++;
                      } else {
@@ -392,10 +326,10 @@
                   ctx.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2);
 
                   if (dot.isUrgent) {
-                     ctx.fillStyle = "#ff3344"; // Immediately red
+                     ctx.fillStyle = "#ff3344";
                      ctx.fill();
                   } else {
-                     ctx.fillStyle = "#00ff88"; // Normal green
+                     ctx.fillStyle = "#00ff88";
                      ctx.fill();
                   }
                }
