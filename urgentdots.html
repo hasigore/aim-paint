@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Urgency Aim Trainer</title>
+      <style>
+         * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+         }
+         body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #111;
+            font-family: system-ui, -apple-system, sans-serif;
+            color: #fff;
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+         }
+         #hud-bar {
+            height: 45px;
+            background: #181818;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 100;
+            flex-shrink: 0;
+         }
+         .hud-item {
+            display: flex;
+            gap: 8px;
+         }
+         .hud-item span {
+            color: #00ff88;
+         }
+         #hud-penalties {
+            color: #ff3344 !important;
+         }
+
+         #canvas-container {
+            flex-grow: 1;
+            overflow: auto;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+         }
+         canvas {
+            display: block;
+            cursor: crosshair;
+            background: #000;
+            border: 2px solid #555;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            flex-shrink: 0;
+         }
+
+         #menu-toggle-btn {
+            position: fixed;
+            top: 60px;
+            right: 15px;
+            background: rgba(40, 40, 40, 0.8);
+            color: #fff;
+            border: 1px solid #666;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 14px;
+            backdrop-filter: blur(4px);
+         }
+         #config-menu {
+            position: fixed;
+            top: 105px;
+            right: 15px;
+            width: 320px;
+            background: rgba(18, 18, 18, 0.95);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            display: none;
+         }
+         #config-menu.open {
+            display: block;
+         }
+         .config-group {
+            margin-bottom: 14px;
+         }
+         .config-group label {
+            display: block;
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 4px;
+         }
+         .config-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+         }
+         .range-value {
+            float: right;
+            color: #00ff88;
+            font-size: 12px;
+         }
+         .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: #fff;
+            font-size: 13px;
+         }
+         .checkbox-label input {
+            margin-right: 8px;
+         }
+         h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 6px;
+            color: #00ff88;
+         }
+      </style>
+   </head>
+   <body>
+      <div id="hud-bar">
+         <div class="hud-item">FPS: <span id="hud-fps">60</span></div>
+         <div class="hud-item">Hits: <span id="hud-hits">0</span></div>
+         <div class="hud-item">Urgent Hits: <span id="hud-urgent-hits">0</span></div>
+         <div class="hud-item">Penalties: <span id="hud-penalties">0</span></div>
+      </div>
+
+      <button id="menu-toggle-btn">Settings (Esc)</button>
+
+      <div id="config-menu">
+         <h3>Urgency Aim Settings</h3>
+         <div class="config-group">
+            <label>Canvas Width <span class="range-value" id="val-canvasWidth">1200</span></label>
+            <input type="range" id="cfg-canvasWidth" value="1200" min="400" max="2500" step="50" />
+         </div>
+         <div class="config-group">
+            <label>Canvas Height <span class="range-value" id="val-canvasHeight">800</span></label>
+            <input type="range" id="cfg-canvasHeight" value="800" min="400" max="1800" step="50" />
+         </div>
+         <div class="config-group">
+            <label>Dot Count <span class="range-value" id="val-dotCount">8</span></label>
+            <input type="range" id="cfg-dotCount" value="8" min="1" max="20" step="1" />
+         </div>
+         <div class="config-group">
+            <label>Base Dot Radius (px) <span class="range-value" id="val-dotRadius">12</span></label>
+            <input type="range" id="cfg-dotRadius" value="12" min="3" max="30" step="1" />
+         </div>
+         <div class="config-group">
+            <label>Max Urgent Radius (px) <span class="range-value" id="val-maxUrgentRadius">45</span></label>
+            <input type="range" id="cfg-maxUrgentRadius" value="45" min="20" max="90" step="5" />
+         </div>
+         <div class="config-group">
+            <label>Urgent Expansion Speed <span class="range-value" id="val-expansionSpeed">0.8</span></label>
+            <input type="range" id="cfg-expansionSpeed" value="0.8" min="0.2" max="3.0" step="0.1" />
+         </div>
+         <div class="config-group">
+            <label>Urgent Spawn Interval (s) <span class="range-value" id="val-urgentSpawnInterval">0.7</span></label>
+            <input type="range" id="cfg-urgentSpawnInterval" value="0.7" min="0.2" max="3.0" step="0.1" />
+         </div>
+         <div class="config-group">
+            <label>Max Concurrent Urgent Dots <span class="range-value" id="val-maxUrgentCount">5</span></label>
+            <input type="range" id="cfg-maxUrgentCount" value="5" min="1" max="10" step="1" />
+         </div>
+         <div class="config-group">
+            <label>Penalty Time (s) <span class="range-value" id="val-penaltyDuration">2.5</span></label>
+            <input type="range" id="cfg-penaltyDuration" value="2.5" min="0.5" max="10" step="0.5" />
+         </div>
+         <div class="config-group">
+            <label>Crosshair Color</label>
+            <input type="color" id="cross-color" value="#00ff88" style="width:100%; height:30px; border:none; cursor:pointer;" />
+         </div>
+         <div class="config-group">
+            <label class="checkbox-label">
+               <input type="checkbox" id="cfg-justHover" checked /> Just Hover (No click required)
+            </label>
+         </div>
+      </div>
+
+      <div id="canvas-container">
+         <canvas id="aimCanvas"></canvas>
+      </div>
+
+      <script>
+         const Config = {
+            width: 1200,
+            height: 800,
+            dotCount: 8,
+            dotRadius: 12,
+            maxUrgentRadius: 45,
+            expansionSpeed: 0.8,
+            urgentSpawnInterval: 0.7,
+            maxUrgentCount: 5,
+            penaltyDuration: 2.5,
+            justHover: true,
+            crossColor: '#00ff88'
+         };
+
+         const canvas = document.getElementById("aimCanvas");
+         const ctx = canvas.getContext("2d");
+
+         let mousePos = { x: 0, y: 0 };
+         let isMouseDown = false;
+         let dots = [];
+         let penaltyTimeLeft = 0;
+         let urgentSpawnTimer = 0;
+         
+         let stats = { hits: 0, urgentHits: 0, penalties: 0 };
+
+         function initCanvas() {
+            canvas.width = Config.width;
+            canvas.height = Config.height;
+            spawnAllDots();
+         }
+
+         function spawnSingleDot() {
+            const margin = Config.maxUrgentRadius + 20;
+            let x, y, tooClose;
+            let attempts = 0;
+
+            do {
+               tooClose = false;
+               x = margin + Math.random() * (Config.width - 2 * margin);
+               y = margin + Math.random() * (Config.height - 2 * margin);
+
+               for (let d of dots) {
+                  if (Math.hypot(d.x - x, d.y - y) < Config.maxUrgentRadius * 2) {
+                     tooClose = true;
+                     break;
+                  }
+               }
+               attempts++;
+            } while (tooClose && attempts < 100);
+
+            return {
+               x,
+               y,
+               radius: Config.dotRadius,
+               isUrgent: false,
+               urgentProgress: 0
+            };
+         }
+
+         function spawnAllDots() {
+            dots = [];
+            for (let i = 0; i < Config.dotCount; i++) {
+               dots.push(spawnSingleDot());
+            }
+            urgentSpawnTimer = 0.5;
+         }
+
+         function tryMakeDotUrgent() {
+            const nonUrgent = dots.filter(d => !d.isUrgent);
+            const currentUrgentCount = dots.filter(d => d.isUrgent).length;
+
+            if (nonUrgent.length > 0 && currentUrgentCount < Config.maxUrgentCount) {
+               const target = nonUrgent[Math.floor(Math.random() * nonUrgent.length)];
+               target.isUrgent = true;
+               target.urgentProgress = 0;
+            }
+         }
+
+         function updateCursor() {
+            const rawSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="2.5" fill="${Config.crossColor}"/><line x1="16" y1="2" x2="16" y2="7" stroke="${Config.crossColor}" stroke-width="2"/><line x1="16" y1="25" x2="16" y2="30" stroke="${Config.crossColor}" stroke-width="2"/><line x1="2" y1="16" x2="7" y2="16" stroke="${Config.crossColor}" stroke-width="2"/><line x1="25" y1="16" x2="30" y2="16" stroke="${Config.crossColor}" stroke-width="2"/></svg>`;
+            canvas.style.cursor = `url("data:image/svg+xml;base64,${btoa(rawSvg)}") 16 16, crosshair`;
+         }
+         updateCursor();
+
+         window.addEventListener("mousemove", (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mousePos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+         });
+         window.addEventListener("mousedown", () => isMouseDown = true);
+         window.addEventListener("mouseup", () => isMouseDown = false);
+
+         document.getElementById("menu-toggle-btn").onclick = () => {
+            document.getElementById("config-menu").classList.toggle("open");
+         };
+
+         window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") document.getElementById("config-menu").classList.toggle("open");
+         });
+
+         function bindInput(id, key, parser = parseFloat, callback) {
+            const el = document.getElementById(id);
+            const valSpan = document.getElementById("val-" + id.replace("cfg-", ""));
+            el.addEventListener("input", (e) => {
+               Config[key] = parser(e.target.value);
+               if (valSpan) valSpan.innerText = Config[key];
+               if (callback) callback();
+            });
+         }
+
+         bindInput("cfg-canvasWidth", "width", parseInt, initCanvas);
+         bindInput("cfg-canvasHeight", "height", parseInt, initCanvas);
+         bindInput("cfg-dotCount", "dotCount", parseInt, () => {
+            while (dots.length < Config.dotCount) dots.push(spawnSingleDot());
+            if (dots.length > Config.dotCount) dots = dots.slice(0, Config.dotCount);
+         });
+         bindInput("cfg-dotRadius", "dotRadius", parseInt, () => {
+            dots.forEach(d => { if (!d.isUrgent) d.radius = Config.dotRadius; });
+         });
+         bindInput("cfg-maxUrgentRadius", "maxUrgentRadius");
+         bindInput("cfg-expansionSpeed", "expansionSpeed");
+         bindInput("cfg-urgentSpawnInterval", "urgentSpawnInterval");
+         bindInput("cfg-maxUrgentCount", "maxUrgentCount", parseInt);
+         bindInput("cfg-penaltyDuration", "penaltyDuration");
+
+         document.getElementById("cfg-justHover").addEventListener("change", (e) => Config.justHover = e.target.checked);
+         document.getElementById("cross-color").addEventListener("input", (e) => {
+            Config.crossColor = e.target.value;
+            updateCursor();
+         });
+
+         initCanvas();
+
+         let lastTime = performance.now();
+         let fps = 60;
+
+         function animate(now) {
+            const dt = Math.min((now - lastTime) / 1000, 0.1);
+            lastTime = now;
+            fps = Math.round(1 / dt);
+
+            ctx.clearRect(0, 0, Config.width, Config.height);
+
+            const activeTrigger = Config.justHover ? true : isMouseDown;
+
+            if (penaltyTimeLeft > 0) {
+               penaltyTimeLeft -= dt;
+               
+               ctx.fillStyle = "rgba(255, 0, 85, 0.15)";
+               ctx.fillRect(0, 0, Config.width, Config.height);
+
+               ctx.fillStyle = "#ff0055";
+               ctx.font = "bold 24px sans-serif";
+               ctx.textAlign = "center";
+               ctx.fillText(`PENALTY COOLDOWN: ${penaltyTimeLeft.toFixed(1)}s`, Config.width / 2, Config.height / 2);
+
+               if (penaltyTimeLeft <= 0) {
+                  spawnAllDots();
+               }
+            } else {
+               urgentSpawnTimer -= dt;
+               if (urgentSpawnTimer <= 0) {
+                  tryMakeDotUrgent();
+                  urgentSpawnTimer = Config.urgentSpawnInterval;
+               }
+
+               for (let i = 0; i < dots.length; i++) {
+                  let dot = dots[i];
+
+                  if (dot.isUrgent) {
+                     dot.urgentProgress += (dt * Config.expansionSpeed) / 2;
+                     dot.radius = Config.dotRadius + dot.urgentProgress * (Config.maxUrgentRadius - Config.dotRadius);
+
+                     if (dot.urgentProgress >= 1) {
+                        stats.penalties++;
+                        penaltyTimeLeft = Config.penaltyDuration;
+                        break;
+                     }
+                  }
+
+                  const dist = Math.hypot(mousePos.x - dot.x, mousePos.y - dot.y);
+                  if (dist <= dot.radius && activeTrigger) {
+                     if (dot.isUrgent) {
+                        stats.urgentHits++;
+                     } else {
+                        stats.hits++;
+                     }
+
+                     dots[i] = spawnSingleDot();
+                     continue;
+                  }
+
+                  ctx.beginPath();
+                  ctx.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2);
+
+                  if (dot.isUrgent) {
+                     const p = dot.urgentProgress;
+                     const r = Math.round(255 * p);
+                     const g = Math.round(255 * (1 - p));
+                     ctx.fillStyle = `rgb(${r},${g},50)`;
+                     ctx.fill();
+                  } else {
+                     ctx.fillStyle = "#00ff88";
+                     ctx.fill();
+                  }
+               }
+            }
+
+            document.getElementById("hud-fps").innerText = fps;
+            document.getElementById("hud-hits").innerText = stats.hits;
+            document.getElementById("hud-urgent-hits").innerText = stats.urgentHits;
+            document.getElementById("hud-penalties").innerText = stats.penalties;
+
+            requestAnimationFrame(animate);
+         }
+
+         requestAnimationFrame(animate);
+      </script>
+   </body>
+</html>
