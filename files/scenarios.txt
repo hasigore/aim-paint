@@ -2,6 +2,7 @@ Aim Paint, aimpaint
 Straight Balls, straightballs
 Urgent Dots, urgent_dots
 Micro Reaction, micro_reaction
+Static Conformation, static_conformation
 #Aim Strafe, trackmove
 #Battlefield 6 Jump Slide Trainer, jump_slide_track
 
