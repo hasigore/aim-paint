@@ -2,8 +2,8 @@ const Config = {
     width: 1200,
     height: 800,
     dotCount: 6,
-    dotRadius: 25,
-    centerDotRadius: 3,
+    dotRadius: 8,         // Much smaller default radius
+    centerDotRadius: 1.5, // Tiny center indicator dot
     requiredHoldTime: 0.8,
     crossColor: '#00ff88'
 };
@@ -22,7 +22,7 @@ function initCanvas() {
 }
 
 function spawnSingleDot() {
-    const margin = Config.dotRadius + 30;
+    const margin = Config.dotRadius + 20;
     let x, y, tooClose;
     let attempts = 0;
 
@@ -32,7 +32,7 @@ function spawnSingleDot() {
         y = margin + Math.random() * (Config.height - 2 * margin);
 
         for (let d of dots) {
-            if (Math.hypot(d.x - x, d.y - y) < Config.dotRadius * 3) {
+            if (Math.hypot(d.x - x, d.y - y) < Config.dotRadius * 4) {
                 tooClose = true;
                 break;
             }
@@ -126,9 +126,11 @@ function animate(now) {
             }
         } else {
             if (dot.holdProgress > 0) {
-                stats.resets++;
-                dots[i] = spawnSingleDot();
-                continue;
+                dot.holdProgress -= dt * 2.0;
+                if (dot.holdProgress < 0) {
+                    dot.holdProgress = 0;
+                    stats.resets++;
+                }
             }
         }
 
@@ -137,7 +139,7 @@ function animate(now) {
         ctx.arc(dot.x, dot.y, Config.dotRadius, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(0, 255, 136, 0.2)";
         ctx.fill();
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1.5;
         ctx.strokeStyle = "#00ff88";
         ctx.stroke();
 
@@ -145,7 +147,7 @@ function animate(now) {
         if (dot.holdProgress > 0) {
             ctx.beginPath();
             ctx.arc(dot.x, dot.y, Config.dotRadius * dot.holdProgress, 0, Math.PI * 2);
-            ctx.fillStyle = "rgba(0, 255, 136, 0.6)";
+            ctx.fillStyle = "rgba(0, 255, 136, 0.7)";
             ctx.fill();
         }
 
