@@ -1,1 +1,58 @@
-
+<!doctype html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="../css/style.css" />
+        <link rel="stylesheet" href="../css/settings.css" />
+        <link rel="stylesheet" href="../css/hud.css" />
+        <link rel="stylesheet" href="../css/switcher.css" />
+        <link rel="stylesheet" href="../css/canvas.css" />
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Static Conformation</title>
+    </head>
+    <body>
+        <div id="hud-bar">
+            <div class="hud-item">FPS: <span id="hud-fps">60</span></div>
+            <div class="hud-item">Completed: <span id="hud-hits">0</span></div>
+            <div class="hud-item">Resets: <span id="hud-resets">0</span></div>
+        </div>
+        <button id="settings-toggle-btn">Settings (Esc)</button>
+        <div id="settings" class="hidden-settings">
+            <h3>Static Conformation Settings</h3>
+            <div class="config-group">
+                <label>Canvas Width <span class="range-value" id="val-canvasWidth">1200</span></label>
+                <input type="range" id="cfg-canvasWidth" value="1200" min="400" max="2500" step="50" />
+            </div>
+            <div class="config-group">
+                <label>Canvas Height <span class="range-value" id="val-canvasHeight">800</span></label>
+                <input type="range" id="cfg-canvasHeight" value="800" min="400" max="1800" step="50" />
+            </div>
+            <div class="config-group">
+                <label>Dot Count <span class="range-value" id="val-dotCount">6</span></label>
+                <input type="range" id="cfg-dotCount" value="6" min="1" max="15" step="1" />
+            </div>
+            <div class="config-group">
+                <label>Dot Radius (px) <span class="range-value" id="val-dotRadius">25</span></label>
+                <input type="range" id="cfg-dotRadius" value="25" min="10" max="50" step="1" />
+            </div>
+            <div class="config-group">
+                <label>Required Hold Time (s) <span class="range-value" id="val-requiredHoldTime">0.8</span></label>
+                <input type="range" id="cfg-requiredHoldTime" value="0.8" min="0.1" max="3.0" step="0.1" />
+            </div>
+            <div class="config-group">
+                <label>Crosshair Color</label>
+                <input
+                    type="color"
+                    id="cross-color"
+                    value="#00ff88"
+                    style="width: 100%; height: 30px; border: none; cursor: pointer"
+                />
+            </div>
+        </div>
+        <div id="canvas-container">
+            <canvas id="aimCanvas"></canvas>
+        </div>
+        <script src="../js/static_conformation.js"></script>
+        <script src="../js/switcher.js"></script>
+    </body>
+</html>
