@@ -2,9 +2,11 @@ const Config = {
     width: 1200,
     height: 800,
     dotCount: 6,
-    dotRadius: 8,         // Much smaller default radius
-    centerDotRadius: 1.5, // Tiny center indicator dot
+    dotRadius: 8,
+    centerDotRadius: 1.5,
     requiredHoldTime: 0.8,
+    movementPattern: 'linear', // 'static', 'linear', or 'orbit'
+    movementSpeed: 25,
     crossColor: '#00ff88'
 };
 
@@ -22,7 +24,7 @@ function initCanvas() {
 }
 
 function spawnSingleDot() {
-    const margin = Config.dotRadius + 20;
+    const margin = Config.dotRadius + 30;
     let x, y, tooClose;
     let attempts = 0;
 
@@ -40,9 +42,17 @@ function spawnSingleDot() {
         attempts++;
     } while (tooClose && attempts < 100);
 
+    // Random velocity angle for linear drift
+    const angle = Math.random() * Math.PI * 2;
+    
     return {
         x,
         y,
+        originX: x,
+        originY: y,
+        vx: Math.cos(angle),
+        vy: Math.sin(angle),
+        orbitAngle: Math.random() * Math.PI * 2,
         holdProgress: 0
     };
 }
@@ -94,6 +104,11 @@ bindInput("cfg-dotCount", "dotCount", parseInt, () => {
 });
 bindInput("cfg-dotRadius", "dotRadius", parseInt);
 bindInput("cfg-requiredHoldTime", "requiredHoldTime");
+bindInput("cfg-movementSpeed", "movementSpeed", parseInt);
+
+document.getElementById("cfg-movementPattern").addEventListener("change", (e) => {
+    Config.movementPattern = e.target.value;
+});
 
 document.getElementById("cross-color").addEventListener("input", (e) => {
     Config.crossColor = e.target.value;
@@ -112,8 +127,33 @@ function animate(now) {
 
     ctx.clearRect(0, 0, Config.width, Config.height);
 
+    const margin = Config.dotRadius + 10;
+
     for (let i = 0; i < dots.length; i++) {
         let dot = dots[i];
+
+        // Handle dot movement physics based on selected pattern
+        if (Config.movementPattern === 'linear') {
+            dot.x += dot.vx * Config.movementSpeed * dt;
+            dot.y += dot.vy * Config.movementSpeed * dt;
+
+            // Bounce off canvas boundaries smoothly
+            if (dot.x < margin || dot.x > Config.width - margin) {
+                dot.vx *= -1;
+                dot.x = Math.max(margin, Math.min(Config.width - margin, dot.x));
+            }
+            if (dot.y < margin || dot.y > Config.height - margin) {
+                dot.vy *= -1;
+                dot.y = Math.max(margin, Math.min(Config.height - margin, dot.y));
+            }
+        } else if (Config.movementPattern === 'orbit') {
+            dot.orbitAngle += (Config.movementSpeed / 50) * dt;
+            const orbitRadius = 35;
+            dot.x = dot.originX + Math.cos(dot.orbitAngle) * orbitRadius;
+            dot.y = dot.originY + Math.sin(dot.orbitAngle) * orbitRadius;
+        }
+        // 'static' pattern does not alter dot.x / dot.y coordinates
+
         const dist = Math.hypot(mousePos.x - dot.x, mousePos.y - dot.y);
         const inside = dist <= Config.dotRadius;
 
